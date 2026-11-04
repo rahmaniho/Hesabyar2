@@ -37,6 +37,20 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByText('آوید کریمی')).toBeTruthy();
   });
 
+  it('opens a read-only invoice preview without offering payment or edit actions', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات فروشگاه آوید' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByRole('heading', { name: 'جزئیات فاکتور نمونه' })).toBeTruthy();
+    expect(within(dialog).getByText('فروشگاه آوید')).toBeTruthy();
+    expect(within(dialog).getByText('امروز، ۱۰:۴۲')).toBeTruthy();
+    expect(within(dialog).getByText('۳ قلم')).toBeTruthy();
+    expect(within(dialog).getByText('۱۲,۴۸۰,۰۰۰ تومان')).toBeTruthy();
+    expect(within(dialog).queryByRole('button', { name: /تسویه|ویرایش|حذف/ })).toBeNull();
+  });
+
   it('opens a read-only detail preview for a sample customer', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));

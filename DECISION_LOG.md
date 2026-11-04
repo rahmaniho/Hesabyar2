@@ -26,12 +26,13 @@
 | D-022 | 2026-11-05 | PR #5 greenfield UI shell را در `main` ادغام کرد؛ شاخهٔ فعال آن نشست `arena/49664ebd-hesabyar2` بر merge commit `a8e55e1e4cc8f17ba6f8b1a9b3452f7b12d28d06` بنا شده بود | `gh pr merge 5 --merge` موفق؛ source اصلی `KarenYar` منتقل نشد |
 | D-023 | 2026-11-05 | PR #6 فرم افزودن مشتری نمونه را با state موقت React ادغام کرد؛ branch آن مرحله `arena/b19a8f51-hesabyar2` و جزئیات مشتری در PR #7 فقط‌خواندنی بود | `gh pr merge 6 --merge` موفق؛ هیچ persistence یا منطق مالی اضافه نشد |
 | D-024 | 2026-11-05 | PR #7 جزئیات مشتری نمونه را به `main` افزود؛ شاخهٔ فعال آن مرحله `arena/622c2021-hesabyar2` فیلتر وضعیت را فقط روی ردیف‌های نمایشی اعمال کرد | `gh pr merge 7 --merge` موفق؛ source اصلی `KarenYar`، persistence و منطق مالی تغییر نکردند |
-| D-025 | 2026-11-05 | PR #8 فیلتر مشتری نمونه را در `main` ادغام کرد؛ شاخهٔ فعال فعلی `arena/e38db981-hesabyar2` سری‌های ثابت و mock نمودار را بر اساس بازهٔ انتخابی نمایش می‌دهد | `gh pr merge 8 --merge` موفق؛ هیچ دادهٔ واقعی یا محاسبهٔ مالی اضافه نشده است |
+| D-025 | 2026-11-05 | PR #8 فیلتر مشتری نمونه را در `main` ادغام کرد؛ شاخهٔ فعال آن مرحله `arena/e38db981-hesabyar2` سری‌های ثابت و mock نمودار را بر اساس بازهٔ انتخابی نمایش داد | `gh pr merge 8 --merge` موفق؛ هیچ دادهٔ واقعی یا محاسبهٔ مالی اضافه نشد |
+| D-026 | 2026-11-05 | PR #9 تعامل mock نمودار را به `main` افزود؛ شاخهٔ فعال فعلی `arena/cd2e7fc5-hesabyar2` جزئیات فاکتور نمونه را به‌صورت فقط‌خواندنی نمایش می‌دهد | `gh pr merge 9 --merge` موفق؛ فاکتور فقط از static mock row خوانده می‌شود و هیچ پرداخت/محاسبه/تغییری انجام نمی‌شود |
 
 ## تصمیم‌های باز برای مالک
 
 - آیا `KarenYar` source رسمی Hesabyar 2.0 است؟
-- مسیر source رسمی برای development فراتر از UI prototype چیست؟ مالک باید `KarenYar` را تأیید کند یا greenfield `Hesabyar2` را به‌عنوان کدبیس کامل انتخاب کند؛ شاخهٔ فعال فعلی `arena/e38db981-hesabyar2` است.
+- مسیر source رسمی برای development فراتر از UI prototype چیست؟ مالک باید `KarenYar` را تأیید کند یا greenfield `Hesabyar2` را به‌عنوان کدبیس کامل انتخاب کند؛ شاخهٔ فعال فعلی `arena/cd2e7fc5-hesabyar2` است.
 - آیا HMAC/void/POS money fixes بعد از تصویب TDR به‌عنوان اولین milestone اجرا شوند؟
 - آیا Business multi-user حتماً server-authoritative است و Personal همچنان local-first می‌ماند؟
 - آیا Pages branch آزمایشی باید build-only بماند یا preview deploy داشته باشد؛ و چه TLS/redirect policy روی host واقعی اعمال می‌شود؟
