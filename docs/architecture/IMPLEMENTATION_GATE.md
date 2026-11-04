@@ -29,19 +29,20 @@
 
 ## Work packages — گیت‌ها، مجوزها و وضعیت
 
-### WP-0 — منبع و CI قابل تکرار (`NOT STARTED`)
+### WP-0 — منبع و CI قابل تکرار (`IN PROGRESS / WORKFLOW ADDED`)
 
-- source greenfield در سطح بالا `Hesabyar2` انتخاب شده؛ تثبیت baseline و boundaries جزئی‌تر هنوز لازم است.
-- پیش از اتصال هر helper به feature/transaction flow، CI کم‌دسترسی برای `npm test`, typecheck, lint, build و release guards لازم است؛ PR #11 فعلاً status check ندارد.
-- جداکردن build/test از publish/sign؛ protected environment و tag/source policy فقط پس از تصمیم owner/security.
-- **خروجی پذیرش:** PR آزمایشی بدون release و بدون production write که required checks را reproducibly سبز کند؛ permissions بازبینی شوند. فعلاً local tests/build اجرا می‌شوند و workflow تغییر نکرده است.
+- source greenfield در سطح بالا `Hesabyar2` انتخاب شده؛ baseline برنامه روی شاخهٔ فعلی تثبیت است و معماری/edition boundaries جزئی‌تر هنوز ADR می‌خواهند.
+- `.github/workflows/ci.yml` روی pull requestها و push به `main` و `arena/**` اجرا می‌شود: Node 22، `npm ci`, tests, typecheck, build و `npm audit --audit-level=low`.
+- Workflow فقط `contents: read` دارد، `actions/checkout` و `actions/setup-node` را به commit SHA کامل pin می‌کند، checkout credential را نگه نمی‌دارد، timeout/concurrency دارد و هیچ deploy، sign، release یا artifact publication انجام نمی‌دهد.
+- در این مخزن lint script/config موجود نیست؛ این workflow lint اجرا یا آن را ادعا نمی‌کند. Release guard هم موضوع این test-only workflow نیست.
+- **خروجی پذیرش:** GitHub run برای PR #11 باید سبز شود؛ سپس owner باید required-check/branch-protection policy را جداگانه تأیید کند. تنظیمات branch protection در این مرحله تغییر نکرده‌اند؛ workflow به‌تنهایی required check را enforce نمی‌کند.
 
 ### WP-1 — مرز ورودی پول POS (`IN PROGRESS / PURE HELPER ONLY`)
 
 - **قرارداد مصوب کاربر:** caller واحد `rial` یا `toman` را صریح می‌دهد؛ ورودی در هر واحد عدد صحیح مثبت است؛ Rial به‌صورت دقیق نگه داشته می‌شود و Toman با ضریب ۱۰ به integer Rial تبدیل می‌شود؛ هیچ rounding نداریم؛ صفر/منفی و اعشار رد می‌شوند؛ رقم فارسی و لاتین پذیرفته می‌شوند؛ برگشت وجه در جریان جداگانه‌ای خواهد بود.
 - نمایش دقیق Rial به Toman: `۱۱ ریال` به‌صورت `۱ تومان و ۱ ریال`، نه rounded decimal. helper خالص `src/domain/money.ts` همین قرارداد را اجرا می‌کند و به UI فروش، posting یا persistence وصل نیست.
 - تست‌ها پوشش می‌دهند: ۰، تمام ۱..۱۱ ریال، ورودی ریال/تومان، رقم فارسی/لاتین، grouping معتبر/نامعتبر، decimals، منفی، و مقدار BigInt بزرگ بدون overflow. حد تجاری مبلغ برای transaction flow هنوز تعیین نشده است.
-- **خروجی پذیرش فعلی:** هیچ ورودی helper بی‌صدا گرد یا حذف نمی‌شود؛ caller باید unit را تعیین کند؛ invalid input explicit result می‌دهد؛ helper تنها در isolation تست شده است. CI/review و اتصال به POS در scope فعلی نیست.
+- **خروجی پذیرش فعلی:** هیچ ورودی helper بی‌صدا گرد یا حذف نمی‌شود؛ caller باید unit را تعیین کند؛ invalid input explicit result می‌دهد؛ helper تنها در isolation تست شده است. CI workflow اضافه شده اما اجرای remote آن باید سبز شود؛ review مستقل و اتصال به POS خارج از WP‑1 فعلی‌اند.
 - هیچ schema/data migration یا تراکنش واقعی در این WP اجرا نشده است.
 
 ### WP-2 — ابطال/اصلاح فروش
@@ -69,7 +70,8 @@
 
 ## وضعیت فعلی
 
-- WP-0: `NOT STARTED`; WP-1: `IN PROGRESS / PURE HELPER ONLY`; WP-2/WP-3: `NOT STARTED`.
+- WP-0: `IN PROGRESS / CI WORKFLOW ADDED; REMOTE RUN PENDING`; WP-1: `IN PROGRESS / PURE HELPER ONLY`; WP-2/WP-3: `NOT STARTED`.
+- `.github/workflows/ci.yml` تست، typecheck، build و npm audit را با دسترسی read-only اجرا می‌کند؛ هنوز نتیجهٔ اجرای GitHub و branch-protection policy تأیید نشده است.
 - `src/domain/money.ts` تنها helper مستقلِ WP-1 است؛ هیچ sales flow، posting، ledger، DB، license، production، Android artifact یا release به آن وصل نشده است.
-- UI prototype و تعامل‌های mock در `arena/a1600dfc-hesabyar2` ادامه دارد؛ PR #11 باز است. local tests/typecheck/build اجرا شده‌اند، اما PR CI status checks خالی است.
+- UI prototype و تعامل‌های mock در `arena/a1600dfc-hesabyar2` ادامه دارد؛ PR #11 باز است. local tests/typecheck/build موفق بوده‌اند؛ remote CI بعد از push باید بررسی شود.
 - پیش از اتصال helper به POS، تراکنش/ابطال/refund، ledger، persistence/backend، licensing، migration یا release، WP-0 و gateهای domain/security مربوط باید جداگانه بسته شوند؛ `KarenYar` هنوز import یا ویرایش نشده است.

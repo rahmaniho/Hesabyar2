@@ -67,12 +67,13 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 در شاخهٔ `arena/a1600dfc-hesabyar2` UI mock را ادامه می‌دهد و یک helper خالص WP‑1 با قرارداد محدودِ ورودی مبلغِ مصوب دارد. این helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 در شاخهٔ `arena/a1600dfc-hesabyar2` UI mock و helper خالص WP‑1 را دارد. برای WP‑0 فایل `.github/workflows/ci.yml` نیز به‌صورت test-only و با دسترسی read-only افزوده شده است؛ GitHub run روی PR باید هنوز مشاهده شود. helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 
-1. آیا `rahmaniho/KarenYar` منبع رسمی برنامه‌ای است که باید Hesabyar 2.0 از آن تکامل یابد؟
-2. آیا توسعهٔ کامل باید روی source فعلی `KarenYar` باشد یا greenfield در `Hesabyar2` ادامه یابد؟ prototype فعلی فقط shell/UI است و این تصمیم را پیشاپیش حل نمی‌کند.
-3. قواعد مالی برای POS conversion، invoice reversal و مجوزدهی چه هستند و چه ownerهایی باید پیش از تغییرات اجرایی آن‌ها را تصویب کنند؟
+1. آیا/چه زمانی legacy data یا رفتارهای `KarenYar` باید سازگار، import یا migrate شوند؟
+2. مرزهای دقیق Personal/Business، tenant model و انتخاب backend برای Shared Core چه هستند؟
+3. قواعد گسترده‌تر مالی (posting، refund، tax، تاریخ مؤثر و reversal) و owner sign-off آن‌ها چیست؟
+4. آیا owner branch protection و required CI check را برای repository فعال می‌کند؟ workflow فقط status می‌دهد و تنظیم repository را عوض نمی‌کند.
 
 هیچ تغییر production، migration، نشر یا ادعای تأیید live انجام نشده است. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [ماتریس راستی‌آزمایی artifactهای Android/Admin](ANDROID_ARTIFACT_VERIFICATION_PLAN.md)، [Admin Android](ADMIN_ANDROID_AUDIT.md)، [Admin PHP staging](ADMIN_SERVER_AUDIT.md)، [cPanel read-only runbook](CPANEL_READ_ONLY_RUNBOOK.md)، [Android platform](ANDROID_PLATFORM_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).

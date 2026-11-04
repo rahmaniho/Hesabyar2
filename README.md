@@ -16,9 +16,12 @@ npm run dev
 The Vite server binds to `0.0.0.0:5173` for the Arena preview. Useful checks:
 
 ```bash
+npm run test
 npm run typecheck
 npm run build
 ```
+
+GitHub Actions runs these checks plus a low-threshold dependency audit for pull requests and pushes to `main` and `arena/**`. The workflow is read-only and does not deploy, sign, publish artifacts, or release.
 
 ## Current prototype scope
 

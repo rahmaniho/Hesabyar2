@@ -39,7 +39,7 @@
 
 ## محدودیت‌های قطعی
 
-- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. PR #10 با merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` ادغام شد؛ PR #11 برای UI mock و helper محدود WP‑1 باز است؛ شاخهٔ فعال `arena/a1600dfc-hesabyar2` از commit PR #10 آغاز می‌شود. کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرد؛ `main` هنوز محصول کامل/ledger ندارد و `KarenYar` جدا و واردنشده باقی مانده است.
+- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. PR #10 با merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` ادغام شد؛ PR #11 برای UI mock، helper محدود WP‑1 و CI workflow کم‌دسترسی باز است؛ شاخهٔ فعال `arena/a1600dfc-hesabyar2` از commit PR #10 آغاز می‌شود. کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرد؛ `main` هنوز محصول کامل/ledger ندارد و `KarenYar` جدا و واردنشده باقی مانده است.
 - `KarenYar` یک snapshot مرجع legacy است؛ کاربر source greenfield را `Hesabyar2` انتخاب کرده و هیچ فایل از `KarenYar` به این مخزن منتقل نشده است.
 - دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
@@ -47,12 +47,13 @@
 ## وضعیت تغییرات
 
 - **کد برنامه:** greenfield app در `Hesabyar2` و شاخهٔ فعال `arena/a1600dfc-hesabyar2`: React/TypeScript/Vite، UI RTL و mock pages؛ PR #11 جزئیات فقط‌خواندنی، فیلترهای mock و helper خالص WP‑1 را شامل می‌شود. Helper فقط ورودی صحیح مثبت با واحد صریح را به integer Rial تبدیل و remainder را دقیق قالب‌بندی می‌کند؛ به POS، ledger، تراکنش یا persistence وصل نیست.
-- **اعتبارسنجی جاری:** ۲۳ تست (۱۵ UI + ۸ WP‑1 helper)، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و helper module را HTTP 200 پاسخ می‌دهد؛ E2E مرورگر اجرا نشده است.
+- **اعتبارسنجی محلی:** ۲۳ تست (۱۵ UI + ۸ WP‑1 helper)، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و helper module را HTTP 200 پاسخ می‌دهد؛ E2E مرورگر اجرا نشده است.
+- **CI کیفیت:** `.github/workflows/ci.yml` روی PR و push به `main`/`arena/**` اضافه شد؛ read-only `contents`, Actionsهای SHA-pinned، Node 22, `npm ci`, tests, typecheck, build و `npm audit --audit-level=low`; بدون deploy/sign/release. GitHub run هنوز pending است؛ branch protection و lint configuration تنظیم/تأیید نشده‌اند.
 - **دیتابیس/production/release:** بدون تغییر؛ هیچ API، license، migration، APK یا deployment اجرا/تغییر نشده.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
 - **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. شاخهٔ فعلی `arena/a1600dfc-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.
-- در follow-up جاری، ماتریس پیشنهادی راستی‌آزمایی APK/AAB و Admin debug artifact در `docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد تا CI-06..08 و ADM-04 معیار پذیرش و negative-testهای مشخص داشته باشند؛ workflow، signer config یا artifact تغییر نکرد و اجرای این معیارها نیازمند approval است.
+- در audit تاریخی Android، ماتریس پیشنهادی راستی‌آزمایی APK/AAB و Admin debug artifact در `docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد تا CI-06..08 و ADM-04 معیار پذیرش و negative-testهای مشخص داشته باشند؛ workflowهای Android/Admin قدیمی، signer config و artifact آن‌ها تغییر نکرده‌اند و اجرای آن معیارها نیازمند approval است. این موضوع جدا از CI test-only جدید Hesabyar2 است.
 
 ## گیت بعدی
 
-کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 UI mock را با helper خالص WP‑1 ادامه می‌دهد. WP‑1 قرارداد ورود مبلغ تأییدشده دارد، اما قبل از اتصال helper به POS یا ثبت واقعی، WP‑0 CI/QA و review لازم است. ledger/posting، refund flow، persistence/backend، licensing، migration، Android و release هنوز مجوز/تصمیم جدا می‌خواهند؛ `KarenYar` وارد یا ویرایش نشده است.
+کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ WP‑1 helper خالص آماده است و WP‑0 اکنون CI workflow کم‌دسترسی دارد. گام جاری انتظار برای GitHub check نتیجهٔ PR #11 و بررسی‌های لازم است؛ branch protection/required-check policy نیازمند تأیید مالک است. پیش از اتصال helper به POS یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، refund flow، persistence/backend، licensing، migration، Android و release هنوز مجوز/تصمیم جدا می‌خواهند؛ `KarenYar` وارد یا ویرایش نشده است.
