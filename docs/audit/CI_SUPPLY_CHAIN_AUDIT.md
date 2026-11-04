@@ -45,18 +45,26 @@
 
 **کاهش ریسک پیشنهادی:** permission را per-job تعریف کنید؛ build فقط `contents:read` داشته باشد و `pages:write`/`id-token:write` تا جای ممکن فقط به deploy job برسد. اگر فعال‌سازی خودکار Pages نیازمند write است، آن کار را جدا و محدود کنید.
 
-### CI-06 — artifact target `test-apk` فاقد verification روی APK همان run است (کم؛ نیازمند اصلاح gate)
+### CI-06 — debug Actions artifact پیش از verification upload می‌شود یا اصلاً verify نمی‌شود (کم؛ CI hardening)
 
-در `android.yml`، هر دو target `github-test` و `test-apk` `assembleDebug` اجرا و APK را upload می‌کنند. اما مرحلهٔ `npm run android:publish-test`، که `publishTestRelease()` را صدا می‌زند و `verifyTestApk()` را با `apksigner`/`aapt` روی فایل واقعی اجرا می‌کند، فقط برای `github-test` شرط‌گذاری شده است. `signed-release` verifier مخصوص خود را دارد (`android:verify`); target `test-apk` پس از upload در workflow مرحلهٔ بررسی binary ندارد. تست Node `test:android-release` کد guardها را می‌آزماید، نه APK خروجی این run را.
+در [`android.yml`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/.github/workflows/android.yml#L120-L146)، targetهای `github-test` و `test-apk` هر دو `assembleDebug` می‌سازند و ابتدا Actions artifact را upload می‌کنند (`L127-L134`). فقط بعد از آن target `github-test`، `android:publish-test` را اجرا می‌کند؛ [`publishTestRelease`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/scripts/android-test-release.mjs#L128-L165) ابتدا `verifyTestApk()` را روی APK واقعی اجرا می‌کند و در صورت موفقیت checksum می‌سازد و release را منتشر می‌کند. پس public pre-release asset در این مسیر verifier-gated است، اما Actions artifact همان run پیش از verifier upload شده و verifier fail کردن job الزاماً upload قبلی را پس نمی‌گیرد. در target `test-apk` اصلاً `android:publish-test` اجرا نمی‌شود و Actions artifact هیچ binary verifier ندارد. دسترسی/retention/قابلیت دانلود این Actions artifactها بررسی نشد.
 
-این فقط شکاف consistency/evidence در artifact-only مسیر است؛ هیچ APK معیوب یا سوءاستفاده‌ای مشاهده نشده و سطح دسترسی download artifact بررسی نشده است.
+Run `41813070224` از همان tree source build/sync و publication verifier را با موفقیت گذراند؛ این، نقص ordering برای Actions artifact و فقدان verifier در target `test-apk` را رفع نمی‌کند. تست Node `test:android-release` کد guardها را می‌آزماید، نه APK خروجی `test-apk` را.
 
-**کاهش ریسک پیشنهادی:** مرحلهٔ مستقل `verifyTestApk` را پیش از upload برای همهٔ debug artifactها اجرا کنید؛ app ID/version/minSdk/debuggable/signing identity و checksum را validate کنید و در failure upload را fail-closed کنید.
+**کاهش ریسک پیشنهادی:** verifier مشترک `verifyTestApk` را پیش از هر upload debug artifact اجرا کنید؛ app ID/version/minSdk/debuggable/signing identity و checksum را validate و verification را fail-closed کنید. اگر upload قبل از validation از نظر workflow ناگزیر است، artifact را تا موفقیت verifier غیرقابل‌دسترسی نگه دارید.
+
+### CI-07 — signed-release AAB بدون verifier مستقل upload/publish می‌شود (کم؛ نیازمند تأیید artifact)
+
+[`android.yml`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/.github/workflows/android.yml#L148-L184) در target `signed-release` هر دو `assembleRelease` و `bundleRelease` را می‌سازد. مرحلهٔ [`android:verify`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/scripts/verify-android-release.mjs#L9-L51) فقط `app-release.apk` را می‌گیرد و روی همان APK `apksigner verify` و `aapt dump badging` اجرا می‌کند. سپس `upload-artifact` و GitHub Release هر دو APK و `app-release.aab` را با هم می‌فرستند؛ AAB به verifier صریحی مانند `jarsigner`/`bundletool validate` یا signer/metadata comparison پاس داده نمی‌شود.
+
+این missing gate است، نه شاهدی از AAB نامعتبر؛ run tag `v1.4.2` در signing-key validation پیش از build fail شد و AAB نهایی در این ممیزی مشاهده نشد.
+
+**کاهش ریسک پیشنهادی:** پیش از upload/release خود AAB را verify کنید، application ID/version/signer را با release metadata/APK تطبیق دهید و checksum/provenance هر دو artifact را ثبت کنید.
 
 ## کنترل‌های مثبت مشاهده‌شده
 
 - Android tag build در گام validation کلید امضا متوقف شد؛ مراحل بعدی اجرا و debug fallback منتشر نشد. این fail-closed است، هرچند علت دقیق run واقعی به‌خاطر در دسترس نبودن log نامعلوم ماند.
-- مسیر public `github-test` پیش از انتشار با `apksigner`/`aapt`، debug certificate، application ID، version، debuggable و min SDK را روی همان APK بررسی می‌کند؛ release noteها TEST/DEBUG و NOT FOR STORES را روشن می‌گویند. این guard در artifact-only target `test-apk` اجرا نمی‌شود (CI-06).
+- مسیر public `github-test` پیش از انتشار با `apksigner`/`aapt`، debug certificate، application ID، version، debuggable و min SDK را روی همان APK بررسی می‌کند؛ release noteها TEST/DEBUG و NOT FOR STORES را روشن می‌گویند. Run `41813070224` روی commit `f724e847b7aa87f7facb8c04be5e27c7473d82a5` از نظر build/sync و publication موفق بود؛ tree آن با baseline ممیزی `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24` برابر است. GitHub API برای فایل APK digest `sha256:0474e5015531dedf4daa1c35a11848d7db1dd43412eef5bc6a275fb011ebd3fc` گزارش می‌کند (metadata، نه محاسبهٔ محلی). این verifier permissionهای merged را enumerate نمی‌کند و در artifact-only target `test-apk` هم اجرا نمی‌شود (CI-06).
 - test publication checksum می‌سازد و ابتدا draft prerelease ایجاد و بعد از upload/validation منتشر می‌کند.
 - Pages environment policy طبق API branch `main` را مجاز می‌داند؛ branch آزمایشی در workflow trigger می‌شود اما در policy نیست. این ممکن است عمداً build-only باشد؛ policy را بدون تصمیم owner باز نکنید.
 
@@ -67,6 +75,6 @@
 ## حدود و گیت بعدی
 
 - Branch protection، rulesets، tag rules، required checks، Environment approvals و secret scopes به‌علت 403 در GitHub API قابل بررسی نبودند؛ هیچ‌کدام را absent فرض نمی‌کنیم.
-- Secret value، signing keystore، host زنده و artifact دستگاه واقعی بررسی نشدند.
+- Secret value/keystore، host زنده و دستگاه واقعی بررسی نشدند؛ APK public release فقط از طریق run/asset metadata و verifier source بررسی شد، binary مستقل دانلود/parse نشد؛ دسترسی Actions artifactها و signed-release AAB نیز بررسی نشد.
 - workflow logs برای run Android امضا به‌علت خطای دریافت log در دسترس نبودند؛ علت شکست مشخص نیست.
 - پیشنهادها صرفاً remediation هستند؛ هیچ workflow/config/release/secret در این ممیزی تغییر نکرد.

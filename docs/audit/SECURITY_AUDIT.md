@@ -74,14 +74,14 @@ App source manifest has `targetSdk=36` from Gradle but no explicit `usesCleartex
 
 ### SEC-16 — WebView debugging در buildهای debug از app flag پیروی می‌کند (کم؛ artifact verification)
 
-برنامه در `capacitor.config.ts` گزینهٔ `android.webContentsDebuggingEnabled` را override نمی‌کند. `package-lock.json`، CLI و Android را روی 8.5.3 pin کرده است؛ CLI `loadExtConfigTS`، export تنظیمات را به‌عنوان `extConfig` می‌گیرد و `copyCapacitorConfig` همان را به JSON بومی می‌نویسد، بدون تزریق این default. بنابراین مسیر source برای copy/sync عادی نشان می‌دهد که fallback خود Capacitor باید اعمال شود؛ `cap sync`، JSON تولیدی و APK اجرا/بازبینی نشدند. Android Capacitor در نبود مقدار config، `WebContentsDebuggingEnabled` را از `ApplicationInfo.FLAG_DEBUGGABLE` می‌گیرد؛ `Bridge` آن را به `WebView.setWebContentsDebuggingEnabled()` می‌دهد. Gradle برای release صریحاً `debuggable=false` می‌گذارد، ولی workflow آزمایشی `assembleDebug` را می‌سازد و debug APK منتشر می‌کند. پس source انتظار debugging خاموش در release و روشن در debug test variant را می‌دهد، اما actual APKها همچنان نیازمند verification هستند. مسیر public `github-test` artifact را با `apksigner`/`aapt` بررسی می‌کند و release verifier `debuggable` را رد می‌کند؛ artifact-only `test-apk` همان check را ندارد (CI-06). این گزینه به‌تنهایی دسترسی شبکه‌ای عمومی را اثبات نمی‌کند؛ بااین‌حال tooling مجاز دستگاه می‌تواند WebView را inspect کند.
+برنامه در `capacitor.config.ts` گزینهٔ `android.webContentsDebuggingEnabled` را override نمی‌کند. `package-lock.json`، CLI و Android را روی 8.5.3 pin کرده است؛ CLI `loadExtConfigTS`، export تنظیمات را به‌عنوان `extConfig` می‌گیرد و `copyCapacitorConfig` همان را به JSON بومی می‌نویسد، بدون تزریق این default. در نبود مقدار، Android Capacitor `WebContentsDebuggingEnabled` را از `ApplicationInfo.FLAG_DEBUGGABLE` می‌گیرد؛ `Bridge` آن را به `WebView.setWebContentsDebuggingEnabled()` می‌دهد. Gradle برای release صریحاً `debuggable=false` می‌گذارد، ولی workflow آزمایشی `assembleDebug` را می‌سازد. در run `41813070224`، build+sync و `Publish verified testing APK` روی همان tree source موفق بودند؛ verifier فایل واقعی را با `apksigner`/`aapt` از نظر Debug certificate، app/version، `application-debuggable` و minSdk بررسی می‌کند. پس برای همین public test APK، CI شواهد قبولی debug certificate و debuggable دارد؛ `webContentsDebuggingEnabled` جداگانه runtime سنجیده نشد و binary در این sandbox مستقل دانلود/parse نشد. Signed release build موجود نیست؛ Actions artifact مسیر `github-test` پیش از verifier upload می‌شود و artifact-only `test-apk` verifier ندارد (CI-06). این گزینه به‌تنهایی دسترسی شبکه‌ای عمومی را اثبات نمی‌کند؛ بااین‌حال tooling مجاز دستگاه می‌تواند WebView را inspect کند.
 
 **پیشنهاد:** debug APK فقط به testerهای مجاز و با دادهٔ آزمایشی داده شود؛ `debuggable` و WebView debugging را روی artifact واقعی debug/release جداگانه تأیید کنید. جزئیات: [Android platform audit](ANDROID_PLATFORM_AUDIT.md).
 
 ## کنترل‌های مثبت مشاهده‌شده
 
 - WebChromeClient پین‌شدهٔ Capacitor 8.5.3، WebView `VIDEO_CAPTURE` را به مجوز runtime دوربین وصل می‌کند؛ این source evidence است، نه اثبات آزمون روی device.
-- Capacitor 8.5.3 mixed-content config را پیش‌فرض false می‌گیرد و release Gradle `debuggable=false` دارد؛ merged manifest و APK نهایی همچنان verify نشده‌اند.
+- Capacitor 8.5.3 mixed-content config را پیش‌فرض false می‌گیرد و release Gradle `debuggable=false` دارد؛ test APK عمومی run `41813070224` در CI verifier را گذراند، اما merged permission manifest و رفتار runtime/WebView روی device بررسی نشد.
 - WebCrypto Ed25519 client verifier، public key pin option و device key identity برای مسیر server license وجود دارند.
 - endpointهای PHP staging دارای `Cache-Control: no-store` و روش POST هستند؛ پنل staging در کد به environment guard و CSRF/session متکی است. production deployment تأیید نشد.
 - backup import پیش از clear، ساختار و برخی رابطه‌ها را validate می‌کند؛ CSV writer تست formula injection دارد.
@@ -93,7 +93,7 @@ App source manifest has `targetSdk=36` from Gradle but no explicit `usesCleartex
 - HTTPS، CSP، headers، access logs، admin protection و rate limits روی host واقعی.
 - backup encryption، دستگاه گم‌شده، XSS/local access و بازیابی PIN.
 - Android barcode scanner: runtime camera permission، WebView `BarcodeDetector`, deny/revoke، exactly-once callback و توقف stream بعد از setup failure.
-- debug/release APK: merged manifest، `debuggable` و WebView debugging state؛ no APK binary در این نشست verify نشد.
+- Android APK: run `41813070224` در CI verifier را گذراند و GitHub API digest دارد؛ binary مستقل دانلود/parse نشد، merged manifest/permissions و WebView state روی device همچنان نیازمند verification هستند؛ signed release build نشده.
 - امضا/لغو مجوز و compatibility با مشتریانی که KS1 مادام‌العمر خریده‌اند.
 - triage advisories و برنامهٔ ارتقای کم‌ریسک با تست رگرسیون.
 
