@@ -22,7 +22,7 @@
 
 ### AND-02 — cleartext policy صریح در app manifest دیده نشد (سخت‌سازی؛ نه vulnerability اثبات‌شده)
 
-در manifest برنامه `android:usesCleartextTraffic` یا `android:networkSecurityConfig` دیده نشد؛ Capacitor scheme محلی روی `https` است و target SDK 36 اعلام شده. رفتار پیش‌فرض Android برای targetهای جدید معمولاً cleartext را محدود می‌کند، اما merged manifest، plugin overrides و APK runtime در این نشست بررسی نشدند. از نبود صفت در manifest به‌تنهایی HTTP traffic نتیجه نمی‌گیریم.
+در manifest برنامه `android:usesCleartextTraffic` یا `android:networkSecurityConfig` دیده نشد؛ Capacitor scheme محلی روی `https` است و target SDK 36 اعلام شده. منبع دقیق Capacitor 8.5.3 [`CapConfig`](https://github.com/ionic-team/capacitor/blob/8.5.3/android/capacitor/src/main/java/com/getcapacitor/CapConfig.java#L42-L50) مقدار `allowMixedContent=false` دارد؛ app config آن را override نمی‌کند و [`Bridge.initWebView`](https://github.com/ionic-team/capacitor/blob/8.5.3/android/capacitor/src/main/java/com/getcapacitor/Bridge.java#L587-L596) فقط در صورت true بودن مقدار، `MIXED_CONTENT_ALWAYS_ALLOW` می‌گذارد. این یک کنترل source-level مثبت برای mixed content است، اما همان setting با سیاست cleartext شبکه یکی نیست؛ merged manifest و APK runtime بررسی نشدند. از نبود صفت در app manifest به‌تنهایی HTTP traffic نتیجه نمی‌گیریم.
 
 **پیشنهاد:** merged manifest و APK با `aapt`/`apkanalyzer` بازبینی شود؛ cleartext فقط در صورت نیاز صریح block و با تست URLهای داخلی/remote تأیید شود.
 
@@ -64,11 +64,23 @@
 
 **پیشنهاد:** scan را serialize یا one-shot کنید، پس از هر `await` وضعیت cancelled/detected را دوباره بررسی کنید، و callback موفق را با latch یک‌بارمصرف محافظت کنید. تست با detector mock کند باید تضمین کند برای یک بارکد دقیقاً یک callback رخ دهد و پس از close هیچ callback دیررس نرسد. تست اختصاصی scanner در snapshot پیدا نشد.
 
+### AND-09 — WebView debugging به debuggable build وابسته است (کم؛ artifact verification)
+
+`capacitor.config.ts` برنامه `android.webContentsDebuggingEnabled` را تنظیم نمی‌کند. در Capacitor tag 8.5.3، [`CapConfig`](https://github.com/ionic-team/capacitor/blob/8.5.3/android/capacitor/src/main/java/com/getcapacitor/CapConfig.java#L242-L288) در نبود override مقدار را از `ApplicationInfo.FLAG_DEBUGGABLE` می‌گیرد و [`Bridge.initWebView`](https://github.com/ionic-team/capacitor/blob/8.5.3/android/capacitor/src/main/java/com/getcapacitor/Bridge.java#L617-L625) همان را به `WebView.setWebContentsDebuggingEnabled()` می‌دهد. app `build.gradle` برای `release` صریحاً `debuggable=false` دارد؛ workflow اصلی برای testing از `assembleDebug` استفاده می‌کند. مسیر `github-test` پس از build در `android:publish-test` خود APK را با `apksigner`/`aapt` بررسی می‌کند و debug certificate و debuggable را انتظار دارد؛ release هم verifier جدا دارد. بنابراین منبع و guardهای pipeline release را از debug تفکیک می‌کنند، ولی APK واقعی این runs در این ممیزی بازبینی نشد.
+
+فعال‌بودن WebView debugging به‌تنهایی اثبات دسترسی شبکه‌ای عمومی نیست و برای استفاده نیازمند debugging channel/device access است؛ بااین‌حال ابزار محلی مجاز می‌تواند WebView content را inspect کند. Debug APK را فقط به testerهای مجاز بدهید و در آن با دادهٔ آزمایشی کار کنید؛ artifact نهایی release/debug را جداگانه تأیید کنید.
+
+### AND-10 — مسیر `test-apk` خود APK آپلودشده را verify نمی‌کند (کم؛ CI hardening)
+
+در [`.github/workflows/android.yml`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/.github/workflows/android.yml#L115-L164)، targetهای `github-test` و `test-apk` هر دو `assembleDebug` می‌سازند و فایل APK را به‌صورت artifact آپلود می‌کنند. فقط target `github-test` مرحلهٔ `android:publish-test` را اجرا می‌کند؛ [`scripts/android-test-release.mjs`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/scripts/android-test-release.mjs#L32-L65) در این مسیر، APK واقعی را با `apksigner` و `aapt` از نظر Debug certificate، package/version، `application-debuggable` و minSdk می‌سنجد. مسیر `signed-release` نیز [`scripts/verify-android-release.mjs`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/scripts/verify-android-release.mjs#L20-L50) را اجرا می‌کند تا امضا/manifest release را validate کند. اما target `test-apk` پس از upload artifact آن verifier را اجرا نمی‌کند؛ `npm run test:android-release` صرفاً تست‌های Node مربوط به guard scripts است و فایل APK همین run را نمی‌سنجد.
+
+این یک gap در evidence/consistency برای artifact-only مسیر است، نه شاهد APK خراب یا release اشتباه؛ artifact در GitHub Actions است و این بررسی دربارهٔ دسترسی دانلود آن نتیجه‌گیری نمی‌کند. **پیشنهاد:** verifier مشترک روی تمام APKهای uploadشده اجرا شود و checksum ساخته شود؛ اگر verification fail شد artifact publish نشود.
+
 ## کنترل‌های مثبت
 
 - permissionهای مستقیم کم هستند؛ camera optional و manual barcode fallback توصیف شده؛ source پین‌شدهٔ Capacitor، runtime `VIDEO_CAPTURE` را به `CAMERA` permission وصل می‌کند.
 - FileProvider export نشده؛ call-site مشاهده‌شدهٔ `saveBlob` فایل را در `Directory.Cache` می‌نویسد و همان URI را share می‌کند؛ intent filter عمیق/وبی روی activity دیده نشد.
-- Android backup خاموش است؛ release build در Gradle non-debuggable تنظیم شده.
+- Android backup خاموش است؛ release build در Gradle non-debuggable تنظیم شده؛ `github-test` و signed-release مسیرهای binary verification دارند (artifact-only `test-apk` gap جداگانهٔ AND-10 است).
 - scheme محلی Capacitor `https` است، اما این به‌تنهایی TLS برای remote host یا data-at-rest encryption را اثبات نمی‌کند.
 
 ## آزمون‌های مجاز بعدی

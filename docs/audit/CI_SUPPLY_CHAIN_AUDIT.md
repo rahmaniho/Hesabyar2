@@ -45,10 +45,18 @@
 
 **کاهش ریسک پیشنهادی:** permission را per-job تعریف کنید؛ build فقط `contents:read` داشته باشد و `pages:write`/`id-token:write` تا جای ممکن فقط به deploy job برسد. اگر فعال‌سازی خودکار Pages نیازمند write است، آن کار را جدا و محدود کنید.
 
+### CI-06 — artifact target `test-apk` فاقد verification روی APK همان run است (کم؛ نیازمند اصلاح gate)
+
+در `android.yml`، هر دو target `github-test` و `test-apk` `assembleDebug` اجرا و APK را upload می‌کنند. اما مرحلهٔ `npm run android:publish-test`، که `publishTestRelease()` را صدا می‌زند و `verifyTestApk()` را با `apksigner`/`aapt` روی فایل واقعی اجرا می‌کند، فقط برای `github-test` شرط‌گذاری شده است. `signed-release` verifier مخصوص خود را دارد (`android:verify`); target `test-apk` پس از upload در workflow مرحلهٔ بررسی binary ندارد. تست Node `test:android-release` کد guardها را می‌آزماید، نه APK خروجی این run را.
+
+این فقط شکاف consistency/evidence در artifact-only مسیر است؛ هیچ APK معیوب یا سوءاستفاده‌ای مشاهده نشده و سطح دسترسی download artifact بررسی نشده است.
+
+**کاهش ریسک پیشنهادی:** مرحلهٔ مستقل `verifyTestApk` را پیش از upload برای همهٔ debug artifactها اجرا کنید؛ app ID/version/minSdk/debuggable/signing identity و checksum را validate کنید و در failure upload را fail-closed کنید.
+
 ## کنترل‌های مثبت مشاهده‌شده
 
 - Android tag build در گام validation کلید امضا متوقف شد؛ مراحل بعدی اجرا و debug fallback منتشر نشد. این fail-closed است، هرچند علت دقیق run واقعی به‌خاطر در دسترس نبودن log نامعلوم ماند.
-- Testing APK پیش از انتشار با `apksigner`/`aapt` از نظر debug certificate، application ID، version، debuggable و min SDK بررسی می‌شود؛ release noteها روشن می‌گویند TEST/DEBUG و NOT FOR STORES و هشدار backup/حذف داده دارند.
+- مسیر public `github-test` پیش از انتشار با `apksigner`/`aapt`، debug certificate، application ID، version، debuggable و min SDK را روی همان APK بررسی می‌کند؛ release noteها TEST/DEBUG و NOT FOR STORES را روشن می‌گویند. این guard در artifact-only target `test-apk` اجرا نمی‌شود (CI-06).
 - test publication checksum می‌سازد و ابتدا draft prerelease ایجاد و بعد از upload/validation منتشر می‌کند.
 - Pages environment policy طبق API branch `main` را مجاز می‌داند؛ branch آزمایشی در workflow trigger می‌شود اما در policy نیست. این ممکن است عمداً build-only باشد؛ policy را بدون تصمیم owner باز نکنید.
 

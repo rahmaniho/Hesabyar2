@@ -1,6 +1,6 @@
 # شواهد منبع، مخزن و اجرای ممیزی
 
-**تاریخ جمع‌آوری:** 2026-11-04 UTC
+**گردآوری اولیه:** 2026-11-04 UTC؛ **آخرین تکمیل:** 2026-11-05 local
 **مخزن متصل این نشست:** `https://github.com/rahmaniho/Hesabyar2`
 **سورس برنامهٔ شناسایی‌شده:** `https://github.com/rahmaniho/KarenYar`
 **مخزن وب‌سایت شرکت:** `https://github.com/rahmaniho/karen-soft`
@@ -8,8 +8,8 @@
 ## `Hesabyar2` در نشست
 
 - ابتدای ممیزی روی branch `arena/39118004-hesabyar2` با commit `38aedc6e1c1ea97fbe0b7b95ddf3fa8436955c05`، پیام `Initial commit`, درخت `Hesabyar2` فقط `README.md` (`# Hesabyar2`) داشت.
-- PR #1، شامل 42 فایل Markdown مستنداتی، در 2026-11-04 در `main` ادغام شد؛ merge commit `cf0864939070073ddaeb28783da036a02a6530d8` است. هیچ app source به repo منتقل نشد.
-- شاخهٔ فعال فعلی نشست `arena/147f6490-hesabyar2` (`active`) روی همین commit شروع شده است؛ این repo حالا audit/architecture docs دارد، اما منبع کد محصول نیست.
+- PR #1، شامل 42 فایل Markdown مستنداتی، در `main` با merge commit `cf0864939070073ddaeb28783da036a02a6530d8` ادغام شد. PR #2 شامل مستندات follow-up audit نیز در `main` با merge commit `68588c0e685e108c81835356c0d0fe8f98495ded` ادغام شد؛ هیچ app source به repo منتقل نشد.
+- شاخهٔ فعال فعلی نشست `arena/0b07fc58-hesabyar2` (`active`) روی merge commit PR #2 شروع شده است؛ این repo حالا audit/architecture docs دارد، اما منبع کد محصول نیست.
 - مخزن عمومی است؛ عبارت «بدون tag/PR/release» مربوط به snapshot اولیهٔ بررسی است و پس از آن PR #1 ایجاد/ادغام شد.
 
 ## شناسایی مخزن واقعی برنامه
@@ -49,7 +49,8 @@
 - `deploy/cpanel-staging/admin/{index,issue-license,deploy-app}.php` در source، staging-only guard، server auth identity، secure session cookie flags، CSRF/rate limit و prepared SQL دارد؛ `deploy-app.php` SHA-256 ثابت را validate و ZIP را in-place extract می‌کند. `bootstrap.php` خارج repo است.
 - SHA-256 artifact این نشست از GitHub blob API دوباره محاسبه شد و با expected hash موجود در deploy script تطبیق داشت؛ branch artifact `arena/1bdeff0a-karenyar` در API به `1d54bf4...` اشاره کرد و `protected=false` گزارش شد. rulesetهای repo به‌علت 403 قابل بررسی نبودند.
 - Main Android manifest، app Gradle و Capacitor config در commit دقیق نشان می‌دهند: `allowBackup=false`, direct permissions فقط INTERNET/CAMERA، camera optional، `FileProvider` non-exported ولی `external-path path="."` و target SDK 36؛ Capacitor scheme محلی HTTPS است. جست‌وجوی source call-site فقط `src/core/utils/file-save.ts` را یافت که backup JSON/CSV/PDF را در `Directory.Cache` می‌نویسد و همان URI را share می‌کند؛ `Filesystem.deleteFile` call-site پیدا نشد و catch فایل را در cache باقی می‌گذارد. `file-save.test.ts` فقط مسیر وب را پوشش می‌دهد؛ native cleanup test مشاهده نشد. APK merged/final manifest بررسی نشد.
-- `package-lock.json`، `@capacitor/android@8.5.3` و pluginهای app/filesystem/share/status-bar را pin می‌کند؛ package AndroidManifestهای منتشرشدهٔ همین نسخه‌ها empty هستند، اما Gradle merge/وابستگی‌های transitive و APK نهایی اجرا/بررسی نشدند. `BarcodeScannerDialog.tsx` در source از `getUserMedia` و `BarcodeDetector` استفاده می‌کند و ورود دستی fallback دارد؛ Capacitor tag `8.5.3` در `Bridge.java`، `BridgeWebChromeClient` را نصب و در `onPermissionRequest`، `VIDEO_CAPTURE` را به مجوز runtime `CAMERA` وصل می‌کند؛ `Bridge.java` و `BridgeWebChromeClient.java` در tarball پین‌شده byte-for-byte با همان فایل‌های GitHub tag مقایسه شدند. همان component پس از stream setup error در `catch` track را explicit متوقف نمی‌کند. interval async هر 350ms `detect()` را صدا می‌زند، اما one-shot/in-flight guard ندارد و `cancelled` بعد از await بررسی نمی‌شود؛ POS callback هر بار واحد کالا را به basket اضافه می‌کند. پس چند Promise هم‌پوشان می‌توانند به‌طور شرطی مقدار draft را دوباره افزایش دهند. هیچ device/runtime یا component test اجرا نشد، پس هر دو مورد source-level risk هستند، نه رخداد تأییدشده.
+- `package-lock.json`، `@capacitor/android@8.5.3` و pluginهای app/filesystem/share/status-bar را pin می‌کند؛ package AndroidManifestهای منتشرشدهٔ همین نسخه‌ها empty هستند، اما Gradle merge/وابستگی‌های transitive و APK نهایی اجرا/بررسی نشدند. `BarcodeScannerDialog.tsx` در source از `getUserMedia` و `BarcodeDetector` استفاده می‌کند و ورود دستی fallback دارد؛ Capacitor tag `8.5.3` در `Bridge.java`، `BridgeWebChromeClient` را نصب و در `onPermissionRequest`، `VIDEO_CAPTURE` را به مجوز runtime `CAMERA` وصل می‌کند؛ `Bridge.java` و `BridgeWebChromeClient.java` در tarball پین‌شده byte-for-byte با همان فایل‌های GitHub tag مقایسه شدند. همان component پس از stream setup error در `catch` track را explicit متوقف نمی‌کند. interval async هر 350ms `detect()` را صدا می‌زند، اما one-shot/in-flight guard ندارد و `cancelled` بعد از await بررسی نمی‌شود؛ POS callback هر بار واحد کالا را به basket اضافه می‌کند. پس چند Promise هم‌پوشان می‌توانند به‌طور شرطی مقدار draft را دوباره افزایش دهند. هیچ device/runtime یا component test اجرا نشد، پس این‌ها source-level risk هستند، نه رخداد تأییدشده.
+- Capacitor 8.5.3 `allowMixedContent` را پیش‌فرض false می‌گیرد و app config آن را تغییر نمی‌دهد؛ WebView debugging را در نبود override از `ApplicationInfo.FLAG_DEBUGGABLE` می‌خواند. `android/app/build.gradle` در release `debuggable=false` دارد، ولی workflow آزمون `assembleDebug` را می‌سازد. مسیر `github-test` از `android:publish-test` و `verifyTestApk` روی binary واقعی با `apksigner`/`aapt` استفاده می‌کند؛ `signed-release` هم `android:verify` دارد. artifact-only target `test-apk` APK را upload می‌کند اما این binary verifier را اجرا نمی‌کند؛ `npm run test:android-release` فقط تست‌های script است. هیچ binary نهایی در این ممیزی بررسی نشد.
 - Admin WebView/APK, session cookies, server headers, Directory Privacy, logout, rate limit, staging dataset و PHP runtime زنده اجرا/بررسی نشدند.
 
 ## حدود شواهد

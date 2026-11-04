@@ -1,9 +1,9 @@
 # دفتر اجرای آژانس مهندسی هوش مصنوعی — Hesabyar 2.0
 
 **آخرین به‌روزرسانی:** 2026-11-05 local
-**شاخهٔ نشست فعلی:** `arena/147f6490-hesabyar2` (`active`), based on merge commit `cf0864939070073ddaeb28783da036a02a6530d8`
+**شاخهٔ نشست فعلی:** `arena/0b07fc58-hesabyar2` (`active`), based on PR #2 merge commit `68588c0e685e108c81835356c0d0fe8f98495ded`
 **مخزن همین نشست:** `rahmaniho/Hesabyar2`
-**PR مستندات قبلی:** [#1](https://github.com/rahmaniho/Hesabyar2/pull/1), merged به `main` در `cf0864939070073ddaeb28783da036a02a6530d8`.
+**PRهای مستندات:** [#1](https://github.com/rahmaniho/Hesabyar2/pull/1) و [#2](https://github.com/rahmaniho/Hesabyar2/pull/2) هر دو در `main` ادغام شدند؛ آخرین merge commit `68588c0e685e108c81835356c0d0fe8f98495ded` است.
 **مخزن برنامهٔ شناسایی‌شده:** `rahmaniho/KarenYar`، ممیزی read-only روی `main` commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
 
 ## تاریخچهٔ اجرا
@@ -31,10 +31,11 @@
 - کاربر اعلام کرد سرور cPanel برای اجرا در صورت نیاز موجود است. lookup connector cPanel در Arena `unsupported` برگشت؛ server/host یا محیط staging/production از این sandbox متصل/شناسایی نشد و هیچ فرمانی روی آن اجرا نشد. `docs/audit/CPANEL_READ_ONLY_RUNBOOK.md` آماده شد.
 - کاربر بعداً روشن کرد cPanel را به خاطر داشته باشیم ولی فعلاً اتصال/بررسی آن لازم نیست؛ سرور در این گام خارج scope ماند و ممیزی read-only source ادامه یافت.
 - ادامهٔ Android audit در source دقیق: package-lock نسخه‌های Capacitor Android/pluginها را pin می‌کند؛ manifests همین npm packageها خالی‌اند ولی Gradle merged APK بررسی نشده. `BarcodeScannerDialog` از `getUserMedia`/`BarcodeDetector` استفاده می‌کند؛ Capacitor 8.5.3 `VIDEO_CAPTURE` را به runtime CAMERA permission bridge می‌کند؛ `Bridge.java` و `BridgeWebChromeClient.java` با GitHub tag 8.5.3 byte-for-byte تطبیق داده شدند. در setup error پس از گرفتن stream، `catch`، `stop()` را صدا نمی‌کند و stream ممکن است تا close فعال بماند. همچنین interval async بدون one-shot/in-flight guard است و `cancelled` بعد از await دوباره سنجیده نمی‌شود؛ callbackهای detect هم‌پوشان ممکن است POS basket quantity را افزایش دهند (device confirmation pending). هیچ component/device test اجرا نشد؛ یافته‌های AND-05..08، SEC-15 و R-35..36 مستند شدند.
+- ادامهٔ Android WebView/CI review: Capacitor 8.5.3 mixed-content را پیش‌فرض false می‌گیرد و WebView debugging را از `FLAG_DEBUGGABLE` می‌گیرد؛ release Gradle `debuggable=false` دارد. مسیر `github-test` APK واقعی را با `apksigner`/`aapt` verify می‌کند، اما artifact-only `test-apk` همان verifier را اجرا نمی‌کند. این‌ها در AND-02/09/10، CI-06، SEC-16، R-37/R-38 و gates G-06/G-10 ثبت شدند؛ هیچ APK binary اجرا/بازبینی نشد.
 
 ## محدودیت‌های قطعی
 
-- شاخهٔ فعال فعلی `arena/147f6490-hesabyar2` است. `Hesabyar2` در ابتدا فقط README داشت؛ PR #1 مستندات را به main ادغام کرد، اما app source همچنان در repo نیست.
+- PR #2 مستندات follow-up را نیز به `main` ادغام کرد؛ شاخهٔ فعال بعدی اکنون `arena/0b07fc58-hesabyar2` است و از merge commit `68588c0e...` شروع می‌شود. app source همچنان در repo نیست.
 - `KarenYar` منبع بسیار محتمل و مستندشده است، ولی هنوز تأیید کتبی مالک برای اینکه همین source مبنای Hesabyar 2.0 باشد لازم است.
 - دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
@@ -44,8 +45,8 @@
 - **کد برنامه:** بدون تغییر.
 - **دیتابیس/production/release:** بدون تغییر.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
-- **مستندات پیگیری فعلی:** `docs/audit/ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md`, hash verification و اصلاح branch/status در گزارش‌ها، decision log و implementation gate در `arena/147f6490-hesabyar2` تهیه شد؛ این تغییرات پس از PR #1 هستند و فعلاً commit/push نشده‌اند.
+- **مستندات پیگیری ادغام‌شده:** `docs/audit/ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md` و اصلاحات مربوط به PR #2 اکنون در `main` هستند. ادامهٔ فعلی روی `arena/0b07fc58-hesabyar2` صرفاً review/doc updates دربارهٔ Capacitor WebView defaults و coverage مسیر `test-apk` است؛ app source تغییر نکرده.
 
 ## گیت بعدی
 
-پیش از source changes، مالک باید `rahmaniho/KarenYar` را به‌عنوان source رسمی تأیید کند و تصمیم دهد چگونه کار روی کد با محدودیت شاخهٔ فعال `arena/147f6490-hesabyar2` سازگار شود. پس از آن، مرحلهٔ بعدی جداگانه و با approval، تغییر کوچک و reviewable است؛ نه migration بزرگ یا deployment.
+پیش از source changes، مالک باید `rahmaniho/KarenYar` را به‌عنوان source رسمی تأیید کند و تصمیم دهد چگونه کار روی کد با محدودیت شاخهٔ فعال `arena/0b07fc58-hesabyar2` سازگار شود. پس از آن، مرحلهٔ بعدی جداگانه و با approval، تغییر کوچک و reviewable است؛ نه migration بزرگ یا deployment.

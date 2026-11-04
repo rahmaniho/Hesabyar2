@@ -19,6 +19,7 @@
 - بعداً [run آزمایشی `41813070224`](https://github.com/rahmaniho/KarenYar/actions/runs/41813070224) روی branch `arena/74812266-karenyar`, commit `f724e847b7aa87f7facb8c04be5e27c7473d82a5`, با موفقیت منتشر شد. release برای test/pre-release است، نه store release.
 - صفحهٔ محصول در `rahmaniho/karen-soft` به همان test prerelease لینک می‌دهد؛ این احتمالاً beta strategy است، اما owner/release manager باید تأیید کند که این download برای مخاطب عمومی intended است.
 - Pipeline fail-closed است: release secrets غایب باشند، signed release build skip/fail می‌شود و debug fallback به‌عنوان release ساخته نمی‌شود. این رفتار مثبت است.
+- Workflowهای `github-test`/`test-apk` با `assembleDebug` APK می‌سازند؛ `android/app/build.gradle` برای release صریحاً `debuggable=false` می‌گذارد. Capacitor 8.5.3 در نبود override، WebView debugging را از `ApplicationInfo.FLAG_DEBUGGABLE` می‌گیرد؛ پس انتظار source-level برای debug test روشن و release خاموش است. مسیر public `github-test` APK واقعی را با `apksigner`/`aapt` verify می‌کند و release هم verifier خودش را دارد؛ مسیر artifact-only `test-apk` آن binary verification را اجرا نمی‌کند (جزئیات در [ممیزی CI](CI_SUPPLY_CHAIN_AUDIT.md)). هیچ artifact binary یا runtime WebView debugging در این نشست بررسی نشد؛ test APK باید فقط برای testerهای مجاز و با دادهٔ آزمایشی باشد.
 
 ## PHP license staging
 

@@ -14,15 +14,16 @@
 | D-010 | 2026-11-04 | app source، release artifact، DB و production تغییر نکرد؛ فقط مستندات به branch نشست اضافه و PR #1 merge شد | audit/architecture docs only; code-free PR |
 | D-011 | 2026-11-04 | CI least-privilege، protected signing و test gates پیشنهادند؛ workflow تغییر نمی‌کند تا owner approval برسد | ممیزی `CI_SUPPLY_CHAIN_AUDIT.md`; branch/ruleset API access=403 |
 | D-012 | 2026-11-04 | WP-0..WP-3 و acceptance criteria در `IMPLEMENTATION_GATE.md` پیشنهاد شده‌اند، نه authorization برای source change | repo/branch mismatch و approval gates unresolved |
-| D-013 | 2026-11-04 | PR #1 مستنداتی merge شد؛ branch فعال بعدی `arena/147f6490-hesabyar2` روی `cf086493...` است و همچنان در repo app source وجود ندارد | PR #1 merged؛ current branch status active |
+| D-013 | 2026-11-04 | پس از merge مستنداتی PR #1، branch فعال آن مرحله `arena/147f6490-hesabyar2` روی `cf086493...` بود؛ app source همچنان در repo نبود | PR #1 merged؛ historical branch state |
 | D-014 | 2026-11-04 | Admin Android static review فقط audit finding است؛ persistent session behavior و server enforcement باید staging verification شوند | code evidence in `admin-android/`; live host inaccessible |
 | D-015 | 2026-11-05 | کاربر گزارش کرد تیم cPanel server دارد و می‌تواند در صورت نیاز اجرا کند؛ سرور هنوز متصل/شناسایی یا استفاده نشده | `cpanel` connector lookup=`unsupported`; runbook read-only آماده شد |
 | D-016 | 2026-11-05 | کاربر گفت cPanel را به خاطر داشته باشیم اما فعلاً اتصال/بررسی server لازم نیست؛ ممیزی read-only برنامه ادامه یابد | ادامهٔ static audit منوط به اتصال cPanel نیست؛ هیچ اتصال یا فرمانی انجام نشود تا scope بعداً خواسته شود |
+| D-017 | 2026-11-05 | PR #2 شامل مستندات follow-up در `main` ادغام شد؛ شاخهٔ فعال فعلی `arena/0b07fc58-hesabyar2` بر merge commit `68588c0e...` بنا شده است | `gh pr merge 2 --merge` موفق؛ PR state=`MERGED` |
 
 ## تصمیم‌های باز برای مالک
 
 - آیا `KarenYar` source رسمی Hesabyar 2.0 است؟
-- چگونه توسعه باید با قاعدهٔ شاخهٔ فعال این نشست روی `arena/147f6490-hesabyar2` انجام شود، در حالی که source برنامه در repo جداست؟
+- چگونه توسعه باید با قاعدهٔ شاخهٔ فعال این نشست روی `arena/0b07fc58-hesabyar2` انجام شود، در حالی که source برنامه در repo جداست؟
 - آیا HMAC/void/POS money fixes بعد از تصویب TDR به‌عنوان اولین milestone اجرا شوند؟
 - آیا Business multi-user حتماً server-authoritative است و Personal همچنان local-first می‌ماند؟
 - آیا Pages branch آزمایشی باید build-only بماند یا preview deploy داشته باشد؛ و چه TLS/redirect policy روی host واقعی اعمال می‌شود؟

@@ -5,7 +5,7 @@
 
 | محدوده | وضعیت | شواهد |
 |---|---|---|
-| مخزن متصل به نشست | `AUDITED` | `rahmaniho/Hesabyar2` در ابتدا فقط README داشت؛ PR #1 مستندات را merge کرد؛ branch فعال فعلی `arena/147f6490-hesabyar2` است و app code همچنان غایب |
+| مخزن متصل به نشست | `AUDITED` | `rahmaniho/Hesabyar2` در ابتدا فقط README داشت؛ PR #1 و PR #2 مستندات را merge کردند؛ branch فعال فعلی `arena/0b07fc58-hesabyar2` است و app code همچنان غایب |
 | شناسایی app source | `FOUND / OWNER CONFIRMATION PENDING` | `rahmaniho/karen-soft` به `rahmaniho/KarenYar` ارجاع می‌دهد؛ app ID/name همخوان |
 | ممیزی کد app | `COMPLETED_FOR_SNAPSHOT` | source `KarenYar/main@d41ca291...` و فایل‌های کلیدی بررسی شدند |
 | تست unit | `PASS` | 47 فایل / 369 تست |
@@ -15,8 +15,8 @@
 | E2E | `BLOCKED` | browser نصب نبود؛ rerun نشد |
 | production/staging audit | `DEFERRED_BY_USER / NEEDS_ENVIRONMENT_SCOPE` | کاربر وجود سرور cPanel را گزارش و صریحاً گفت فعلاً اتصال/بررسی لازم نیست؛ host و staging/production نامعلوم، هیچ server command اجرا نشده؛ ممیزی static بدون cPanel ادامه می‌یابد |
 | GitHub Pages/Android release | `NEEDS_OWNER_VERIFICATION` | Pages API `https_enforced=false` و `custom_domain=null`; Android 1.4.2 فقط test pre-release است و tag build در signing-key validation fail شد |
-| CI/CD security | `ACTION_REQUIRED / NEEDS_OWNER_VERIFICATION` | Android/Admin workflow-wide `contents:write` و build code در همان job؛ test/typecheck/lint کامل CI gate نیست؛ branch/tag protection API پاسخ 403 داد |
-| Android/Admin security | `NEEDS_ARTIFACT_AND_DEVICE_VERIFICATION` | manifest permissions محدود و allowBackup=false؛ FileProvider root hardening؛ exportها در cache می‌مانند؛ scanner از getUserMedia استفاده می‌کند و Capacitor 8.5.3 permission را bridge می‌کند؛ setup catch ممکن است stream را روشن نگه دارد و detectهای async بالقوه callback تکراری/POS qty اضافه بسازند؛ device test نشده؛ Admin session و PHP runtime نامعلوم |
+| CI/CD security | `ACTION_REQUIRED / NEEDS_OWNER_VERIFICATION` | Android/Admin workflow-wide `contents:write` و build code در همان job؛ test/typecheck/lint کامل CI gate نیست؛ `github-test` و signed-release APK verification دارند، اما artifact-only `test-apk` verifier روی binary ندارد؛ branch/tag protection API پاسخ 403 داد |
+| Android/Admin security | `NEEDS_ARTIFACT_AND_DEVICE_VERIFICATION` | manifest permissions محدود و allowBackup=false؛ Capacitor mixed-content default=false؛ release debuggable=false اما WebView debugging در test `assembleDebug` از app flag پیروی می‌کند؛ APK نهایی بررسی نشده؛ scanner permission bridge دارد ولی setup catch ممکن است stream را روشن نگه دارد و detectهای async callback تکراری/POS qty بسازند؛ device test نشده؛ Admin session/PHP runtime نامعلوم |
 | architecture docs | `PROPOSED` | `docs/architecture/` ایجاد؛ owner approval pending |
 | source code change | `NOT_STARTED` | هیچ فایل برنامه تغییر نکرد |
 | migration/deploy | `NOT_STARTED` | هیچ DB، customer data یا production touch نشد |
