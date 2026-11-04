@@ -1,7 +1,7 @@
 # گیت آمادگی برای اولین تغییر اجرایی
 
 **وضعیت:** پیشنهاد/چک‌لیست؛ approval نشده و مجوز تغییر کد محسوب نمی‌شود.
-**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ فعال نشست `arena/0b07fc58-hesabyar2` در `Hesabyar2` و merge commit پایه `68588c0e685e108c81835356c0d0fe8f98495ded` است.
+**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ active فعلی نشست `arena/72006e53-hesabyar2` در `Hesabyar2` و merge commit پایه `64cafd61f803f641fabe13d032256a822159859f` است.
 
 ## چرا این گیت لازم است؟
 
@@ -11,16 +11,16 @@
 
 | Gate | مالک/نقش لازم | تصمیم یا evidence موردنیاز | وضعیت |
 |---|---|---|---|
-| G-01 — Canonical source | product/repository owner | آیا `KarenYar` منبع رسمی Hesabyar 2.0 است؟ مسیر کار چگونه با branch ثابت Arena `arena/0b07fc58-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
+| G-01 — Canonical source | product/repository owner | آیا `KarenYar` منبع رسمی Hesabyar 2.0 است؟ مسیر کار چگونه با شاخهٔ فعال Arena `arena/72006e53-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
 | G-02 — Scope و baseline پشتیبانی | product/release owner | کدام release و کدام editionها باید حفظ شوند؟ آیا Android 1.4.2 صرفاً beta است یا انتشار عمومی مدنظر است؟ | `NEEDS_VERIFICATION` |
 | G-03 — پول و قواعد ثبت | accounting/domain owner | سیاست تومان/ریال، remainder ورودی، rounding، تاریخ مؤثر، اصلاح/ابطال فاکتور، refund و بستن دوره چیست؟ | `NEEDS_DOMAIN_APPROVAL` |
 | G-04 — سازگاری و داده | database/product owner | fixture ناشناس از backup/versionهای پشتیبانی‌شده، سناریوی restore و plan rollback کجاست؟ آیا برای legacy voidها source record قابل اتکا هست؟ | `NEEDS_VERIFICATION` |
 | G-05 — مجوز/حریم خصوصی | licensing/security owner | حفظ lifetime/KS1، سرور مجوز، crypto keys، retention و رفتار هنگام license failure چگونه باید باشد؟ | `NEEDS_SECURITY_APPROVAL` |
-| G-06 — CI/release authority | repository/security owner | branch/tag rules، required checks، Environment reviewers و secret scopes چیست؟ آیا همهٔ APK/AAB و Actions artifactها پیش از upload/انتشار verify می‌شوند (از جمله `test-apk` و artifactی که در `github-test` پیش از verifier upload می‌شود)؛ آیا Admin gate signer/debuggable را assert و signed-release AAB مستقلاً validate می‌کند؟ Pages branch preview عمدی است؟ | `NEEDS_ADMIN_VERIFICATION` |
+| G-06 — CI/release authority | repository/security owner | branch/tag rules، required checks، Environment reviewers و secret scopes چیست؟ آیا همهٔ APK/AAB و Actions artifactها پیش از upload/انتشار verify می‌شوند (از جمله `test-apk` و artifactی که در `github-test` پیش از verifier upload می‌شود)؛ آیا Admin gate signer/debuggable را assert و signed-release AAB مستقلاً validate می‌کند؟ معیار پیشنهادی: [ماتریس راستی‌آزمایی artifactها](../audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md). Pages branch preview عمدی است؟ | `NEEDS_ADMIN_VERIFICATION` |
 | G-07 — Deployment/TLS | Pages/DNS owner | چرا Pages API/deployment URL با HTTP گزارش می‌شود و custom domain خالی است؟ live TLS/redirect/headers چگونه تأیید می‌شوند؟ | `NEEDS_LIVE_VERIFICATION` |
 | G-08 — Admin session lifecycle | security/admin owner | admin debug APK فقط به staging وصل است؟ server cookie/session flags, expiry, logout/revocation و storage cleanup چگونه‌اند؟ | `NEEDS_STAGING_REVIEW` |
 | G-09 — Staging deployment rollback | release/infra owner | in-place ZIP extraction را با atomic deploy/rollback چگونه کنترل می‌کنند؟ artifact hash/provenance و staging snapshot کجاست؟ | `NEEDS_STAGING_REVIEW` |
-| G-10 — Android final artifact | Android/security owner | merged manifest/permissions، cleartext/mixed-content policy، FileProvider URI grants و debuggable/WebView-debug state در APK release و debug دقیقاً چیست؟ | `NEEDS_ARTIFACT_REVIEW` |
+| G-10 — Android final artifact | Android/security owner | merged manifest/permissions، cleartext/mixed-content policy، FileProvider URI grants و debuggable/WebView-debug state در APK release و debug دقیقاً چیست؟ ماتریس artifact verification معیارهای اولیه را مشخص می‌کند؛ تأیید binary و device همچنان لازم است. | `NEEDS_ARTIFACT_REVIEW` |
 | G-11 — Android export retention | product/privacy owner | backup/CSV/PDF پس از share/cancel در app cache چه مدت می‌ماند و چه پیام/cleanupی دارد؟ | `NEEDS_POLICY_AND_DEVICE_TEST` |
 | G-12 — cPanel run scope | site/security owner | کدام cPanel environment (staging/production)، چه host/path، و دقیقاً کدام read-only checks مجازند؟ | `DEFERRED_BY_USER / NEEDS_SCOPE_BEFORE_FUTURE_EXECUTION` |
 | G-13 — Barcode scanner one-shot | app/QA owner | برای هر scan حداکثر یک `onDetected` رخ می‌دهد، callback پس از close لغو می‌شود، و camera track در همهٔ failureها متوقف می‌شود؟ | `NEEDS_COMPONENT_AND_DEVICE_TEST` |

@@ -1,9 +1,9 @@
 # دفتر اجرای آژانس مهندسی هوش مصنوعی — Hesabyar 2.0
 
 **آخرین به‌روزرسانی:** 2026-11-05 local
-**شاخهٔ نشست فعلی:** `arena/0b07fc58-hesabyar2` (`active`), based on PR #2 merge commit `68588c0e685e108c81835356c0d0fe8f98495ded`
+**شاخهٔ نشست فعلی:** `arena/72006e53-hesabyar2` (`active`), based on PR #3 merge commit `64cafd61f803f641fabe13d032256a822159859f`
 **مخزن همین نشست:** `rahmaniho/Hesabyar2`
-**PRهای مستندات:** [#1](https://github.com/rahmaniho/Hesabyar2/pull/1) و [#2](https://github.com/rahmaniho/Hesabyar2/pull/2) هر دو در `main` ادغام شدند؛ آخرین merge commit `68588c0e685e108c81835356c0d0fe8f98495ded` است.
+**PRهای مستندات:** [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2) و [#3](https://github.com/rahmaniho/Hesabyar2/pull/3) در `main` ادغام شدند؛ آخرین merge commit `64cafd61f803f641fabe13d032256a822159859f` است.
 **مخزن برنامهٔ شناسایی‌شده:** `rahmaniho/KarenYar`، ممیزی read-only روی `main` commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
 
 ## تاریخچهٔ اجرا
@@ -35,10 +35,11 @@
 - Read-only artifact lineage follow-up: run `41813070224`، head `f724e847b7aa87f7facb8c04be5e27c7473d82a5`, release tag به همان commit و tree برابر با baseline `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24` است. Workflow build/sync، debug build و `Publish verified testing APK` را success گزارش می‌کند؛ `publishTestRelease()` قبل از انتشار `verifyTestApk()` را اجرا می‌کند و GitHub API digest APK را اعلام می‌کند. دانلود binary در sandbox به‌دلیل redirect به host خارج از egress allowlist ناممکن بود؛ هیچ APK اجرا یا تغییر داده نشد. همچنین ترتیب workflow نشان داد Actions artifact برای `github-test` پیش از verifier upload می‌شود، `test-apk` verifier ندارد، و signed-release `android:verify` فقط APK را می‌سنجد نه AAB. این artifact-gate gaps به CI-06/07، R-38/39 و G-06 افزوده شدند. نتایج/محدودیت run و API digest در AND-05/09/10، CI audit، security, deployment, source evidence, risk, progress و audit report ثبت شدند.
 
 - Admin Android artifact gate follow-up: `admin-android.yml` verifier runs before upload/publication and the observed run `41274386135` passed; the run’s `admin-android` subtree and workflow blob match the audited baseline. The script checks valid signature + app ID/versionName/min/target SDK, but does not assert signer subject, `application-debuggable`, versionCode or permissions; API digest is recorded, binary not independently downloaded. ADM-04/CI-08/R-40 and CI/progress gates were updated; no Admin APK/config was changed.
+- GitHub Actions artifact metadata follow-up: API reported names, sizes and 30-day expirations for observed artifacts from runs `41813070224` (`github-test`), `41645205606` (historical `test-apk`, head `63b882f...`, before current baseline) and `41274386135` (Admin). Job/source metadata confirm the historical `test-apk` build uploaded before its verifier/public-publish step was skipped; no archive was downloaded or parsed, and API metadata does not disclose access policy. Exact IDs/expiries are recorded in `ANDROID_ARTIFACT_VERIFICATION_PLAN.md`, `CI_SUPPLY_CHAIN_AUDIT.md`, `ADMIN_ANDROID_AUDIT.md` and `SOURCE_EVIDENCE.md`.
 
 ## محدودیت‌های قطعی
 
-- PR #2 مستندات follow-up را نیز به `main` ادغام کرد؛ شاخهٔ فعال بعدی اکنون `arena/0b07fc58-hesabyar2` است و از merge commit `68588c0e...` شروع می‌شود. app source همچنان در repo نیست.
+- PR #2 مستندات follow-up را نیز به `main` ادغام کرد؛ PR #3 هم در `main` با merge commit `64cafd61f803f641fabe13d032256a822159859f` ادغام شد. شاخهٔ فعال فعلی نشست `arena/72006e53-hesabyar2` از همین merge commit شروع می‌شود؛ app source همچنان در repo نیست.
 - `KarenYar` منبع بسیار محتمل و مستندشده است، ولی هنوز تأیید کتبی مالک برای اینکه همین source مبنای Hesabyar 2.0 باشد لازم است.
 - دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
@@ -48,8 +49,9 @@
 - **کد برنامه:** بدون تغییر.
 - **دیتابیس/production/release:** بدون تغییر.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
-- **مستندات پیگیری ادغام‌شده:** `docs/audit/ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md` و اصلاحات مربوط به PR #2 اکنون در `main` هستند. ادامهٔ فعلی روی `arena/0b07fc58-hesabyar2` صرفاً review/doc updates دربارهٔ Capacitor WebView defaults و coverage artifact verifierهای Android/Admin است؛ app source تغییر نکرده.
+- **مستندات پیگیری ادغام‌شده:** PR #2، `ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md` را به `main` افزود؛ PR #3 نیز Capacitor CLI config-copy، Android/Admin artifact verifier coverage، evidence, risks و gates را تکمیل کرد. شاخهٔ فعلی `arena/72006e53-hesabyar2` است؛ app source تغییر نکرده. ادامهٔ کار source/owner approval gate را دور نمی‌زند.
+- در follow-up جاری، ماتریس پیشنهادی راستی‌آزمایی APK/AAB و Admin debug artifact در `docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد تا CI-06..08 و ADM-04 معیار پذیرش و negative-testهای مشخص داشته باشند؛ workflow، signer config یا artifact تغییر نکرد و اجرای این معیارها نیازمند approval است.
 
 ## گیت بعدی
 
-پیش از source changes، مالک باید `rahmaniho/KarenYar` را به‌عنوان source رسمی تأیید کند و تصمیم دهد چگونه کار روی کد با محدودیت شاخهٔ فعال `arena/0b07fc58-hesabyar2` سازگار شود. پس از آن، مرحلهٔ بعدی جداگانه و با approval، تغییر کوچک و reviewable است؛ نه migration بزرگ یا deployment.
+پیش از source changes، مالک باید `rahmaniho/KarenYar` را به‌عنوان source رسمی تأیید کند و تصمیم دهد چگونه کار روی کد با محدودیت شاخهٔ فعال `arena/72006e53-hesabyar2` سازگار شود. پس از آن، مرحلهٔ بعدی جداگانه و با approval، تغییر کوچک و reviewable است؛ نه migration بزرگ یا deployment.
