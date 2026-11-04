@@ -1,7 +1,7 @@
 # ممیزی امنیتی Admin Android — سورس حساب‌یار
 
 **مبنای بررسی:** `rahmaniho/KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
-**دامنه:** static review از shell اندرویدی `admin-android/` و workflow انتشار؛ APK/device/server اجرا یا بررسی نشدند.
+**دامنه:** static review از shell اندرویدی `admin-android/` و workflow انتشار. Run `41274386135` برای همان Admin subtree/workflow build، verifier، upload و انتشار را گذراند؛ APK در این sandbox مستقل دانلود/parse نشد، و device/server بررسی نشدند.
 
 ## معماری مشاهده‌شده
 
@@ -13,7 +13,8 @@
 - WebView: TLS error را `cancel()` می‌کند؛ mixed content، file/content access و geolocation را خاموش؛ third-party cookies را رد؛ zoom را خاموش می‌کند.
 - `shouldOverrideUrlLoading` فقط HTTPS، host دقیق `staging.karen-soft.ir` و مسیر `/admin` یا `/admin/` را در WebView نگه می‌دارد؛ سایر navigationها را به browser خارجی می‌فرستد.
 - Basic-auth prompt برای host غیرمجاز لغو می‌شود. در این Java source هیچ credential ثابت/هاردکدشده‌ای برای login مشاهده نشد؛ فیلدهای `authUser` و `authPass` داخل instance Activity هستند.
-- APK workflow آن را debug و NOT FOR STORES منتشر می‌کند؛ checksum و application ID/version/SDK checks دارد.
+- Workflow از `assembleDebug` استفاده می‌کند، و پیش از Actions artifact/GitHub release `apksigner verify` و `aapt dump badging` اجرا می‌کند؛ app ID، versionName، minSdk و targetSdk را چک و checksum می‌سازد. اما certificate identity را با Android Debug signer تطبیق نمی‌دهد، `application-debuggable` را assert نمی‌کند و versionCode/permissions را چک نمی‌کند (ADM-04). Gradle source صریحاً `debuggable=true` برای debug variant دارد، اما artifact guard آن را مستقل نمی‌سنجد.
+- Run `41274386135` در گام‌های Build, Verify APK, Upload APK artifact و Publish GitHub prerelease موفق بود. Commit run `a9f392dcdfc207d66458efc308d4c7b98b647b32` از baseline `d41ca...` متفاوت است، اما `admin-android` subtree و `admin-android.yml` blob با baseline دقیقاً برابرند. GitHub API APK را 44,282 بایت و با digest `sha256:95c0b44236f603aae56efcaee684576aad21fd462a34ecf844e5ee7a2f6b8946` گزارش می‌کند؛ این metadata است، نه hash محلی. APK binary مستقل دانلود/parse نشد.
 
 مراجع: [MainActivity.java](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/admin-android/app/src/main/java/ir/karensoft/hesabyar/admin/MainActivity.java), [Manifest](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/admin-android/app/src/main/AndroidManifest.xml), [network security config](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/admin-android/app/src/main/res/xml/network_security_config.xml).
 
@@ -36,6 +37,12 @@
 ### ADM-03 — auth retry در client، کنترل server-side را جایگزین نمی‌کند
 
 `authAttempts` در Activity تعداد retryهای credential موجود را کنترل می‌کند، ولی کاربر می‌تواند dialog را دوباره باز کند؛ این app-level rate limit واقعی نیست. Lockout/rate limit/captcha/account policy باید در server یا cPanel واقعاً enforce و log شود. رفتار server بررسی نشده است (`NEEDS_VERIFICATION`).
+
+### ADM-04 — Admin APK verifier گواهی/حالت debug را به‌صورت صریح assert نمی‌کند (کم؛ verification gap)
+
+در [`admin-android.yml`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/.github/workflows/admin-android.yml#L33-L64)، workflow `assembleDebug` اجرا می‌کند و `Verify APK` از `apksigner verify --verbose --print-certs` فقط برای fail کردن روی امضای نامعتبر استفاده می‌کند؛ subject گواهی را parse یا با `CN=Android Debug` مقایسه نمی‌کند. `aapt dump badging` نیز برای package name، versionName، minSdk و targetSdk grep می‌شود، نه `application-debuggable`, versionCode یا permissionها. Gradle source `debuggable=true` برای build type `debug` دارد؛ این انتظار source-level است و verifier روی binary آن را assert نمی‌کند. Run `41274386135` با همین checkهای محدود موفق بود و subtree/workflow blob با baseline ممیزی یکی است؛ هیچ شواهدی از signer اشتباه یا artifact غیر-debug به‌دست نیامد.
+
+**کاهش ریسک پیشنهادی:** signer subject را صریحاً به گواهی مورد انتظار محدود کنید و از `aapt`/`apkanalyzer`، debuggable state، versionCode و manifest policy را هم قبل از upload و release assert کنید. این finding شکاف test gate است، نه رخداد اثبات‌شده.
 
 ## حدود ممیزی
 

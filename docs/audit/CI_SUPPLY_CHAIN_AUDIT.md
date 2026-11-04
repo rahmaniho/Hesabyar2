@@ -61,6 +61,12 @@ Run `41813070224` از همان tree source build/sync و publication verifier �
 
 **کاهش ریسک پیشنهادی:** پیش از upload/release خود AAB را verify کنید، application ID/version/signer را با release metadata/APK تطبیق دهید و checksum/provenance هر دو artifact را ثبت کنید.
 
+### CI-08 — Admin APK gate امضای معتبر را می‌سنجد، نه signer/debug state (کم؛ hardening)
+
+در [`admin-android.yml`](https://github.com/rahmaniho/KarenYar/blob/d41ca2916a4edfa93b5edbeeefa6403d11a3ff24/.github/workflows/admin-android.yml#L33-L64)، `Verify APK` پیش از upload از `apksigner verify` استفاده می‌کند و app ID، versionName، minSdk و targetSdk را با `aapt dump badging` چک می‌کند؛ این ترتیب از CI-06 بهتر است. اما script signer subject را parse/محدود نمی‌کند، `application-debuggable`, versionCode و permission set را assert نمی‌کند. Run `41274386135` گام Verify/Upload/Publish را موفق گذراند؛ workflow blob و `admin-android` subtree همان‌هایی هستند که در baseline ممیزی. این CI evidence برای همان checkهای موجود است، نه تضمین شروطی که verifier اجرا نمی‌کند؛ APK binary مستقل بررسی نشد و artifact نامعتبر مشاهده نشد.
+
+**کاهش ریسک پیشنهادی:** certificate subject مورد انتظار، `application-debuggable`, versionCode و manifest policy را با `aapt`/`apkanalyzer` صریحاً بررسی کنید؛ fail-closed پیش از upload و prerelease بماند.
+
 ## کنترل‌های مثبت مشاهده‌شده
 
 - Android tag build در گام validation کلید امضا متوقف شد؛ مراحل بعدی اجرا و debug fallback منتشر نشد. این fail-closed است، هرچند علت دقیق run واقعی به‌خاطر در دسترس نبودن log نامعلوم ماند.

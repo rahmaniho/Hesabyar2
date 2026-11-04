@@ -34,6 +34,8 @@
 - ادامهٔ Android WebView/CI review: `@capacitor/cli`, `@capacitor/android` هر دو در lockfile روی 8.5.3 هستند؛ CLI tag در `loadExtConfigTS`، TS default export را مستقیم `extConfig` می‌گیرد و `copyCapacitorConfig` همان را serialize می‌کند، پس مسیر copy پیش‌فرض `webContentsDebuggingEnabled` تزریق نمی‌کند و config برنامه نیز آن را نمی‌نویسد؛ `CapConfig` از `FLAG_DEBUGGABLE` fallback می‌گیرد. CLI مسیر عادی `copy`، Cordova manifest generator را بدون آرگومان live-reload cleartext فراخوانی می‌کند؛ app config `server.cleartext` ندارد. این یافته‌های static و عدم اجرای `cap sync`/Gradle/APK در AND-02/09، SOURCE_EVIDENCE، SEC-13/16، R-33/37 و IMPLEMENTATION_PROGRESS ثبت شدند. `github-test` APK واقعی را با `apksigner`/`aapt` verify می‌کند، اما artifact-only `test-apk` verifier ندارد؛ این شکاف در AND-10، CI-06 و R-38 باقی است. هیچ generated config، merged manifest یا APK در این گام ساخته/بررسی نشد.
 - Read-only artifact lineage follow-up: run `41813070224`، head `f724e847b7aa87f7facb8c04be5e27c7473d82a5`, release tag به همان commit و tree برابر با baseline `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24` است. Workflow build/sync، debug build و `Publish verified testing APK` را success گزارش می‌کند؛ `publishTestRelease()` قبل از انتشار `verifyTestApk()` را اجرا می‌کند و GitHub API digest APK را اعلام می‌کند. دانلود binary در sandbox به‌دلیل redirect به host خارج از egress allowlist ناممکن بود؛ هیچ APK اجرا یا تغییر داده نشد. همچنین ترتیب workflow نشان داد Actions artifact برای `github-test` پیش از verifier upload می‌شود، `test-apk` verifier ندارد، و signed-release `android:verify` فقط APK را می‌سنجد نه AAB. این artifact-gate gaps به CI-06/07، R-38/39 و G-06 افزوده شدند. نتایج/محدودیت run و API digest در AND-05/09/10، CI audit، security, deployment, source evidence, risk, progress و audit report ثبت شدند.
 
+- Admin Android artifact gate follow-up: `admin-android.yml` verifier runs before upload/publication and the observed run `41274386135` passed; the run’s `admin-android` subtree and workflow blob match the audited baseline. The script checks valid signature + app ID/versionName/min/target SDK, but does not assert signer subject, `application-debuggable`, versionCode or permissions; API digest is recorded, binary not independently downloaded. ADM-04/CI-08/R-40 and CI/progress gates were updated; no Admin APK/config was changed.
+
 ## محدودیت‌های قطعی
 
 - PR #2 مستندات follow-up را نیز به `main` ادغام کرد؛ شاخهٔ فعال بعدی اکنون `arena/0b07fc58-hesabyar2` است و از merge commit `68588c0e...` شروع می‌شود. app source همچنان در repo نیست.
@@ -46,7 +48,7 @@
 - **کد برنامه:** بدون تغییر.
 - **دیتابیس/production/release:** بدون تغییر.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
-- **مستندات پیگیری ادغام‌شده:** `docs/audit/ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md` و اصلاحات مربوط به PR #2 اکنون در `main` هستند. ادامهٔ فعلی روی `arena/0b07fc58-hesabyar2` صرفاً review/doc updates دربارهٔ Capacitor WebView defaults و coverage مسیر `test-apk` است؛ app source تغییر نکرده.
+- **مستندات پیگیری ادغام‌شده:** `docs/audit/ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md` و اصلاحات مربوط به PR #2 اکنون در `main` هستند. ادامهٔ فعلی روی `arena/0b07fc58-hesabyar2` صرفاً review/doc updates دربارهٔ Capacitor WebView defaults و coverage artifact verifierهای Android/Admin است؛ app source تغییر نکرده.
 
 ## گیت بعدی
 
