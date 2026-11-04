@@ -1,17 +1,17 @@
 # گیت آمادگی برای اولین تغییر اجرایی
 
-**وضعیت:** پیشنهاد/چک‌لیست؛ approval نشده و مجوز تغییر کد محسوب نمی‌شود.
-**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ active فعلی نشست `arena/72006e53-hesabyar2` در `Hesabyar2` و merge commit پایه `64cafd61f803f641fabe13d032256a822159859f` است.
+**وضعیت:** پیشنهاد/چک‌لیست و architecture کلی هنوز approval نشده است؛ این سند خود مجوز تغییر نیست. greenfield shell/UI mock در این شاخه فقط به‌واسطهٔ scope صریح کاربر مجاز است؛ تغییرات مالی/داده/منبع اصلی همچنان approval جدا می‌خواهند.
+**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ active فعلی `arena/973fe290-hesabyar2` در `Hesabyar2` و merge commit پایهٔ PR #4 برابر `75f6b0fdc9410dc9c03c1cd138d0ac9be60d30af` است. کاربر فقط greenfield shell/UI prototype را در این repo مجاز کرده است.
 
 ## چرا این گیت لازم است؟
 
-سورس برنامه در `KarenYar` شناسایی شده، اما شاخهٔ فعال Arena روی repo جداگانهٔ `Hesabyar2` است؛ PR #1 اسناد ممیزی/معماری را ادغام کرد ولی app source را منتقل نکرد. کاربر همچنین وجود سرور cPanel قابل‌اجرا را گزارش کرده؛ host، staging/production boundary، access route و مجوز هر عملیات در این نشست مشخص یا verify نشده‌اند؛ کاربر فعلاً اتصال/بررسی cPanel را لازم ندانست و خواست ممیزی read-only برنامه ادامه یابد. علاوه بر mismatch، production behavior، migration مشتری، Pages/TLS، branch/ruleset protection، CI signing secrets و تصمیم‌های حسابداری از دسترس ممیزی read-only خارج‌اند. بنابراین ادامهٔ طراحی مستندات ممکن است، ولی شروع source change، migration یا release نه.
+سورس برنامه در `KarenYar` شناسایی شده، اما شاخهٔ فعال Arena روی repo جداگانهٔ `Hesabyar2` است؛ PR #1 اسناد ممیزی/معماری را ادغام کرد ولی app source را منتقل نکرد. کاربر همچنین وجود سرور cPanel قابل‌اجرا را گزارش کرده؛ host، staging/production boundary، access route و مجوز هر عملیات در این نشست مشخص یا verify نشده‌اند؛ کاربر فعلاً اتصال/بررسی cPanel را لازم ندانست و خواست ممیزی read-only برنامه ادامه یابد. علاوه بر mismatch، production behavior، migration مشتری، Pages/TLS، branch/ruleset protection، CI signing secrets و تصمیم‌های حسابداری از دسترس ممیزی read-only خارج‌اند. کاربر اکنون greenfield shell/UI prototype در `Hesabyar2` را مجاز کرده است؛ این استثنا فقط به mock UI محدود است و تأیید source اصلی، تغییر مالی/persistence، migration، release یا deployment محسوب نمی‌شود.
 
 ## تصمیم‌ها/شواهد لازم پیش از اولین PR برنامه
 
 | Gate | مالک/نقش لازم | تصمیم یا evidence موردنیاز | وضعیت |
 |---|---|---|---|
-| G-01 — Canonical source | product/repository owner | آیا `KarenYar` منبع رسمی Hesabyar 2.0 است؟ مسیر کار چگونه با شاخهٔ فعال Arena `arena/72006e53-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
+| G-01 — Canonical source | product/repository owner | برای توسعهٔ فراتر از greenfield UI mock، آیا `KarenYar` منبع رسمی Hesabyar 2.0 است و مسیر کار چگونه با شاخهٔ فعال Arena `arena/973fe290-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
 | G-02 — Scope و baseline پشتیبانی | product/release owner | کدام release و کدام editionها باید حفظ شوند؟ آیا Android 1.4.2 صرفاً beta است یا انتشار عمومی مدنظر است؟ | `NEEDS_VERIFICATION` |
 | G-03 — پول و قواعد ثبت | accounting/domain owner | سیاست تومان/ریال، remainder ورودی، rounding، تاریخ مؤثر، اصلاح/ابطال فاکتور، refund و بستن دوره چیست؟ | `NEEDS_DOMAIN_APPROVAL` |
 | G-04 — سازگاری و داده | database/product owner | fixture ناشناس از backup/versionهای پشتیبانی‌شده، سناریوی restore و plan rollback کجاست؟ آیا برای legacy voidها source record قابل اتکا هست؟ | `NEEDS_VERIFICATION` |
@@ -68,6 +68,6 @@
 
 ## وضعیت فعلی
 
-- WP-0 تا WP-3: `NOT STARTED`؛ فقط proposal/criteria آماده شد.
-- هیچ source code، workflow، DB، license, production یا release در این مرحله تغییر نکرد.
-- گام مجاز بعدی تا روشن‌شدن G-01، G-06 و G-07: دریافت owner/admin evidence و ادامهٔ طراحی مستندات؛ نه تغییر upstream.
+- WP-0 تا WP-3: `NOT STARTED`؛ greenfield UI shell prototype مجازشده خارج از این work packages است و فقط mock data دارد.
+- در prototype هیچ منطق مالی، workflow، DB، license، production، Android artifact یا release اضافه/تغییر نشده است.
+- گام مجاز: ادامهٔ UX/UI prototype با mock data در شاخهٔ `arena/973fe290-hesabyar2`. پیش از ورود به source `KarenYar`، قواعد مالی، persistence/backend یا release، gateهای مربوط باید جداگانه تأیید شوند.
