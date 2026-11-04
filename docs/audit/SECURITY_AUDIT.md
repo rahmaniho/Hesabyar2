@@ -60,7 +60,7 @@ Workflow debug APK را به GitHub prerelease می‌فرستد و README، tar
 
 ### SEC-13 — Android merged manifest/network policy needs artifact verification
 
-App source manifest has `targetSdk=36` from Gradle but no explicit `usesCleartextTraffic`/`networkSecurityConfig`; Capacitor local scheme is HTTPS. Plugin manifest merges and the final APK were not inspected, so this is a hardening/verification item—not evidence of HTTP requests. Verify merged permissions, exported components, and cleartext block on a release APK.
+App source manifest has `targetSdk=36` from Gradle but no explicit `usesCleartextTraffic`/`networkSecurityConfig`; `capacitor.config.ts` sets the local scheme to HTTPS and omits `server.cleartext`. In the pinned Capacitor CLI 8.5.3, ordinary `copy` calls the Cordova manifest generator without its live-reload `cleartext` argument; the `server.cleartext` path is also absent in this config. This narrows source-level evidence for a CLI-generated cleartext override, but does not settle manifests from plugins/Gradle hooks or the final merged APK. This remains a hardening/verification item—not evidence of HTTP requests. Verify merged permissions, exported components, and cleartext policy on a release APK; see [Android platform audit](ANDROID_PLATFORM_AUDIT.md).
 
 ### SEC-14 — Backup/CSV/PDF export files remain in app cache without explicit cleanup (متوسط؛ نیازمند policy)
 
@@ -72,9 +72,16 @@ App source manifest has `targetSdk=36` from Gradle but no explicit `usesCleartex
 
 **پیشنهاد:** stop/clear را در تمام error paths بعد از دریافت stream تضمین کنید، و error راه‌اندازی را از permission denial جدا کنید. مجاز برای بررسی بعدی: `video.play()`/BarcodeDetector failure، close/unmount، deny/revoke و خاموش‌شدن camera indicator. جزئیات: [Android platform audit](ANDROID_PLATFORM_AUDIT.md).
 
+### SEC-16 — WebView debugging در buildهای debug از app flag پیروی می‌کند (کم؛ artifact verification)
+
+برنامه در `capacitor.config.ts` گزینهٔ `android.webContentsDebuggingEnabled` را override نمی‌کند. `package-lock.json`، CLI و Android را روی 8.5.3 pin کرده است؛ CLI `loadExtConfigTS`، export تنظیمات را به‌عنوان `extConfig` می‌گیرد و `copyCapacitorConfig` همان را به JSON بومی می‌نویسد، بدون تزریق این default. در نبود مقدار، Android Capacitor `WebContentsDebuggingEnabled` را از `ApplicationInfo.FLAG_DEBUGGABLE` می‌گیرد؛ `Bridge` آن را به `WebView.setWebContentsDebuggingEnabled()` می‌دهد. Gradle برای release صریحاً `debuggable=false` می‌گذارد، ولی workflow آزمایشی `assembleDebug` را می‌سازد. در run `41813070224`، build+sync و `Publish verified testing APK` روی همان tree source موفق بودند؛ verifier فایل واقعی را با `apksigner`/`aapt` از نظر Debug certificate، app/version، `application-debuggable` و minSdk بررسی می‌کند. پس برای همین public test APK، CI شواهد قبولی debug certificate و debuggable دارد؛ `webContentsDebuggingEnabled` جداگانه runtime سنجیده نشد و binary در این sandbox مستقل دانلود/parse نشد. Signed release build موجود نیست؛ Actions artifact مسیر `github-test` پیش از verifier upload می‌شود و artifact-only `test-apk` verifier ندارد (CI-06). این گزینه به‌تنهایی دسترسی شبکه‌ای عمومی را اثبات نمی‌کند؛ بااین‌حال tooling مجاز دستگاه می‌تواند WebView را inspect کند.
+
+**پیشنهاد:** debug APK فقط به testerهای مجاز و با دادهٔ آزمایشی داده شود؛ `debuggable` و WebView debugging را روی artifact واقعی debug/release جداگانه تأیید کنید. جزئیات: [Android platform audit](ANDROID_PLATFORM_AUDIT.md).
+
 ## کنترل‌های مثبت مشاهده‌شده
 
 - WebChromeClient پین‌شدهٔ Capacitor 8.5.3، WebView `VIDEO_CAPTURE` را به مجوز runtime دوربین وصل می‌کند؛ این source evidence است، نه اثبات آزمون روی device.
+- Capacitor 8.5.3 mixed-content config را پیش‌فرض false می‌گیرد و release Gradle `debuggable=false` دارد؛ test APK عمومی run `41813070224` در CI verifier را گذراند، اما merged permission manifest و رفتار runtime/WebView روی device بررسی نشد.
 - WebCrypto Ed25519 client verifier، public key pin option و device key identity برای مسیر server license وجود دارند.
 - endpointهای PHP staging دارای `Cache-Control: no-store` و روش POST هستند؛ پنل staging در کد به environment guard و CSRF/session متکی است. production deployment تأیید نشد.
 - backup import پیش از clear، ساختار و برخی رابطه‌ها را validate می‌کند؛ CSV writer تست formula injection دارد.
@@ -85,7 +92,8 @@ App source manifest has `targetSdk=36` from Gradle but no explicit `usesCleartex
 - آیا production از server license path استفاده می‌کند؟ issuer private key و envها کجا نگهداری می‌شوند؟
 - HTTPS، CSP، headers، access logs، admin protection و rate limits روی host واقعی.
 - backup encryption، دستگاه گم‌شده، XSS/local access و بازیابی PIN.
-- Android barcode scanner: runtime camera permission، WebView `BarcodeDetector`, deny/revoke و توقف stream بعد از setup failure.
+- Android barcode scanner: runtime camera permission، WebView `BarcodeDetector`, deny/revoke، exactly-once callback و توقف stream بعد از setup failure.
+- Android APK: run `41813070224` در CI verifier را گذراند و GitHub API digest دارد؛ binary مستقل دانلود/parse نشد، merged manifest/permissions و WebView state روی device همچنان نیازمند verification هستند؛ signed release build نشده.
 - امضا/لغو مجوز و compatibility با مشتریانی که KS1 مادام‌العمر خریده‌اند.
 - triage advisories و برنامهٔ ارتقای کم‌ریسک با تست رگرسیون.
 
