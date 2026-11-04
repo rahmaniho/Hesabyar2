@@ -1,13 +1,13 @@
 # گزارش اجرایی ممیزی Hesabyar 2.0 — به‌روزرسانی پس از «ادامه بده»
 
-**تاریخ:** 2026-11-04 (UTC)
-**شاخهٔ کاری این نشست:** `arena/39118004-hesabyar2` (`active`)
-**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`، commit مبنا `38aedc6e1c1ea97fbe0b7b95ddf3fa8436955c05`
+**تاریخ:** 2026-11-05
+**شاخهٔ کاری فعلی:** `arena/147f6490-hesabyar2` (`active`)
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit `cf0864939070073ddaeb28783da036a02a6530d8` شروع می‌شود. PR #1 مستندات audit/architecture را به `main` ادغام کرد؛ app source همچنان در این مخزن نیست.
 **مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
 
 ## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
 
-گزارش اولیه به‌درستی نشان داد مخزن متصل‌شدهٔ `Hesabyar2` فقط README دارد، اما در آن مرحله منبع برنامه پیدا نشده بود. پس از درخواست شما برای ادامه، مخزن شرکت `rahmaniho/karen-soft` و مستند `docs/hesabyar-release-update.md` بررسی شد؛ این سند `rahmaniho/KarenYar` را منبع برنامه معرفی می‌کند. package/app ID آن نیز با حساب‌یار مطابقت دارد. بنابراین ممیزی کد در ادامه روی snapshot خواندنی `KarenYar/main` انجام شد؛ `Hesabyar2` همچنان مخزن placeholder است و هیچ کدی به آن منتقل نشده است.
+در آغاز ممیزی، مخزن متصل‌شدهٔ `Hesabyar2` فقط README داشت و منبع برنامه پیدا نشده بود. بعداً مخزن شرکت `rahmaniho/karen-soft` و مستند `docs/hesabyar-release-update.md` بررسی شد؛ این سند `rahmaniho/KarenYar` را منبع برنامه معرفی می‌کند و package/app ID آن نیز همخوان است. ممیزی کد روی snapshot خواندنی `KarenYar/main` انجام شد. پس از آن، PR #1 فقط مستندات audit/architecture را به `Hesabyar2` ادغام کرد؛ app source به این مخزن منتقل نشده است.
 
 ## خلاصهٔ مدیریتی
 
@@ -19,6 +19,9 @@
 2. `voidInvoice` درآمد فروش را از جدول `transactions` فیزیکی حذف می‌کند؛ تست فعلی نیز همین رفتار را انتظار دارد. event ابطال ثبت می‌شود، اما reversal درآمدی و trace کامل جای حذف را نمی‌گیرد.
 3. GitHub Pages API و status آخرین deployment هر دو URL با `http` گزارش کردند؛ API نیز `https_enforced=false`, `custom_domain=null` داد، در حالی که سورس CNAME و workflow از HTTPS می‌گویند. Live host بررسی نشد، پس TLS/redirect باید روی host واقعی verify شود. علاوه بر این، workflow branch آزمایشی را trigger می‌کند ولی Pages environment فقط `main` را می‌پذیرد؛ run تاریخی آن branch build موفق/deploy ناموفق داشت و علت دقیق نامعلوم است. صفحهٔ محصول Android 1.4.2 را به Pre-release با برچسب NOT FOR STORES لینک می‌دهد؛ tag build در validation کلید امضا متوقف شد و علت دقیق به‌دلیل در دسترس نبودن log تأیید نشد.
 4. در workflowهای Android/Admin `contents:write` کل job را پوشش می‌دهد و checkout credential پیش‌فرض را پایدار نگه می‌دارد، در حالی که build scripts/Gradle اجرا می‌شوند؛ علاوه بر آن، suite کامل unit/typecheck/lint در CIهای دیده‌شده gate نیست. این ریسک بالقوهٔ زنجیرهٔ تأمین و کیفیت release است؛ GitHub ruleset/required checks از API قابل تأیید نبود.
+5. Admin Android کنترل‌های خوبی در host/path/TLS دارد، اما DOM storage و cookies فعال‌اند و cookieها روی pause flush می‌شوند؛ cleanup session و cookie flags سرور بررسی نشده‌اند، پس privacy/session retention روی device نیازمند verification است. APK موجود debug و staging-target است.
+6. Admin PHP staging در source دارای CSRF/session cookie flags/rate limits و hash-pinned artifact است؛ deploy آن اما مستقیم روی پوشهٔ `app` extract می‌کند و atomic swap/rollback در کد مشاهده نشد. PHP lint/runtime و server config اجرا/دیده نشدند؛ این یافته staging code است، نه اثبات آسیب production.
+7. Android source manifest permissionهای مستقیمی محدود و `allowBackup=false` دارد؛ FileProvider external root تعریف می‌کند، ولی call-site مشاهده‌شده فقط فایل `Directory.Cache` را share می‌کند. Backup JSON/CSV/PDF در همان cache ذخیره می‌شوند و حذف صریح ندارند؛ policy retention نیازمند بررسی است. Barcode scanner از WebView `getUserMedia` استفاده می‌کند و Capacitor 8.5.3 مسیر VIDEO_CAPTURE را به مجوز runtime دوربین bridge می‌کند؛ اما device support تست نشده، setup error ممکن است track را تا بستن دیالوگ فعال نگه دارد، و detectهای async هم‌پوشان ممکن است callback تکراری بسازند که در POS مقدار basket را افزایش دهد. merged manifest/cleartext policy APK نهایی هم هنوز بررسی نشده؛ این‌ها source-level/device-review items هستند، نه رخداد live تأییدشده.
 
 علاوه بر این، چند مسیر POS ریال را با `Math.round(rial/10)` به تومان تبدیل می‌کنند، و بعضی aggregateهای گزارش/مانده از جمع مستقیم `number` استفاده می‌کنند. این موارد نیازمند اصلاح/آزمون قبل از توسعهٔ وسیع Business هستند.
 
@@ -50,13 +53,17 @@
 | Personal و Business | دو edition مستقل وجود ندارد؛ feature tiers فعلی جای edition architecture نیستند |
 | دیتابیس | IndexedDB/Dexie v4 محلی؛ backup JSON v3؛ هیچ DB مرکزی نیست |
 | offline/sync | کارکرد محلی آفلاین موجود؛ همگام‌سازی مالی چنددستگاهی وجود ندارد |
-| امنیت | ریسک مجوز HMAC سمت کلاینت؛ دادهٔ محلی/backup بدون رمزنگاری؛ بدون RBAC/tenant backend |
+| امنیت | HMAC سمت کلاینت، دادهٔ محلی/backup cleartext، CI write privileges؛ Admin WebView session/storage نیازمند verification؛ بدون RBAC/tenant backend |
 | اسناد فارسی | Jalali/RTL/PDF برداری و CSV موجود؛ Excel و آزمون چاپ فیزیکی/مرورگر واقعی تأیید نشده |
-| استقرار و production | `NEEDS_VERIFICATION`؛ GitHub Pages API گزارش HTTPS غیرفعال/custom domain خالی می‌دهد؛ Android 1.4.2 linked build pre-release است؛ live host از sandbox قابل دسترسی نیست |
+| استقرار و production | `NEEDS_VERIFICATION / CPANEL DEFERRED`؛ GitHub Pages API HTTPS غیرفعال/custom domain خالی می‌دهد؛ Android 1.4.2 pre-release است؛ کاربر cPanel server را گزارش کرده اما اتصال/بررسی را فعلاً لازم ندانست؛ host و محیط نامعلوم و هیچ server command اجرا نشده |
 
 ## پیشنهاد Shared Core و editionها
 
 جهت‌گیری یک هستهٔ مالی مشترک و دو edition همچنان مناسب است، اما نباید به‌عنوان وضعیت فعلی معرفی شود. معماری پیشنهادی در `docs/architecture/` با شواهد `KarenYar` تنظیم شده است: هستهٔ Money/Posting مشترک، ماژول‌های Sales/Inventory/Treasury و Reports، و entitlement جدا از RBAC. برای ساخت Business واقعی، ledger و سرویس سروری/مرز چندشرکتی لازم است؛ Modular Monolith گزینهٔ بررسی است، نه تصمیم deployment مصوب.
+
+## به‌روزرسانی دربارهٔ cPanel (اطلاع کاربر، 2026-11-05)
+
+کاربر گفته تیم سرور cPanel دارد و در صورت نیاز می‌تواند روی آن اجرا انجام دهد. این امکان ثبت شده؛ اما cPanel connector در Arena پشتیبانی نمی‌شود و host، محیط (staging/production)، access route و scope مجاز از این sandbox تأیید نشده‌اند. کاربر صریحاً گفت اتصال/بررسی cPanel فعلاً لازم نیست؛ بنابراین هیچ commandی روی server اجرا نمی‌شود و ممیزی static برنامه ادامه می‌یابد. [Runbook read-only staging](CPANEL_READ_ONLY_RUNBOOK.md) برای نیاز آینده نگه داشته شده است.
 
 ## گام اجرایی بعدی و Approval Gate
 
@@ -65,7 +72,7 @@
 لطفاً برای شروع milestone توسعه تأیید کنید:
 
 1. آیا `rahmaniho/KarenYar` منبع رسمی برنامه‌ای است که باید Hesabyar 2.0 از آن تکامل یابد؟
-2. آیا کد باید در همان مخزن برنامه توسعه داده شود؟ در این نشست branch فعال و مجاز برای تغییر فقط `arena/39118004-hesabyar2` در `Hesabyar2` است، پس لازم است تصمیم repository/workspace با محدودیت branch سازگار شود.
+2. آیا کد باید در همان مخزن برنامه توسعه داده شود؟ شاخهٔ فعال این نشست `arena/147f6490-hesabyar2` در `Hesabyar2` است؛ تصمیم repository/workspace باید با این محدودیت سازگار شود.
 3. آیا اصلاح‌های کوچک و غیرمخربِ اولویت‌دار (HMAC/مجوز، reversal فاکتور، POS unit conversion) پس از تأیید architecture شروع شوند؟
 
-هیچ تغییر production، migration، نشر یا ادعای تأیید live انجام نشده است. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).
+هیچ تغییر production، migration، نشر یا ادعای تأیید live انجام نشده است. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [Admin Android](ADMIN_ANDROID_AUDIT.md)، [Admin PHP staging](ADMIN_SERVER_AUDIT.md)، [cPanel read-only runbook](CPANEL_READ_ONLY_RUNBOOK.md)، [Android platform](ANDROID_PLATFORM_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).

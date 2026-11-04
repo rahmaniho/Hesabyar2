@@ -37,6 +37,14 @@
 
 محاسبهٔ هر فاکتور در محدودهٔ safe integer کنترل می‌شود، اما بعضی جمع‌های روزانه/ماهانه/ماندهٔ مشتری و top-product از JavaScript number addition استفاده می‌کنند. با حجم/مبالغی که مجموع از `Number.MAX_SAFE_INTEGER` بگذرد، تضمین fixed-point دیگر برقرار نیست. این edge case هنوز در tests دیده نشد؛ پیشنهاد می‌شود aggregationها به `sumMoney`/BigInt منتقل و مرز overflow آزموده شود.
 
+## ریسک ورودی POS: callback چندگانه از اسکنر async بارکد
+
+`BarcodeScannerDialog.tsx:87-100` هر 350ms یک callback async می‌سازد که `BarcodeDetector.detect()` را await می‌کند؛ `setInterval` منتظر پایان Promise قبلی نمی‌ماند، in-flight/one-shot guard وجود ندارد، و `cancelled` پس از await دوباره بررسی نمی‌شود. `stop()` بعد از اولین کد interval و دوربین را می‌بندد، اما detect Promiseهای جاری را لغو نمی‌کند؛ بنابراین در شرایط هم‌پوشانی، یک barcode ممکن است بیش از یک‌بار به caller برسد. این مورد روی device اجرا/تأیید نشده و یک ریسک شرطی source-level است.
+
+در POS، `PosPage.tsx:185-210` callback را به `addProduct` می‌دهد؛ این تابع state فعلی basket را می‌خواند و برای کالای موجود `qty + 1` ذخیره می‌کند. در نتیجه callback تکراری می‌تواند quantity پیش‌نویس را بیش از یک واحد زیاد کند؛ این تغییر پیش از posting و قابل بازبینی است، اما اگر cashier آن را نبیند، فاکتور اشتباه ممکن است صادر شود. کد فعلی idempotency key در `createInvoice` دارد که retry صدور را کنترل می‌کند، اما از duplicate scanner callback و مقدار draft جلوگیری نمی‌کند.
+
+**پیشنهاد:** تشخیص را serial/one-shot کنید، بعد از await cancellation را دوباره بسنجید و callback موفق را latch کنید. Component test با detector کند باید تضمین کند یک اسکن دقیقاً یک callback می‌دهد و پس از بستن dialog callback دیررس ندارد؛ device matrix نیز لازم است. در این ممیزی هیچ source code یا تستی تغییر/اجرا نشد.
+
 ## نتیجهٔ حسابداری
 
 این برنامه ثبت‌های عملیاتی و گزارش‌های ساده دارد، نه double-entry accounting. برای Business، ابتدا journal/ledger، mapping فروش/خرید/موجودی/پرداخت و رفتار reversal باید طراحی شود؛ UI و گزارش جدید روی `transactions` ساده، جایگزین دفترکل نیست.

@@ -7,10 +7,10 @@
 
 ## `Hesabyar2` در نشست
 
-- شاخه جاری: `arena/39118004-hesabyar2`; commit مبنا `38aedc6e1c1ea97fbe0b7b95ddf3fa8436955c05`، پیام `Initial commit`.
-- `git ls-tree -r --name-only HEAD` و GitHub API درخت `main` فقط `README.md` را نشان دادند؛ محتوا `# Hesabyar2` است.
-- مخزن عمومی است؛ در زمان بررسی فقط شاخهٔ `main`، بدون tag، PR یا release داشت.
-- نتیجه: این مخزن منبع کد برنامه نیست، مگر اینکه مالک آن را عمداً بعداً خالی کرده باشد.
+- ابتدای ممیزی روی branch `arena/39118004-hesabyar2` با commit `38aedc6e1c1ea97fbe0b7b95ddf3fa8436955c05`، پیام `Initial commit`, درخت `Hesabyar2` فقط `README.md` (`# Hesabyar2`) داشت.
+- PR #1، شامل 42 فایل Markdown مستنداتی، در 2026-11-04 در `main` ادغام شد؛ merge commit `cf0864939070073ddaeb28783da036a02a6530d8` است. هیچ app source به repo منتقل نشد.
+- شاخهٔ فعال فعلی نشست `arena/147f6490-hesabyar2` (`active`) روی همین commit شروع شده است؛ این repo حالا audit/architecture docs دارد، اما منبع کد محصول نیست.
+- مخزن عمومی است؛ عبارت «بدون tag/PR/release» مربوط به snapshot اولیهٔ بررسی است و پس از آن PR #1 ایجاد/ادغام شد.
 
 ## شناسایی مخزن واقعی برنامه
 
@@ -45,7 +45,13 @@
 - `pages.yml` build/deploy می‌کند، Android workflow `test:android-release` را اجرا می‌کند، اما در سه workflow مشاهده‌شده `npm test`, typecheck و lint gate نیستند. `admin-android.yml` debug APK و prerelease را تولید می‌کند.
 - `gh api repos/rahmaniho/KarenYar/rulesets` و branch-protection endpoint پاسخ 403 `Resource not accessible by integration` دادند؛ تنظیمات protection قابل تأیید/رد نبودند.
 - `.github/` در commit فقط directory `workflows/` دارد؛ `.github/dependabot.yml` مشاهده نشد. این فقط یافتهٔ مخزن است و تنظیمات بیرونی/سازمانی را رد نمی‌کند.
+- `admin-android/MainActivity.java` روی commit همان source، `https://staging.karen-soft.ir/admin/`, host/path guard، cancel SSL error، JavaScript/DOM storage، cookies و `CookieManager.flush()` روی pause را دارد؛ manifest `allowBackup=false`/`usesCleartextTraffic=false` است. این فقط static code evidence است.
+- `deploy/cpanel-staging/admin/{index,issue-license,deploy-app}.php` در source، staging-only guard، server auth identity، secure session cookie flags، CSRF/rate limit و prepared SQL دارد؛ `deploy-app.php` SHA-256 ثابت را validate و ZIP را in-place extract می‌کند. `bootstrap.php` خارج repo است.
+- SHA-256 artifact این نشست از GitHub blob API دوباره محاسبه شد و با expected hash موجود در deploy script تطبیق داشت؛ branch artifact `arena/1bdeff0a-karenyar` در API به `1d54bf4...` اشاره کرد و `protected=false` گزارش شد. rulesetهای repo به‌علت 403 قابل بررسی نبودند.
+- Main Android manifest، app Gradle و Capacitor config در commit دقیق نشان می‌دهند: `allowBackup=false`, direct permissions فقط INTERNET/CAMERA، camera optional، `FileProvider` non-exported ولی `external-path path="."` و target SDK 36؛ Capacitor scheme محلی HTTPS است. جست‌وجوی source call-site فقط `src/core/utils/file-save.ts` را یافت که backup JSON/CSV/PDF را در `Directory.Cache` می‌نویسد و همان URI را share می‌کند؛ `Filesystem.deleteFile` call-site پیدا نشد و catch فایل را در cache باقی می‌گذارد. `file-save.test.ts` فقط مسیر وب را پوشش می‌دهد؛ native cleanup test مشاهده نشد. APK merged/final manifest بررسی نشد.
+- `package-lock.json`، `@capacitor/android@8.5.3` و pluginهای app/filesystem/share/status-bar را pin می‌کند؛ package AndroidManifestهای منتشرشدهٔ همین نسخه‌ها empty هستند، اما Gradle merge/وابستگی‌های transitive و APK نهایی اجرا/بررسی نشدند. `BarcodeScannerDialog.tsx` در source از `getUserMedia` و `BarcodeDetector` استفاده می‌کند و ورود دستی fallback دارد؛ Capacitor tag `8.5.3` در `Bridge.java`، `BridgeWebChromeClient` را نصب و در `onPermissionRequest`، `VIDEO_CAPTURE` را به مجوز runtime `CAMERA` وصل می‌کند؛ `Bridge.java` و `BridgeWebChromeClient.java` در tarball پین‌شده byte-for-byte با همان فایل‌های GitHub tag مقایسه شدند. همان component پس از stream setup error در `catch` track را explicit متوقف نمی‌کند. interval async هر 350ms `detect()` را صدا می‌زند، اما one-shot/in-flight guard ندارد و `cancelled` بعد از await بررسی نمی‌شود؛ POS callback هر بار واحد کالا را به basket اضافه می‌کند. پس چند Promise هم‌پوشان می‌توانند به‌طور شرطی مقدار draft را دوباره افزایش دهند. هیچ device/runtime یا component test اجرا نشد، پس هر دو مورد source-level risk هستند، نه رخداد تأییدشده.
+- Admin WebView/APK, session cookies, server headers, Directory Privacy, logout, rate limit, staging dataset و PHP runtime زنده اجرا/بررسی نشدند.
 
 ## حدود شواهد
 
-سایت/اپ زنده، production database، logs، configuration secrets، license server واقعی، backup مشتری، دستگاه Android واقعی و چاپگر فیزیکی بررسی نشدند. hostهای `karen-soft.ir` و `hesabyar.karen-soft.ir` در allowlist این sandbox نیستند. بررسی کد `KarenYar` نمی‌تواند وضعیت deployment یا دادهٔ مشتری را ثابت کند.
+سایت/اپ زنده، production database، logs، configuration secrets، license server واقعی، backup مشتری، دستگاه Android واقعی و چاپگر فیزیکی بررسی نشدند. کاربر گزارش کرده تیم یک سرور cPanel دارد که در صورت نیاز می‌تواند روی آن اجرا انجام دهد؛ lookup connector `cpanel` در Arena `unsupported` بود، این اطلاع هنوز مستقلاً verify یا از این sandbox به سرور متصل نشده، و مشخص نیست staging است یا production/چه سطح مجوزی دارد. hostهای رسمی خارج allowlist این sandbox هستند. بررسی کد `KarenYar` نمی‌تواند وضعیت deployment یا دادهٔ مشتری را ثابت کند.
