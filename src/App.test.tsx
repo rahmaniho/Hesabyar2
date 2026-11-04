@@ -22,6 +22,20 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByText('آوید کریمی')).toBeTruthy();
   });
 
+  it('adds a sample customer in page memory without writing to browser storage', () => {
+    window.localStorage.clear();
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    fireEvent.click(screen.getByRole('button', { name: 'مشتری جدید' }));
+    fireEvent.change(screen.getByLabelText('نام نمونه'), { target: { value: 'نگار آزمایشی' } });
+    fireEvent.change(screen.getByLabelText('شمارهٔ نمایشی (اختیاری)'), { target: { value: '۰۹۱۲ ۰۰۰ ۰۰۰۰' } });
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن نمونه' }));
+
+    expect(screen.getByText('نگار آزمایشی')).toBeTruthy();
+    expect(screen.getByText('مشتری نمونه · حافظهٔ موقت همین صفحه')).toBeTruthy();
+    expect(window.localStorage.length).toBe(0);
+  });
+
   it('opens a non-persistent sale preview instead of recording a transaction', () => {
     render(<App />);
 

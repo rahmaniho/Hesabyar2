@@ -24,7 +24,8 @@ npm run build
 
 - Responsive Persian RTL dashboard and navigation.
 - Sample sales, customers, payments, inventory, and report views.
-- Search, date-range menu, notification panel, and lightweight preview dialogs.
+- Search, date-range menu, notification panel, lightweight preview dialogs, and an in-memory sample-customer form.
+- A sample customer exists only in page memory and disappears on refresh; do not enter real customer information.
 - No database, API, authentication, licensing, accounting rules, or real transaction actions.
 
 The wider architecture and domain proposals remain in `docs/`; this prototype intentionally does not treat them as approved financial requirements.
