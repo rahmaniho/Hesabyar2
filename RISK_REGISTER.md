@@ -5,7 +5,7 @@
 
 | ID | ریسک | شدت | شواهد | اقدام کاهشی / گیت |
 |---|---|---|---|---|
-| R-01 | مخزن نشست `Hesabyar2` فاقد app source است؛ ابتدا README-only بود و اکنون audit docs دارد؛ source candidate در `KarenYar` است | بحرانی | درخت اولیهٔ GitHub و PR #1/#2 docs-only که merge شدند؛ کد برنامه منتقل نشده | مالک source/repo را تأیید کند؛ تغییر کد تا هماهنگی با branch ثابت `arena/0b07fc58-hesabyar2` ممنوع |
+| R-01 | مخزن نشست `Hesabyar2` فاقد app source است؛ ابتدا README-only بود و اکنون audit docs دارد؛ source candidate در `KarenYar` است | بحرانی | درخت اولیهٔ GitHub و PRهای #1/#2/#3 docs-only که merge شدند؛ کد برنامه منتقل نشده | مالک source/repo را تأیید کند؛ تغییر کد تا هماهنگی با شاخهٔ active نشست `arena/72006e53-hesabyar2` ممنوع |
 | R-02 | live app, production DB/config و cPanel environment هنوز verify نشده‌اند | بالا | کاربر cPanel server را گزارش کرده ولی بررسی اتصال/سرور را فعلاً deferred دانسته؛ host/env/scope نامعلوم و دامنه‌های عمومی خارج allowlist هستند | در این مرحله static audit ادامه یابد؛ اگر live verification بعداً لازم شد ابتدا staging/read-only scope بگیرید؛ بدون secrets/customer data و production write بدون approval جدا |
 | R-03 | دفترکل دوطرفه/Business accounting در source موجود نیست | بحرانی برای هدف Business | schema فاقد account/journal/period؛ فقط income/expense | طراحی و approval حسابداری پیش از Business UI |
 | R-04 | void فروش ردیف income transaction را delete می‌کند | بالا | `invoice.service.ts:605-609`; تست آن را assert می‌کند | تبدیل به reversal قابل ردیابی با migration/rollback/tests |

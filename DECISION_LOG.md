@@ -18,12 +18,13 @@
 | D-014 | 2026-11-04 | Admin Android static review فقط audit finding است؛ persistent session behavior و server enforcement باید staging verification شوند | code evidence in `admin-android/`; live host inaccessible |
 | D-015 | 2026-11-05 | کاربر گزارش کرد تیم cPanel server دارد و می‌تواند در صورت نیاز اجرا کند؛ سرور هنوز متصل/شناسایی یا استفاده نشده | `cpanel` connector lookup=`unsupported`; runbook read-only آماده شد |
 | D-016 | 2026-11-05 | کاربر گفت cPanel را به خاطر داشته باشیم اما فعلاً اتصال/بررسی server لازم نیست؛ ممیزی read-only برنامه ادامه یابد | ادامهٔ static audit منوط به اتصال cPanel نیست؛ هیچ اتصال یا فرمانی انجام نشود تا scope بعداً خواسته شود |
-| D-017 | 2026-11-05 | PR #2 شامل مستندات follow-up در `main` ادغام شد؛ شاخهٔ فعال فعلی `arena/0b07fc58-hesabyar2` بر merge commit `68588c0e...` بنا شده است | `gh pr merge 2 --merge` موفق؛ PR state=`MERGED` |
+| D-017 | 2026-11-05 | PR #2 شامل مستندات follow-up در `main` ادغام شد؛ شاخهٔ active آن مرحله `arena/0b07fc58-hesabyar2` بر merge commit `68588c0e...` بنا شده بود | `gh pr merge 2 --merge` موفق؛ PR state=`MERGED` |
+| D-018 | 2026-11-05 | PR #3، شامل follow-up ممیزی Android/CI و artifact gates، در `main` ادغام شد؛ شاخهٔ active فعلی نشست `arena/72006e53-hesabyar2` بر merge commit `64cafd61f803f641fabe13d032256a822159859f` بنا شده است | `gh pr merge 3 --merge` موفق؛ PR state=`MERGED` |
 
 ## تصمیم‌های باز برای مالک
 
 - آیا `KarenYar` source رسمی Hesabyar 2.0 است؟
-- چگونه توسعه باید با قاعدهٔ شاخهٔ فعال این نشست روی `arena/0b07fc58-hesabyar2` انجام شود، در حالی که source برنامه در repo جداست؟
+- چگونه توسعه باید با قاعدهٔ شاخهٔ فعال این نشست روی `arena/72006e53-hesabyar2` انجام شود، در حالی که source برنامه در repo جداست؟
 - آیا HMAC/void/POS money fixes بعد از تصویب TDR به‌عنوان اولین milestone اجرا شوند؟
 - آیا Business multi-user حتماً server-authoritative است و Personal همچنان local-first می‌ماند؟
 - آیا Pages branch آزمایشی باید build-only بماند یا preview deploy داشته باشد؛ و چه TLS/redirect policy روی host واقعی اعمال می‌شود؟

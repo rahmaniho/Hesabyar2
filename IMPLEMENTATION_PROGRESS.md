@@ -5,7 +5,7 @@
 
 | محدوده | وضعیت | شواهد |
 |---|---|---|
-| مخزن متصل به نشست | `AUDITED` | `rahmaniho/Hesabyar2` در ابتدا فقط README داشت؛ PR #1 و PR #2 مستندات را merge کردند؛ branch فعال فعلی `arena/0b07fc58-hesabyar2` است و app code همچنان غایب |
+| مخزن متصل به نشست | `AUDITED` | `rahmaniho/Hesabyar2` در ابتدا فقط README داشت؛ PRهای #1/#2/#3 اسناد را merge کردند؛ شاخهٔ active نشست `arena/72006e53-hesabyar2` از merge commit PR #3 آغاز شده و app code همچنان غایب است |
 | شناسایی app source | `FOUND / OWNER CONFIRMATION PENDING` | `rahmaniho/karen-soft` به `rahmaniho/KarenYar` ارجاع می‌دهد؛ app ID/name همخوان |
 | ممیزی کد app | `COMPLETED_FOR_SNAPSHOT` | source `KarenYar/main@d41ca291...` و فایل‌های کلیدی بررسی شدند |
 | تست unit | `PASS` | 47 فایل / 369 تست |

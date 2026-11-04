@@ -1,7 +1,7 @@
 # گیت آمادگی برای اولین تغییر اجرایی
 
 **وضعیت:** پیشنهاد/چک‌لیست؛ approval نشده و مجوز تغییر کد محسوب نمی‌شود.
-**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ فعال نشست `arena/0b07fc58-hesabyar2` در `Hesabyar2` و merge commit پایه `68588c0e685e108c81835356c0d0fe8f98495ded` است.
+**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ active فعلی نشست `arena/72006e53-hesabyar2` در `Hesabyar2` و merge commit پایه `64cafd61f803f641fabe13d032256a822159859f` است.
 
 ## چرا این گیت لازم است؟
 
@@ -11,7 +11,7 @@
 
 | Gate | مالک/نقش لازم | تصمیم یا evidence موردنیاز | وضعیت |
 |---|---|---|---|
-| G-01 — Canonical source | product/repository owner | آیا `KarenYar` منبع رسمی Hesabyar 2.0 است؟ مسیر کار چگونه با branch ثابت Arena `arena/0b07fc58-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
+| G-01 — Canonical source | product/repository owner | آیا `KarenYar` منبع رسمی Hesabyar 2.0 است؟ مسیر کار چگونه با شاخهٔ فعال Arena `arena/72006e53-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
 | G-02 — Scope و baseline پشتیبانی | product/release owner | کدام release و کدام editionها باید حفظ شوند؟ آیا Android 1.4.2 صرفاً beta است یا انتشار عمومی مدنظر است؟ | `NEEDS_VERIFICATION` |
 | G-03 — پول و قواعد ثبت | accounting/domain owner | سیاست تومان/ریال، remainder ورودی، rounding، تاریخ مؤثر، اصلاح/ابطال فاکتور، refund و بستن دوره چیست؟ | `NEEDS_DOMAIN_APPROVAL` |
 | G-04 — سازگاری و داده | database/product owner | fixture ناشناس از backup/versionهای پشتیبانی‌شده، سناریوی restore و plan rollback کجاست؟ آیا برای legacy voidها source record قابل اتکا هست؟ | `NEEDS_VERIFICATION` |

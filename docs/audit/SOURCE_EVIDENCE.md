@@ -8,8 +8,8 @@
 ## `Hesabyar2` در نشست
 
 - ابتدای ممیزی روی branch `arena/39118004-hesabyar2` با commit `38aedc6e1c1ea97fbe0b7b95ddf3fa8436955c05`، پیام `Initial commit`, درخت `Hesabyar2` فقط `README.md` (`# Hesabyar2`) داشت.
-- PR #1، شامل 42 فایل Markdown مستنداتی، در `main` با merge commit `cf0864939070073ddaeb28783da036a02a6530d8` ادغام شد. PR #2 شامل مستندات follow-up audit نیز در `main` با merge commit `68588c0e685e108c81835356c0d0fe8f98495ded` ادغام شد؛ هیچ app source به repo منتقل نشد.
-- شاخهٔ فعال فعلی نشست `arena/0b07fc58-hesabyar2` (`active`) روی merge commit PR #2 شروع شده است؛ این repo حالا audit/architecture docs دارد، اما منبع کد محصول نیست.
+- PR #1، شامل 42 فایل Markdown مستنداتی، در `main` با merge commit `cf0864939070073ddaeb28783da036a02a6530d8` ادغام شد. PR #2 با merge commit `68588c0e685e108c81835356c0d0fe8f98495ded` و PR #3 با merge commit `64cafd61f803f641fabe13d032256a822159859f` نیز در `main` ادغام شدند؛ هیچ app source به repo منتقل نشد.
+- شاخهٔ فعال فعلی نشست `arena/72006e53-hesabyar2` (`active`) روی merge commit PR #3 شروع شده است؛ این repo حالا audit/architecture docs دارد، اما منبع کد محصول نیست.
 - مخزن عمومی است؛ عبارت «بدون tag/PR/release» مربوط به snapshot اولیهٔ بررسی است و پس از آن PR #1 ایجاد/ادغام شد.
 
 ## شناسایی مخزن واقعی برنامه
