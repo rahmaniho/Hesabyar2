@@ -2,7 +2,7 @@
 
 **تاریخ:** 2026-11-05
 **شاخهٔ کاری فعلی:** `arena/a1600dfc-hesabyar2` (`active`)
-**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit PR #10، `88f3fe6456b80c5e1f584112573fbb17744a37aa`, شروع می‌شود. PRهای #1 تا #10 به `main` ادغام شده‌اند؛ PRهای #5 تا #10 greenfield UI prototype و تعامل‌های mock مشتری/داشبورد/فاکتور را افزودند. `main` اکنون shell/UI mock دارد، اما منطق کامل محصول را ندارد؛ `KarenYar` همچنان source candidate جداگانه و تأییدنشده است.
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ کاربر این مخزن را source greenfield توسعهٔ جدید و Shared Core را هدف سطح‌بالا انتخاب کرده است. شاخهٔ فعلی از merge commit PR #10، `88f3fe6456b80c5e1f584112573fbb17744a37aa`, شروع می‌شود؛ PRهای #1 تا #10 در `main` ادغام شده‌اند. PR #11 شامل جزئیات کالا و فیلترهای mock به‌علاوهٔ helper خالص WP‑1 است؛ `main` هنوز منطق کامل محصول ندارد و `KarenYar` به این مخزن وارد نشده است.
 **مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
 
 ## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
@@ -67,7 +67,7 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را برای `Hesabyar2` مجاز کرده؛ PRهای #5 تا #10 آن را به `main` افزودند و PR #11 روی شاخهٔ فعال `arena/a1600dfc-hesabyar2` جزئیات کالای نمونه و فیلترهای وضعیت mock را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 در شاخهٔ `arena/a1600dfc-hesabyar2` UI mock را ادامه می‌دهد و یک helper خالص WP‑1 با قرارداد محدودِ ورودی مبلغِ مصوب دارد. این helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 

@@ -30,13 +30,15 @@
 | D-026 | 2026-11-05 | PR #9 تعامل mock نمودار را به `main` افزود؛ شاخهٔ فعال آن مرحله `arena/cd2e7fc5-hesabyar2` جزئیات فاکتور نمونه را به‌صورت فقط‌خواندنی نمایش می‌داد | `gh pr merge 9 --merge` موفق؛ فاکتور فقط از static mock row خوانده می‌شود و هیچ پرداخت/محاسبه/تغییری انجام نمی‌شود |
 | D-027 | 2026-11-05 | PR #10 جزئیات فاکتور و اقلام ثابت آن را به `main` افزود؛ شاخهٔ فعال فعلی `arena/a1600dfc-hesabyar2` ادامهٔ مجاز UI prototype را با جزئیات فقط‌خواندنی کالای نمونه در جدول انبار و داشبورد انجام می‌دهد | merge commit PR #10 برابر `88f3fe6456b80c5e1f584112573fbb17744a37aa`; همهٔ کالاها/قیمت‌ها/موجودی‌ها mock هستند و هیچ محاسبه، تغییر، خرید، فروش یا persistence اضافه نشده است |
 | D-028 | 2026-11-05 | در ادامهٔ mock-only، فیلترهای وضعیت فهرست فاکتور، گردش، مشتری و کالا در PR #11 تعمیم داده شدند؛ منطق فقط ردیف‌های همان نمونه را موقتاً پنهان/نمایان می‌کند | ۱۵ تست UI پوشش فیلترها و بازگرداندن فهرست را دارند؛ هیچ داده، مبلغ، موجودی یا تراکنشی تغییر نمی‌کند |
+| D-029 | 2026-11-05 | کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرد؛ WP‑1 ورودی پول به‌عنوان اولین بسته انتخاب شد، با واحد صریح ریال/تومان، عدد صحیح مثبت، حفظ remainder بدون rounding، رد صفر/منفی و رقم فارسی/لاتین | انتخاب‌های صریح کاربر در همین نشست؛ refund flow، transaction posting، limit، backend، architecture details و production هنوز خارج از تصمیم‌اند |
+| D-030 | 2026-11-05 | helper مستقل `src/domain/money.ts` برای WP‑1 با BigInt و نمایش دقیق `۱۱ ریال → ۱ تومان و ۱ ریال` افزوده شد؛ به POS، ledger یا persistence وصل نیست | ۸ unit tests جدید؛ قرارداد helper فقط input parsing/formatting است، نه accounting engine یا transaction flow |
 
 ## تصمیم‌های باز برای مالک
 
-- آیا `KarenYar` source رسمی Hesabyar 2.0 است؟
-- مسیر source رسمی برای development فراتر از UI prototype چیست؟ مالک باید `KarenYar` را تأیید کند یا greenfield `Hesabyar2` را به‌عنوان کدبیس کامل انتخاب کند؛ شاخهٔ فعال فعلی `arena/a1600dfc-hesabyar2` است.
-- آیا HMAC/void/POS money fixes بعد از تصویب TDR به‌عنوان اولین milestone اجرا شوند؟
-- آیا Business multi-user حتماً server-authoritative است و Personal همچنان local-first می‌ماند؟
+- `Hesabyar2` برای توسعهٔ greenfield انتخاب شده؛ آیا/چه زمانی باید با legacy data یا رفتارهای `KarenYar` سازگار شود یا migration داشته باشد؟
+- Shared Core هدف سطح‌بالاست؛ مرز دقیق Personal/Business، local-first/server-authoritative و backend هنوز باید با ADR مشخص شود.
+- WP‑1 helper مستقل شروع شده؛ پیش از اتصال به POS به WP-0 CI/QA و تعیین maximum transaction amount/validation contract برای application flow نیاز است.
+- برای WP‑2 reversal، ledger/posting و WP‑3 Business Accounting چه مدل‌ها و قواعد domain مصوب شوند؟
 - آیا Pages branch آزمایشی باید build-only بماند یا preview deploy داشته باشد؛ و چه TLS/redirect policy روی host واقعی اعمال می‌شود؟
 - چه branch/tag rules، required CI checks و Environment reviewers برای Android signing و release مصوب‌اند؟
 - آیا Admin debug APK باید عمومی pre-release بماند؟ session/cookie cleanup و server-side protection در staging چه policyای دارند؟

@@ -3,7 +3,7 @@
 **آخرین به‌روزرسانی:** 2026-11-05 local
 **شاخهٔ نشست فعلی:** `arena/a1600dfc-hesabyar2` (`active`)، بر پایهٔ merge commit PR #10: `88f3fe6456b80c5e1f584112573fbb17744a37aa`
 **مخزن همین نشست:** `rahmaniho/Hesabyar2`
-**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7)، [#8](https://github.com/rahmaniho/Hesabyar2/pull/8)، [#9](https://github.com/rahmaniho/Hesabyar2/pull/9) و [#10](https://github.com/rahmaniho/Hesabyar2/pull/10) در `main` ادغام شدند؛ PR [#11](https://github.com/rahmaniho/Hesabyar2/pull/11) برای UI mock باز است. آخرین merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` است.
+**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7)، [#8](https://github.com/rahmaniho/Hesabyar2/pull/8)، [#9](https://github.com/rahmaniho/Hesabyar2/pull/9) و [#10](https://github.com/rahmaniho/Hesabyar2/pull/10) در `main` ادغام شدند؛ PR [#11](https://github.com/rahmaniho/Hesabyar2/pull/11) برای UI mock و helper مستقل WP‑1 باز است. آخرین merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` است.
 **مخزن برنامهٔ شناسایی‌شده:** `rahmaniho/KarenYar`، ممیزی read-only روی `main` commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
 
 ## تاریخچهٔ اجرا
@@ -39,15 +39,15 @@
 
 ## محدودیت‌های قطعی
 
-- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. PR #10 با merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` ادغام شد؛ PR #11 برای ادامهٔ همین prototype باز است؛ شاخهٔ فعال `arena/a1600dfc-hesabyar2` از commit PR #10 آغاز می‌شود. `main` اکنون UI mock دارد ولی هنوز source کامل/منطق محصول ندارد؛ `KarenYar` همچنان source candidate جدا و تأییدنشده است.
-- `KarenYar` منبع بسیار محتمل و مستندشده است، ولی هنوز تأیید کتبی مالک برای اینکه همین source مبنای Hesabyar 2.0 باشد لازم است.
+- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. PR #10 با merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` ادغام شد؛ PR #11 برای UI mock و helper محدود WP‑1 باز است؛ شاخهٔ فعال `arena/a1600dfc-hesabyar2` از commit PR #10 آغاز می‌شود. کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرد؛ `main` هنوز محصول کامل/ledger ندارد و `KarenYar` جدا و واردنشده باقی مانده است.
+- `KarenYar` یک snapshot مرجع legacy است؛ کاربر source greenfield را `Hesabyar2` انتخاب کرده و هیچ فایل از `KarenYar` به این مخزن منتقل نشده است.
 - دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
 
 ## وضعیت تغییرات
 
-- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ فعال `arena/a1600dfc-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل موقت مشتری، فیلترهای وضعیت mock برای فاکتور/گردش/مشتری/کالا، و جزئیات فقط‌خواندنی مشتری/فاکتور/کالا. منطق مالی، محاسبهٔ موجودی یا persistence وجود ندارد.
-- **اعتبارسنجی prototype:** ۱۵ UI tests، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و ماژول را با HTTP 200 پاسخ می‌دهد. E2E مرورگر در این مرحله اجرا نشده است.
+- **کد برنامه:** greenfield app در `Hesabyar2` و شاخهٔ فعال `arena/a1600dfc-hesabyar2`: React/TypeScript/Vite، UI RTL و mock pages؛ PR #11 جزئیات فقط‌خواندنی، فیلترهای mock و helper خالص WP‑1 را شامل می‌شود. Helper فقط ورودی صحیح مثبت با واحد صریح را به integer Rial تبدیل و remainder را دقیق قالب‌بندی می‌کند؛ به POS، ledger، تراکنش یا persistence وصل نیست.
+- **اعتبارسنجی جاری:** ۲۳ تست (۱۵ UI + ۸ WP‑1 helper)، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و helper module را HTTP 200 پاسخ می‌دهد؛ E2E مرورگر اجرا نشده است.
 - **دیتابیس/production/release:** بدون تغییر؛ هیچ API، license، migration، APK یا deployment اجرا/تغییر نشده.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
 - **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. شاخهٔ فعلی `arena/a1600dfc-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.
@@ -55,4 +55,4 @@
 
 ## گیت بعدی
 
-ادامهٔ UI prototype و mock interactions در شاخهٔ فعال `arena/a1600dfc-hesabyar2` مجاز است. این شاخه فیلتر وضعیت mock را برای فاکتور، گردش، مشتری و کالا تکمیل می‌کند و جزئیات فقط‌خواندنی کالای نمونه را از جدول انبار و داشبورد نشان می‌دهد. پیش از واردکردن یا ویرایش source اصلی، ذخیره‌سازی پایدار، منطق مالی، backend, licensing, migration یا release، مالک باید `rahmaniho/KarenYar` و مسیر توسعه را جداگانه تأیید کند؛ اگر برای این تصمیم‌ها ورودی لازم شد، مرحله‌به‌مرحله از کاربر خواسته می‌شود.
+کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 UI mock را با helper خالص WP‑1 ادامه می‌دهد. WP‑1 قرارداد ورود مبلغ تأییدشده دارد، اما قبل از اتصال helper به POS یا ثبت واقعی، WP‑0 CI/QA و review لازم است. ledger/posting، refund flow، persistence/backend، licensing، migration، Android و release هنوز مجوز/تصمیم جدا می‌خواهند؛ `KarenYar` وارد یا ویرایش نشده است.

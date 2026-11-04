@@ -1,19 +1,19 @@
 # گیت آمادگی برای اولین تغییر اجرایی
 
-**وضعیت:** پیشنهاد/چک‌لیست و architecture کلی هنوز approval نشده است؛ این سند خود مجوز تغییر نیست. greenfield shell/UI mock در این شاخه فقط به‌واسطهٔ scope صریح کاربر مجاز است؛ تغییرات مالی/داده/منبع اصلی همچنان approval جدا می‌خواهند.
-**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ active فعلی `arena/a1600dfc-hesabyar2` در `Hesabyar2` و merge commit پایهٔ PR #10 برابر `88f3fe6456b80c5e1f584112573fbb17744a37aa` است. کاربر فقط greenfield shell/UI prototype و تعامل‌های mock-only را در این repo مجاز کرده است.
+**وضعیت:** architecture کلی و backend/tenant details هنوز approval نشده‌اند. کاربر `Hesabyar2` را به‌عنوان source greenfield و Shared Core را به‌عنوان هدف سطح‌بالا انتخاب کرد؛ همچنین فقط helper خالص WP‑1 را با قرارداد محدود پایین‌تر تأیید کرد. هیچ transaction، posting یا persistence مجاز/پیاده‌سازی نشده است.
+**Baseline شواهد:** snapshot read-only `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ فعال `arena/a1600dfc-hesabyar2` در `Hesabyar2` بر merge commit PR #10، `88f3fe6456b80c5e1f584112573fbb17744a37aa` بنا شده؛ PR #11 باز است. هدف Shared Core در سطح بالا انتخاب شده اما architecture details/ADR pending است.
 
 ## چرا این گیت لازم است؟
 
-سورس برنامه در `KarenYar` شناسایی شده، اما شاخهٔ فعال Arena روی repo جداگانهٔ `Hesabyar2` است؛ PR #1 اسناد ممیزی/معماری را ادغام کرد ولی app source را منتقل نکرد. کاربر همچنین وجود سرور cPanel قابل‌اجرا را گزارش کرده؛ host، staging/production boundary، access route و مجوز هر عملیات در این نشست مشخص یا verify نشده‌اند؛ کاربر فعلاً اتصال/بررسی cPanel را لازم ندانست و خواست ممیزی read-only برنامه ادامه یابد. علاوه بر mismatch، production behavior، migration مشتری، Pages/TLS، branch/ruleset protection، CI signing secrets و تصمیم‌های حسابداری از دسترس ممیزی read-only خارج‌اند. کاربر اکنون greenfield shell/UI prototype در `Hesabyar2` را مجاز کرده است؛ این استثنا فقط به mock UI محدود است و تأیید source اصلی، تغییر مالی/persistence، migration، release یا deployment محسوب نمی‌شود.
+`KarenYar` به‌صورت read-only بررسی شد، اما کاربر بعداً `Hesabyar2` را source greenfield برای توسعهٔ جدید و Shared Core را هدف سطح‌بالا انتخاب کرد؛ کد موجود همچنان prototype است و هیچ source از `KarenYar` منتقل نشده. کاربر وجود سرور cPanel را گزارش کرده، اما host، staging/production boundary و دسترسی تأیید نشده و بررسی cPanel به درخواست کاربر deferred است. production behavior، migration مشتری، Pages/TLS، branch/ruleset protection، CI signing secrets و تصمیم‌های دامنه‌ای همچنان نیازمند بررسی/تأیید‌اند. تنها مجوز مالی مشخص فعلی، helper خالص WP‑1 با قرارداد دقیق همین سند است؛ این مجوز شامل تراکنش، persistence، API/DB، migration، release یا deployment نیست.
 
 ## تصمیم‌ها/شواهد لازم پیش از اولین PR برنامه
 
 | Gate | مالک/نقش لازم | تصمیم یا evidence موردنیاز | وضعیت |
 |---|---|---|---|
-| G-01 — Canonical source | product/repository owner | برای توسعهٔ فراتر از greenfield UI mock، آیا `KarenYar` منبع رسمی Hesabyar 2.0 است و مسیر کار چگونه با شاخهٔ فعال Arena `arena/a1600dfc-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
-| G-02 — Scope و baseline پشتیبانی | product/release owner | کدام release و کدام editionها باید حفظ شوند؟ آیا Android 1.4.2 صرفاً beta است یا انتشار عمومی مدنظر است؟ | `NEEDS_VERIFICATION` |
-| G-03 — پول و قواعد ثبت | accounting/domain owner | سیاست تومان/ریال، remainder ورودی، rounding، تاریخ مؤثر، اصلاح/ابطال فاکتور، refund و بستن دوره چیست؟ | `NEEDS_DOMAIN_APPROVAL` |
+| G-01 — Canonical source | product/repository owner | کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرده؛ آیا `KarenYar` فقط legacy compatibility/reference می‌ماند یا بعداً import/migration لازم می‌شود؟ | `HESABYAR2_SELECTED / LEGACY RELATION OPEN` |
+| G-02 — Scope و baseline پشتیبانی | product/release owner | کاربر Shared Core را به‌عنوان هدف سطح‌بالا برگزید؛ مرز Personal/Business، migration و release support هنوز چیست؟ | `HIGH-LEVEL TARGET SELECTED / DETAILS PENDING` |
+| G-03 — پول و قواعد ثبت | accounting/domain owner | قرارداد محدود WP‑1 تأیید شده: واحد صریح Rial/Toman، ورودی صحیح مثبت، remainder دقیق بدون rounding، دو شیوهٔ رقم؛ قواعد posting، refund flow، tax، effective date و بستن دوره هنوز چیست؟ | `WP-1 INPUT POLICY CONFIRMED / OTHER DOMAIN RULES PENDING` |
 | G-04 — سازگاری و داده | database/product owner | fixture ناشناس از backup/versionهای پشتیبانی‌شده، سناریوی restore و plan rollback کجاست؟ آیا برای legacy voidها source record قابل اتکا هست؟ | `NEEDS_VERIFICATION` |
 | G-05 — مجوز/حریم خصوصی | licensing/security owner | حفظ lifetime/KS1، سرور مجوز، crypto keys، retention و رفتار هنگام license failure چگونه باید باشد؟ | `NEEDS_SECURITY_APPROVAL` |
 | G-06 — CI/release authority | repository/security owner | branch/tag rules، required checks، Environment reviewers و secret scopes چیست؟ آیا همهٔ APK/AAB و Actions artifactها پیش از upload/انتشار verify می‌شوند (از جمله `test-apk` و artifactی که در `github-test` پیش از verifier upload می‌شود)؛ آیا Admin gate signer/debuggable را assert و signed-release AAB مستقلاً validate می‌کند؟ معیار پیشنهادی: [ماتریس راستی‌آزمایی artifactها](../audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md). Pages branch preview عمدی است؟ | `NEEDS_ADMIN_VERIFICATION` |
@@ -27,21 +27,22 @@
 
 مقادیر secret، backup واقعی مشتری یا دادهٔ production را به Git/chat منتقل نکنید؛ verification باید از مسیر امن مالک و با دادهٔ ناشناس انجام شود.
 
-## ترتیب پیشنهادی work packages — همه غیرمجاز تا تصویب gateها
+## Work packages — گیت‌ها، مجوزها و وضعیت
 
-### WP-0 — منبع و CI قابل تکرار
+### WP-0 — منبع و CI قابل تکرار (`NOT STARTED`)
 
-- تثبیت repo/ref مجاز و baseline commit.
-- پیش از feature work، اجرای CI کم‌دسترسی برای `npm test`, typecheck, lint, build و release guards؛ تست‌ها در CI فعلی همه gate نیستند.
-- جداکردن build/test از publish/sign؛ protected environment و tag/source policy را فقط پس از تصمیم owner تنظیم کنید.
-- **خروجی پذیرش:** دست‌کم یک PR آزمایشی بدون release و بدون production write که تمام required checks را reproducibly سبز کند؛ permissions ثبت/بازبینی شوند.
+- source greenfield در سطح بالا `Hesabyar2` انتخاب شده؛ تثبیت baseline و boundaries جزئی‌تر هنوز لازم است.
+- پیش از اتصال هر helper به feature/transaction flow، CI کم‌دسترسی برای `npm test`, typecheck, lint, build و release guards لازم است؛ PR #11 فعلاً status check ندارد.
+- جداکردن build/test از publish/sign؛ protected environment و tag/source policy فقط پس از تصمیم owner/security.
+- **خروجی پذیرش:** PR آزمایشی بدون release و بدون production write که required checks را reproducibly سبز کند؛ permissions بازبینی شوند. فعلاً local tests/build اجرا می‌شوند و workflow تغییر نکرده است.
 
-### WP-1 — مرز ورودی پول POS
+### WP-1 — مرز ورودی پول POS (`IN PROGRESS / PURE HELPER ONLY`)
 
-- اول سیاست مقدارهای ریالی غیرمضرب ۱۰ و نمایش/ذخیرهٔ تومان تصویب شود؛ خطای فعلی `Math.round(rial/10)` نباید با رفتار دیگری خاموش جایگزین شود.
-- آزمون لبه: 0، 1..9، 10، 11، مقادیر منفی/حدی و parse فارسی/انگلیسی؛ رفتارهای نامعتبر باید صریح باشند.
-- **خروجی پذیرش:** هیچ ورودی مالی بی‌صدا گرد/حذف نشود؛ UI و قرارداد سرویس واحد پول را یکسان اعلام کنند؛ تمام regression tests سبز.
-- هیچ schema/data migration برای این تغییر از پیش فرض نشده است.
+- **قرارداد مصوب کاربر:** caller واحد `rial` یا `toman` را صریح می‌دهد؛ ورودی در هر واحد عدد صحیح مثبت است؛ Rial به‌صورت دقیق نگه داشته می‌شود و Toman با ضریب ۱۰ به integer Rial تبدیل می‌شود؛ هیچ rounding نداریم؛ صفر/منفی و اعشار رد می‌شوند؛ رقم فارسی و لاتین پذیرفته می‌شوند؛ برگشت وجه در جریان جداگانه‌ای خواهد بود.
+- نمایش دقیق Rial به Toman: `۱۱ ریال` به‌صورت `۱ تومان و ۱ ریال`، نه rounded decimal. helper خالص `src/domain/money.ts` همین قرارداد را اجرا می‌کند و به UI فروش، posting یا persistence وصل نیست.
+- تست‌ها پوشش می‌دهند: ۰، تمام ۱..۱۱ ریال، ورودی ریال/تومان، رقم فارسی/لاتین، grouping معتبر/نامعتبر، decimals، منفی، و مقدار BigInt بزرگ بدون overflow. حد تجاری مبلغ برای transaction flow هنوز تعیین نشده است.
+- **خروجی پذیرش فعلی:** هیچ ورودی helper بی‌صدا گرد یا حذف نمی‌شود؛ caller باید unit را تعیین کند؛ invalid input explicit result می‌دهد؛ helper تنها در isolation تست شده است. CI/review و اتصال به POS در scope فعلی نیست.
+- هیچ schema/data migration یا تراکنش واقعی در این WP اجرا نشده است.
 
 ### WP-2 — ابطال/اصلاح فروش
 
@@ -68,7 +69,7 @@
 
 ## وضعیت فعلی
 
-- WP-0 تا WP-3: `NOT STARTED`؛ greenfield UI shell prototype مجازشده خارج از این work packages است و فقط mock data دارد.
-- در prototype هیچ منطق مالی، workflow، DB، license، production، Android artifact یا release اضافه/تغییر نشده است.
-- گام مجاز: ادامهٔ UX/UI prototype و تعامل‌های mock در شاخهٔ `arena/a1600dfc-hesabyar2`; افزودن مشتری در حافظهٔ موقت، نمایش جزئیات مشتری/فاکتور/کالا، فیلتر وضعیت در فهرست‌های نمونه و تغییر سری نمودار فقط نمایش mock است.
-- پیش از ورود به source `KarenYar`، ذخیره‌سازی پایدار، قواعد مالی، backend/licensing یا release، gateهای مربوط باید جداگانه تأیید شوند.
+- WP-0: `NOT STARTED`; WP-1: `IN PROGRESS / PURE HELPER ONLY`; WP-2/WP-3: `NOT STARTED`.
+- `src/domain/money.ts` تنها helper مستقلِ WP-1 است؛ هیچ sales flow، posting، ledger، DB، license، production، Android artifact یا release به آن وصل نشده است.
+- UI prototype و تعامل‌های mock در `arena/a1600dfc-hesabyar2` ادامه دارد؛ PR #11 باز است. local tests/typecheck/build اجرا شده‌اند، اما PR CI status checks خالی است.
+- پیش از اتصال helper به POS، تراکنش/ابطال/refund، ledger، persistence/backend، licensing، migration یا release، WP-0 و gateهای domain/security مربوط باید جداگانه بسته شوند؛ `KarenYar` هنوز import یا ویرایش نشده است.

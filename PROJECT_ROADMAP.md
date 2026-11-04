@@ -1,14 +1,14 @@
 # نقشهٔ راه Hesabyar 2.0
 
-**وضعیت:** بر پایهٔ ممیزی read-only `KarenYar` به‌روزرسانی شد؛ greenfield UI prototype پس از ادغام PRهای #5 تا #10 در `main` موجود است. PR #11 برای جزئیات کالا و فیلتر وضعیت mock باز است و در شاخهٔ فعال `arena/a1600dfc-hesabyar2` ادامه دارد. معماری پیشنهادی در `docs/architecture/` هنوز نیازمند approval مالک است.
+**وضعیت:** کاربر `Hesabyar2` را به‌عنوان source greenfield و Shared Core را به‌عنوان هدف سطح‌بالا انتخاب کرد؛ جزئیات معماری هنوز نیازمند ADR است. UI prototype پس از PRهای #5 تا #10 در `main` موجود است؛ PR #11 در شاخهٔ فعال `arena/a1600dfc-hesabyar2` جزئیات کالا، فیلترهای mock و helper خالص WP‑1 را ادامه می‌دهد.
 **تاریخ:** 2026-11-05
 
 | مرحله | هدف | وضعیت فعلی | گیت/معیار خروج |
 |---|---|---|---|
-| M0 — Environment/source audit | تأیید مخزن واقعی، framework، اجرای baseline و حدود live | `PARTIALLY_COMPLETED`؛ `KarenYar` شناسایی و کد/build به‌صورت read-only بررسی شد؛ GitHub Pages/CI هم read-only دیده شد؛ `Hesabyar2/main` پس از PRهای #5 تا #10 یک greenfield UI prototype mock-only دارد و شاخهٔ فعال `arena/a1600dfc-hesabyar2` آن را ادامه می‌دهد؛ این هنوز source کامل/رسمی تأییدشده نیست؛ cPanel فعلاً به درخواست کاربر deferred است | مالک source را برای منطق/داده تأیید کند، TLS را با evidence مجاز reconcile کند؛ cPanel را فقط در صورت درخواست بعدی با staging/read-only scope بررسی کنید |
+| M0 — Environment/source audit | تأیید مخزن واقعی، framework، اجرای baseline و حدود live | `PARTIALLY_COMPLETED`؛ کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرد؛ `KarenYar` و GitHub Pages/CI به‌صورت read-only بررسی شدند؛ main هنوز UI prototype دارد و source کامل محصول نیست؛ cPanel فعلاً به درخواست کاربر deferred است | مالک source را برای منطق/داده تأیید کند، TLS را با evidence مجاز reconcile کند؛ cPanel را فقط در صورت درخواست بعدی با staging/read-only scope بررسی کنید |
 | M1 — Product/accounting gap | مقایسهٔ source با نیاز Personal/Business و invariants | `COMPLETED_FOR_SOURCE / NEEDS_OWNER_REVIEW`؛ ledger double-entry و multi-user در source نیست | domain owner تأیید قواعد و scope محصول |
-| M2 — Shared Core architecture | boundaries، editions، migration، ADR | `PROPOSED`؛ اسناد `docs/architecture/` آماده‌اند، هنوز approval نشده | تأیید صریح مالک/معمار/حسابداری |
-| M3 — Financial engine stabilization | exact money، immutable postings، reversals، ledger | `PLANNED`; پیش‌نیاز M2 | tests invariants و schema compatibility plan |
+| M2 — Shared Core architecture | boundaries، editions، migration، ADR | `HIGH-LEVEL TARGET SELECTED / DETAILS PENDING`؛ کاربر Shared Core را در سطح هدف انتخاب کرد؛ اسناد `docs/architecture/` هنوز ADR مصوب نیستند | تأیید مرز editions، tenant، backend، migration و تصمیم‌های مالک/معمار/حسابداری |
+| M3 — Financial engine stabilization | exact money، immutable postings، reversals، ledger | `PLANNED`; helper خالص WP‑1 برای ورودی مبلغ، engine/ledger محسوب نمی‌شود؛ پیش‌نیاز معماری M2 | tests invariants، posting/reversal design و schema compatibility plan |
 | M4 — Sales/procurement/inventory/treasury integration | فروش/خرید/موجودی/پرداخت به ledger | `PLANNED`; خرید و treasury رسمی در سورس نیست | M3 و domain mappings مصوب |
 | M5 — Personal edition completion | حفظ تجربهٔ local-first و قابلیت‌های روزمره | `PLANNED`; پایه‌ای از قابلیت‌ها اکنون در یک app مشترک وجود دارد | entitlement/UX boundary و backup migration |
 | M6 — Business accounting | ledger، خرید/AP، چندشرکتی/کاربری، statements | `PLANNED`; پیاده‌سازی Business در source وجود ندارد | M3/M4 و backend authorization |
@@ -22,6 +22,6 @@
 
 ## گیت‌های تغییر
 
-- ادامهٔ greenfield shell/UI mock در شاخهٔ فعال `arena/a1600dfc-hesabyar2` مجاز است؛ افزودن مشتری در حافظهٔ موقت، نمایش جزئیات مشتری/فاکتور/کالا، فیلتر وضعیت چهار فهرست و تغییر سری chart صرفاً تعامل mock-only است. این اجازه تأیید `KarenYar` به‌عنوان source رسمی یا مجوز تغییر منطق مالی/داده/persistence نیست.
-- ویرایش/import source اصلی، اصلاح `voidInvoice`, پول/rounding، HMAC/licensing، schema migration، entitlement و production deployment هرکدام approval/spec جدا می‌خواهند.
+- ادامهٔ greenfield UI mock در شاخهٔ فعال `arena/a1600dfc-hesabyar2` مجاز است. کاربر جداگانه فقط helper خالص WP‑1 را با قرارداد مشخص ورودی صریح ریال/تومان، عدد صحیح مثبت، حفظ remainder بدون گردکردن و رقم فارسی/لاتین مجاز کرده؛ helper به فروش، ledger یا persistence وصل نیست.
+- اصلاح `voidInvoice`، ثبت/ابطال/refund واقعی، ledger، سیاست‌های دیگر پول/rounding، HMAC/licensing، schema migration، persistence/backend، entitlement، import از `KarenYar` یا production deployment همچنان به approval/spec جداگانه نیاز دارند.
 - هر مرحله باید بر source دقیق، diff و آزمون واقعی استوار باشد؛ تست‌های داخلی source repo صرفاً شواهد کمکی‌اند، نه جایگزین اجرای جاری.
