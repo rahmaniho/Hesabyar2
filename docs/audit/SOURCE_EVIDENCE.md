@@ -8,8 +8,8 @@
 ## `Hesabyar2` در نشست
 
 - ابتدای ممیزی روی branch `arena/39118004-hesabyar2` با commit `38aedc6e1c1ea97fbe0b7b95ddf3fa8436955c05`، پیام `Initial commit`, درخت `Hesabyar2` فقط `README.md` (`# Hesabyar2`) داشت.
-- PR #1، شامل 42 فایل Markdown مستنداتی، در `main` با merge commit `cf0864939070073ddaeb28783da036a02a6530d8` ادغام شد. PR #2 با merge commit `68588c0e685e108c81835356c0d0fe8f98495ded`، PR #3 با merge commit `64cafd61f803f641fabe13d032256a822159859f` و PR #4 با merge commit `75f6b0fdc9410dc9c03c1cd138d0ac9be60d30af` نیز ادغام شدند؛ هیچ app source از `KarenYar` به `main` منتقل نشد.
-- شاخهٔ فعال فعلی نشست `arena/973fe290-hesabyar2` (`active`) از merge commit PR #4 شروع شده است. `main` هنوز docs-only است؛ روی شاخهٔ کاری فعلی، با مجوز محدود کاربر، greenfield UI prototype ساخته می‌شود و جایگزین source اصلی محسوب نمی‌شود.
+- PR #1، شامل 42 فایل Markdown مستنداتی، در `main` با merge commit `cf0864939070073ddaeb28783da036a02a6530d8` ادغام شد. PR #2 با merge commit `68588c0e685e108c81835356c0d0fe8f98495ded`، PR #3 با merge commit `64cafd61f803f641fabe13d032256a822159859f`، PR #4 با merge commit `75f6b0fdc9410dc9c03c1cd138d0ac9be60d30af` و PR #5 با merge commit `a8e55e1e4cc8f17ba6f8b1a9b3452f7b12d28d06` ادغام شدند. PR #5، greenfield UI prototype را به `main` افزود؛ هیچ source code از `KarenYar` منتقل نشد.
+- شاخهٔ فعال فعلی نشست `arena/49664ebd-hesabyar2` (`active`) از merge commit PR #5 شروع شده است. `main` shell/UI mock دارد ولی source کامل محصول ندارد؛ این شاخه با اجازهٔ محدود کاربر تعامل‌های mock-only را ادامه می‌دهد و جایگزین source رسمی نیست.
 - مخزن عمومی است؛ عبارت «بدون tag/PR/release» مربوط به snapshot اولیهٔ بررسی است و پس از آن PR #1 ایجاد/ادغام شد.
 
 ## شناسایی مخزن واقعی برنامه

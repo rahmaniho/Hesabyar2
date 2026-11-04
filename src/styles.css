@@ -390,6 +390,13 @@ button:disabled { cursor: not-allowed; }
 .preview-modal h2 { margin: 5px 0 7px; color: #1b3e34; font-size: 19px; }
 .preview-modal > p { margin: 0; color: #7f9189; font-size: 10px; line-height: 2; }
 .sale-preview-fields { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+.customer-preview-form { display: flex; flex-direction: column; gap: 7px; margin-top: 17px; }
+.modal-input-label { margin-top: 3px; color: #667e75; font-size: 9px; font-weight: 600; }
+.customer-preview-form input { width: 100%; min-height: 39px; padding: 0 10px; color: #36564b; border: 1px solid #e5ede9; border-radius: 9px; background: #fbfdfc; font-size: 10px; }
+.customer-preview-form input::placeholder { color: #b0bcb7; }
+.customer-preview-form input:focus { border-color: #9ed0bf; outline: 3px solid rgba(22, 138, 120, .09); }
+.customer-memory-warning { display: flex; align-items: flex-start; gap: 8px; margin-top: 6px; padding: 9px 10px; color: #887345; border: 1px solid #f1e8cf; border-radius: 8px; background: #fffbf1; font-size: 8px; line-height: 1.7; }
+.customer-memory-warning .small-dot { width: 5px; height: 5px; margin-top: 4px; background: #c3974d; box-shadow: none; }
 .preview-field { display: flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 10px; color: #9ba9a4; border: 1px solid #e8efec; border-radius: 9px; background: #fbfdfc; font-size: 8px; }
 .preview-field span { width: 46px; color: #94a39d; }
 .preview-field strong { flex: 1; color: #60766d; font-size: 9px; font-weight: 500; }

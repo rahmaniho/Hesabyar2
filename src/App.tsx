@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import {
   Activity,
   ArrowDownLeft,
@@ -197,6 +198,7 @@ function getPersianDate() {
 
 export default function App() {
   const [activePage, setActivePage] = useState<PageId>('overview');
+  const [prototypeCustomers, setPrototypeCustomers] = useState<DataRow[]>(recordConfigs.customers.rows);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -222,6 +224,26 @@ export default function App() {
     setSidebarOpen(false);
     setNotificationsOpen(false);
     setRangeOpen(false);
+  };
+
+  const addPrototypeCustomer = (name: string, phone: string) => {
+    const normalizedName = name.trim();
+    if (!normalizedName) return;
+
+    setPrototypeCustomers((customers) => [{
+      id: `demo-${Date.now()}`,
+      initials: normalizedName.slice(0, 1),
+      primary: normalizedName,
+      secondary: 'مشتری نمونه · حافظهٔ موقت همین صفحه',
+      values: [phone.trim() || 'ثبت نشده', 'همین حالا', '۰ تومان'],
+      status: 'نمونه',
+      tone: 'info',
+      avatarTone: 1,
+    }, ...customers]);
+    setActivePage('customers');
+    setSearchQuery('');
+    setModalKind(null);
+    showToast('رکورد نمونه فقط تا تازه‌سازی صفحه در حافظه می‌ماند.');
   };
 
   useEffect(() => {
@@ -347,7 +369,7 @@ export default function App() {
           </div>
 
           {activePage === 'overview' && <Dashboard onAction={handlePrimaryAction} onNavigate={navigate} query={searchQuery} selectedRange={selectedRange} />}
-          {isRecordsPage && <RecordsPage pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} />}
+          {isRecordsPage && <RecordsPage pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} />}
           {activePage === 'reports' && <ReportsPage onAction={handlePrimaryAction} selectedRange={selectedRange} />}
           {activePage === 'settings' && <SettingsPage onAction={handlePrimaryAction} showToast={showToast} />}
 
@@ -359,7 +381,7 @@ export default function App() {
         </main>
       </div>
 
-      {modalKind && <PreviewModal kind={modalKind} onClose={() => setModalKind(null)} onNavigate={navigate} />}
+      {modalKind && <PreviewModal kind={modalKind} onClose={() => setModalKind(null)} onNavigate={navigate} onCreateCustomer={addPrototypeCustomer} />}
       {toast && <div className="toast" role="status"><Check size={17} />{toast}</div>}
     </div>
   );
@@ -612,8 +634,9 @@ function DataTable({ rows, columns, query, compact = false }: { rows: DataRow[];
   );
 }
 
-function RecordsPage({ pageId, query, onAction }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void }) {
+function RecordsPage({ pageId, query, onAction, rowsOverride }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[] }) {
   const config = recordConfigs[pageId];
+  const rows = rowsOverride ?? config.rows;
   const Icon = pageId === 'sales' ? Receipt : pageId === 'activity' ? CreditCard : pageId === 'customers' ? Users : Package;
 
   return (
@@ -637,11 +660,11 @@ function RecordsPage({ pageId, query, onAction }: { pageId: keyof typeof recordC
           </div>
         </div>
         <div className="records-hint"><span className="small-dot" />جست‌وجوی بالای صفحه روی فهرست نمونه اعمال می‌شود.</div>
-        <DataTable rows={config.rows} columns={config.columns} query={query} />
-        <div className="records-footer"><span>نمایش {config.rows.length} مورد نمونه</span><div className="pagination"><button type="button" disabled aria-label="صفحهٔ قبل"><ChevronLeft size={16} /></button><span className="page-number is-current">۱</span><span className="page-number">۲</span><span className="page-number">۳</span><button type="button" aria-label="صفحهٔ بعد" onClick={() => onAction('generic')}><ChevronLeft size={16} /></button></div></div>
+        <DataTable rows={rows} columns={config.columns} query={query} />
+        <div className="records-footer"><span>نمایش {rows.length} مورد نمونه</span><div className="pagination"><button type="button" disabled aria-label="صفحهٔ قبل"><ChevronLeft size={16} /></button><span className="page-number is-current">۱</span><span className="page-number">۲</span><span className="page-number">۳</span><button type="button" aria-label="صفحهٔ بعد" onClick={() => onAction('generic')}><ChevronLeft size={16} /></button></div></div>
       </section>
 
-      <div className="prototype-note"><Sparkles size={17} /><span>این صفحه فقط رابط را نمایش می‌دهد؛ ساخت و ویرایش رکوردها هنوز فعال نیست.</span></div>
+      <div className="prototype-note"><Sparkles size={17} /><span>{pageId === 'customers' ? 'افزودن مشتری فقط یک رکورد نمونه در حافظهٔ موقت صفحه می‌سازد؛ با تازه‌سازی پاک می‌شود.' : 'این صفحه فقط رابط را نمایش می‌دهد؛ ساخت و ویرایش رکوردها هنوز فعال نیست.'}</span></div>
     </section>
   );
 }
@@ -718,11 +741,17 @@ function NotificationsPanel() {
   );
 }
 
-function PreviewModal({ kind, onClose, onNavigate }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void }) {
+function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void }) {
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const handleCustomerSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (customerName.trim()) onCreateCustomer(customerName, customerPhone);
+  };
   const content = kind === 'sale'
     ? { icon: ShoppingCart, title: 'پیش‌نمایش ثبت فروش', label: 'فروش واقعی ثبت نمی‌شود', description: 'این نسخه فقط رابط را نشان می‌دهد. ثبت فروش، محاسبهٔ مبلغ، پرداخت و موجودی تا تصویب قواعد مالی و پیاده‌سازی امن غیرفعال است.' }
     : kind === 'customer'
-      ? { icon: Users, title: 'پیش‌نمایش مشتری جدید', label: 'ذخیره‌سازی فعال نیست', description: 'فرم مشتری در حال طراحی است. هیچ اطلاعاتی در مرورگر یا سرور ذخیره نمی‌شود.' }
+      ? { icon: Users, title: 'مشتری نمونه جدید', label: 'افزودن موقت به پیش‌نمایش', description: 'این فرم فقط یک رکورد ساختگی را در حافظهٔ موقت صفحه اضافه می‌کند؛ لطفاً اطلاعات واقعی مشتری وارد نکنید.' }
       : kind === 'report'
         ? { icon: FileText, title: 'خروجی گزارش', label: 'در این نسخه آماده نیست', description: 'گزارش‌ها نمونه هستند و هیچ فایل یا خروجی واقعی تولید نمی‌شود.' }
         : kind === 'help'
@@ -745,11 +774,25 @@ function PreviewModal({ kind, onClose, onNavigate }: { kind: ModalKind; onClose:
             <div className="preview-total"><span>جمع نمونه</span><strong>۱۲,۴۸۰,۰۰۰ تومان</strong></div>
           </div>
         )}
-        <div className="modal-actions">
-          <button type="button" className="button button-primary" onClick={onClose}>متوجه شدم</button>
-          {kind === 'sale' && <button type="button" className="button button-secondary" onClick={() => { onClose(); onNavigate('sales'); }}>دیدن فاکتورهای نمونه</button>}
-        </div>
-        <div className="modal-safety"><span className="small-dot" />بدون ذخیره‌سازی · بدون اتصال به دادهٔ واقعی</div>
+        {kind === 'customer' ? (
+          <form className="customer-preview-form" onSubmit={handleCustomerSubmit}>
+            <label className="modal-input-label" htmlFor="prototype-customer-name">نام نمونه</label>
+            <input id="prototype-customer-name" type="text" autoComplete="off" value={customerName} onChange={(event) => setCustomerName(event.target.value)} placeholder="مثلاً نگار آزمایشی" required />
+            <label className="modal-input-label" htmlFor="prototype-customer-phone">شمارهٔ نمایشی (اختیاری)</label>
+            <input id="prototype-customer-phone" type="tel" autoComplete="off" value={customerPhone} onChange={(event) => setCustomerPhone(event.target.value)} placeholder="مثلاً ۰۹۱۲ ۰۰۰ ۰۰۰۰" />
+            <div className="customer-memory-warning"><span className="small-dot" />از اطلاعات واقعی مشتری استفاده نکنید؛ رکورد فقط تا تازه‌سازی در حافظهٔ صفحه می‌ماند.</div>
+            <div className="modal-actions">
+              <button type="submit" className="button button-primary" disabled={!customerName.trim()}>افزودن نمونه</button>
+              <button type="button" className="button button-secondary" onClick={onClose}>انصراف</button>
+            </div>
+          </form>
+        ) : (
+          <div className="modal-actions">
+            <button type="button" className="button button-primary" onClick={onClose}>متوجه شدم</button>
+            {kind === 'sale' && <button type="button" className="button button-secondary" onClick={() => { onClose(); onNavigate('sales'); }}>دیدن فاکتورهای نمونه</button>}
+          </div>
+        )}
+        <div className="modal-safety"><span className="small-dot" />بدون ذخیره‌سازی پایدار · بدون اتصال به دادهٔ واقعی</div>
       </section>
     </div>
   );
