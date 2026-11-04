@@ -13,6 +13,21 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByRole('button', { name: 'ثبت فروش' })).toBeTruthy();
   });
 
+  it('updates the dashboard chart with static mock data for the selected period', () => {
+    render(<App />);
+    expect(screen.getByRole('img', { name: 'نمودار نمونهٔ فروش و دریافت برای این هفته؛ داده‌ها ساختگی‌اند' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'این هفته' }));
+    fireEvent.click(screen.getByRole('button', { name: 'امروز' }));
+    expect(screen.getByRole('img', { name: 'نمودار نمونهٔ فروش و دریافت برای امروز؛ داده‌ها ساختگی‌اند' })).toBeTruthy();
+    expect(screen.getByText('نمایش ساعتی نمونه')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'امروز' }));
+    fireEvent.click(screen.getByRole('button', { name: 'این فصل' }));
+    expect(screen.getByRole('img', { name: 'نمودار نمونهٔ فروش و دریافت برای این فصل؛ داده‌ها ساختگی‌اند' })).toBeTruthy();
+    expect(screen.getByText('نمایش ماهانه نمونه')).toBeTruthy();
+  });
+
   it('navigates to the customers sample view', () => {
     render(<App />);
 

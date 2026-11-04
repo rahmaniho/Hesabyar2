@@ -25,6 +25,7 @@ npm run build
 - Responsive Persian RTL dashboard and navigation.
 - Sample sales, customers, payments, inventory, and report views.
 - Search, date-range menu, notification panel, lightweight preview dialogs, an in-memory sample-customer form, read-only customer details, and customer status filtering.
+- The date selector switches between hard-coded demo chart series; it does not query or calculate real sales.
 - A sample customer exists only in page memory and disappears on refresh; detail views are mock-only. Do not enter real customer information.
 - No database, API, authentication, licensing, accounting rules, or real transaction actions.
 
