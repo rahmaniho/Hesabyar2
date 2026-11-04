@@ -1,8 +1,8 @@
 # گزارش اجرایی ممیزی Hesabyar 2.0 — به‌روزرسانی پس از «ادامه بده»
 
 **تاریخ:** 2026-11-05
-**شاخهٔ کاری فعلی:** `arena/e38db981-hesabyar2` (`active`)
-**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit PR #8، `5d58f36bd2e3cee266a28c93f8abbb6aebcd354d`, شروع می‌شود. PRهای #1 تا #8 به `main` ادغام شده‌اند؛ PRهای #5 تا #8 greenfield UI prototype و تعامل‌های mock مشتری/داشبورد را افزودند. `main` اکنون shell/UI mock دارد، اما منطق کامل محصول را ندارد؛ `KarenYar` همچنان source candidate جداگانه و تأییدنشده است.
+**شاخهٔ کاری فعلی:** `arena/cd2e7fc5-hesabyar2` (`active`)
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit PR #9، `efb08c1367179fd3025fe3abc85fd6263d703939`, شروع می‌شود. PRهای #1 تا #9 به `main` ادغام شده‌اند؛ PRهای #5 تا #9 greenfield UI prototype و تعامل‌های mock مشتری/داشبورد را افزودند. `main` اکنون shell/UI mock دارد، اما منطق کامل محصول را ندارد؛ `KarenYar` همچنان source candidate جداگانه و تأییدنشده است.
 **مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
 
 ## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
@@ -67,7 +67,7 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را در شاخهٔ فعال `arena/e38db981-hesabyar2` مجاز کرده؛ PRهای #5 تا #8 آن را به `main` افزودند و این شاخه تعامل‌های mock-only مشتری/داشبورد را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را در شاخهٔ فعال `arena/cd2e7fc5-hesabyar2` مجاز کرده؛ PRهای #5 تا #9 آن را به `main` افزودند و این شاخه تعامل‌های mock-only مشتری/داشبورد/فاکتور را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 

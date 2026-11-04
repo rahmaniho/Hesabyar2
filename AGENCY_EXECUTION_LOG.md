@@ -1,9 +1,9 @@
 # دفتر اجرای آژانس مهندسی هوش مصنوعی — Hesabyar 2.0
 
 **آخرین به‌روزرسانی:** 2026-11-05 local
-**شاخهٔ نشست فعلی:** `arena/e38db981-hesabyar2` (`active`)، بر پایهٔ merge commit PR #8: `5d58f36bd2e3cee266a28c93f8abbb6aebcd354d`
+**شاخهٔ نشست فعلی:** `arena/cd2e7fc5-hesabyar2` (`active`)، بر پایهٔ merge commit PR #9: `efb08c1367179fd3025fe3abc85fd6263d703939`
 **مخزن همین نشست:** `rahmaniho/Hesabyar2`
-**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7) و [#8](https://github.com/rahmaniho/Hesabyar2/pull/8) در `main` ادغام شدند؛ آخرین merge commit `5d58f36bd2e3cee266a28c93f8abbb6aebcd354d` است.
+**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7)، [#8](https://github.com/rahmaniho/Hesabyar2/pull/8) و [#9](https://github.com/rahmaniho/Hesabyar2/pull/9) در `main` ادغام شدند؛ آخرین merge commit `efb08c1367179fd3025fe3abc85fd6263d703939` است.
 **مخزن برنامهٔ شناسایی‌شده:** `rahmaniho/KarenYar`، ممیزی read-only روی `main` commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
 
 ## تاریخچهٔ اجرا
@@ -39,20 +39,20 @@
 
 ## محدودیت‌های قطعی
 
-- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 greenfield UI shell، PR #6 فرم موقت مشتری، PR #7 جزئیات فقط‌خواندنی مشتری و PR #8 فیلتر وضعیت مشتری را به `main` افزودند. PR #8 با merge commit `5d58f36bd2e3cee266a28c93f8abbb6aebcd354d` ادغام شد؛ شاخهٔ فعال فعلی `arena/e38db981-hesabyar2` از همین commit آغاز می‌شود. `main` اکنون UI shell دارد ولی هنوز source کامل/منطق محصول ندارد؛ `KarenYar` همچنان source candidate جدا و تأییدنشده است.
+- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 greenfield UI shell، PR #6 فرم موقت مشتری، PR #7 جزئیات فقط‌خواندنی مشتری، PR #8 فیلتر وضعیت مشتری و PR #9 نمودار وابسته به بازهٔ انتخابی را به `main` افزودند. PR #9 با merge commit `efb08c1367179fd3025fe3abc85fd6263d703939` ادغام شد؛ شاخهٔ فعال فعلی `arena/cd2e7fc5-hesabyar2` از همین commit آغاز می‌شود. `main` اکنون UI shell دارد ولی هنوز source کامل/منطق محصول ندارد؛ `KarenYar` همچنان source candidate جدا و تأییدنشده است.
 - `KarenYar` منبع بسیار محتمل و مستندشده است، ولی هنوز تأیید کتبی مالک برای اینکه همین source مبنای Hesabyar 2.0 باشد لازم است.
 - دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
 
 ## وضعیت تغییرات
 
-- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ `arena/e38db981-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل‌های مشتری در حافظهٔ موقت، فیلتر وضعیت و سری‌های hard-coded نمودار برای بازه‌های انتخابی. منطق مالی یا persistence وجود ندارد.
-- **اعتبارسنجی prototype:** ۹ UI tests، typecheck و build موفق؛ `npm audit` صفر vulnerability گزارش کرد. Vite preview روی `0.0.0.0:5173` فعال است؛ صفحه و module با HTTP 200 پاسخ می‌دهند.
+- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ `arena/cd2e7fc5-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل‌های موقت مشتری، جزئیات فقط‌خواندنی فاکتور/مشتری با اقلام ثابت و بدون جمع‌زدن، فیلتر وضعیت و سری‌های hard-coded نمودار. منطق مالی یا persistence وجود ندارد.
+- **اعتبارسنجی prototype:** ۱۰ UI tests، typecheck و build موفق؛ `npm audit` صفر vulnerability گزارش کرد. Vite preview روی `0.0.0.0:5173` فعال است و صفحه/module با HTTP 200 پاسخ می‌دهند.
 - **دیتابیس/production/release:** بدون تغییر؛ هیچ API، license، migration، APK یا deployment اجرا/تغییر نشده.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
-- **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #8 greenfield UI و تعامل‌های mock مشتری/داشبورد را به `main` افزودند. شاخهٔ فعلی `arena/e38db981-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.
+- **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #9 greenfield UI و تعامل‌های mock را به `main` افزودند. شاخهٔ فعلی `arena/cd2e7fc5-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.
 - در follow-up جاری، ماتریس پیشنهادی راستی‌آزمایی APK/AAB و Admin debug artifact در `docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد تا CI-06..08 و ADM-04 معیار پذیرش و negative-testهای مشخص داشته باشند؛ workflow، signer config یا artifact تغییر نکرد و اجرای این معیارها نیازمند approval است.
 
 ## گیت بعدی
 
-ادامهٔ UI prototype و mock interactions در شاخهٔ فعال `arena/e38db981-hesabyar2` مجاز است. پیش از واردکردن یا ویرایش source اصلی، ذخیره‌سازی پایدار، منطق مالی، backend, licensing, migration یا release، مالک باید `rahmaniho/KarenYar` و مسیر توسعه را جداگانه تأیید کند؛ اگر برای این تصمیم‌ها ورودی لازم شد، مرحله‌به‌مرحله از کاربر خواسته می‌شود.
+ادامهٔ UI prototype و mock interactions در شاخهٔ فعال `arena/cd2e7fc5-hesabyar2` مجاز است. پیش از واردکردن یا ویرایش source اصلی، ذخیره‌سازی پایدار، منطق مالی، backend, licensing, migration یا release، مالک باید `rahmaniho/KarenYar` و مسیر توسعه را جداگانه تأیید کند؛ اگر برای این تصمیم‌ها ورودی لازم شد، مرحله‌به‌مرحله از کاربر خواسته می‌شود.
