@@ -1,7 +1,7 @@
 # ماتریس وضعیت قابلیت‌ها — کد منبع در برابر محصول زنده
 
 **Source snapshot:** `rahmaniho/KarenYar/main`، commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
-**محدودیت:** live app/production بررسی نشده؛ ستون «Live» همواره تا مشاهدهٔ محیط `NEEDS_VERIFICATION` می‌ماند.
+**محدودیت:** live app/production بررسی نشده؛ ستون «Live» همواره تا مشاهدهٔ محیط `NEEDS_VERIFICATION` می‌ماند. شاخهٔ فعال `arena/973fe290-hesabyar2` یک greenfield UI prototype جدا و mock-only می‌سازد؛ آن UI به معنی پیاده‌سازی قابلیت‌های محصول یا تأیید source رسمی نیست.
 
 | حوزه | وضعیت در source | وضعیت live | توضیح |
 |---|---|---|---|

@@ -1,8 +1,8 @@
 # گزارش اجرایی ممیزی Hesabyar 2.0 — به‌روزرسانی پس از «ادامه بده»
 
 **تاریخ:** 2026-11-05
-**شاخهٔ کاری فعلی:** `arena/72006e53-hesabyar2` (`active`)
-**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit `64cafd61f803f641fabe13d032256a822159859f` شروع می‌شود. PRهای #1، #2 و #3 مستندات audit/architecture را به `main` ادغام کردند؛ app source همچنان در این مخزن نیست.
+**شاخهٔ کاری فعلی:** `arena/973fe290-hesabyar2` (`active`)
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit PR #4، `75f6b0fdc9410dc9c03c1cd138d0ac9be60d30af`, شروع می‌شود. PRهای #1 تا #4 اسناد audit/architecture را به `main` ادغام کردند. `main` هنوز source محصول را ندارد؛ این branch اکنون یک greenfield UI prototype محدود و mock-only می‌سازد. `KarenYar` همچنان source candidate جداگانه و تأییدنشده است.
 **مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
 
 ## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
@@ -67,12 +67,12 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی read-only کد کامل‌تر شده و اسناد معماری هدف تهیه شده‌اند. **توسعهٔ کد هنوز متوقف است** چون مخزن این نشست `Hesabyar2` است ولی سورس برنامه در `KarenYar` قرار دارد؛ همچنین تغییرات حیاتی مانند اصلاح reversal، سیاست لایسنس یا انتقال local DB به server پرریسک‌اند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را در شاخهٔ فعال `arena/973fe290-hesabyar2` مجاز کرده و prototype mock-only در حال ساخت است. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
 
-لطفاً برای شروع milestone توسعه تأیید کنید:
+تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 
 1. آیا `rahmaniho/KarenYar` منبع رسمی برنامه‌ای است که باید Hesabyar 2.0 از آن تکامل یابد؟
-2. آیا کد باید در همان مخزن برنامه توسعه داده شود؟ شاخهٔ فعال این نشست `arena/72006e53-hesabyar2` در `Hesabyar2` است؛ تصمیم repository/workspace باید با این محدودیت سازگار شود.
-3. آیا اصلاح‌های کوچک و غیرمخربِ اولویت‌دار (HMAC/مجوز، reversal فاکتور، POS unit conversion) پس از تأیید architecture شروع شوند؟
+2. آیا توسعهٔ کامل باید روی source فعلی `KarenYar` باشد یا greenfield در `Hesabyar2` ادامه یابد؟ prototype فعلی فقط shell/UI است و این تصمیم را پیشاپیش حل نمی‌کند.
+3. قواعد مالی برای POS conversion، invoice reversal و مجوزدهی چه هستند و چه ownerهایی باید پیش از تغییرات اجرایی آن‌ها را تصویب کنند؟
 
 هیچ تغییر production، migration، نشر یا ادعای تأیید live انجام نشده است. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [ماتریس راستی‌آزمایی artifactهای Android/Admin](ANDROID_ARTIFACT_VERIFICATION_PLAN.md)، [Admin Android](ADMIN_ANDROID_AUDIT.md)، [Admin PHP staging](ADMIN_SERVER_AUDIT.md)، [cPanel read-only runbook](CPANEL_READ_ONLY_RUNBOOK.md)، [Android platform](ANDROID_PLATFORM_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).

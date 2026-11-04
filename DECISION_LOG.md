@@ -22,11 +22,12 @@
 | D-018 | 2026-11-05 | PR #3، شامل follow-up ممیزی Android/CI و artifact gates، در `main` ادغام شد؛ شاخهٔ active فعلی نشست `arena/72006e53-hesabyar2` بر merge commit `64cafd61f803f641fabe13d032256a822159859f` بنا شده است | `gh pr merge 3 --merge` موفق؛ PR state=`MERGED` |
 | D-019 | 2026-11-05 | معیار پذیرش CI برای Android debug، signed APK/AAB و Admin debug در `ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد؛ صرفاً proposal است و هیچ workflow/artifact/signing setting تغییر نکرد | static source/CI findings در CI-06..08 و ADM-04؛ نیازمند approval owner/security پیش از اجرا |
 | D-020 | 2026-11-05 | GitHub Actions API metadata برای test APKهای runs `41813070224`, `41645205606` و Admin run `41274386135` نام/اندازه/expiry را گزارش می‌کند؛ این metadata محتوا یا access policy را اثبات نمی‌کند و run `41645205606` پیش از source baseline فعلی است | read-only API/workflow/job metadata؛ archiveها دانلود/parse نشدند |
+| D-021 | 2026-11-05 | کاربر ساخت greenfield app در `Hesabyar2` را برای shell/UI prototype با mock data مجاز کرد؛ این مجوز شامل حسابداری/تراکنش، persistence/DB، backend/auth، licensing، migration، import از `KarenYar` یا release نیست | انتخاب صریح کاربر در این نشست؛ branch فعال `arena/973fe290-hesabyar2` |
 
 ## تصمیم‌های باز برای مالک
 
 - آیا `KarenYar` source رسمی Hesabyar 2.0 است؟
-- چگونه توسعه باید با قاعدهٔ شاخهٔ فعال این نشست روی `arena/72006e53-hesabyar2` انجام شود، در حالی که source برنامه در repo جداست؟
+- مسیر source رسمی برای development فراتر از UI prototype چیست؟ مالک باید `KarenYar` را تأیید کند یا greenfield `Hesabyar2` را به‌عنوان کدبیس کامل انتخاب کند؛ شاخهٔ فعال فعلی `arena/973fe290-hesabyar2` است.
 - آیا HMAC/void/POS money fixes بعد از تصویب TDR به‌عنوان اولین milestone اجرا شوند؟
 - آیا Business multi-user حتماً server-authoritative است و Personal همچنان local-first می‌ماند؟
 - آیا Pages branch آزمایشی باید build-only بماند یا preview deploy داشته باشد؛ و چه TLS/redirect policy روی host واقعی اعمال می‌شود؟

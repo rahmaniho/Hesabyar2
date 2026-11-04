@@ -1,26 +1,24 @@
 # پیشرفت Hesabyar 2.0
 
 **آخرین به‌روزرسانی:** 2026-11-05
-**وضعیت کلی:** ممیزی source و طراحی مفهومی انجام شده؛ implementation متوقف تا تأیید مخزن/معماری.
+**شاخهٔ فعال:** `arena/973fe290-hesabyar2` بر پایهٔ merge commit PR #4، `75f6b0fdc9410dc9c03c1cd138d0ac9be60d30af`.
+**وضعیت کلی:** کاربر ساخت greenfield در همین repo را برای shell/UI prototype تأیید کرد؛ منطق مالی، persistence، backend، licensing، migration و انتشار خارج از این scope هستند.
 
 | محدوده | وضعیت | شواهد |
 |---|---|---|
-| مخزن متصل به نشست | `AUDITED` | `rahmaniho/Hesabyar2` در ابتدا فقط README داشت؛ PRهای #1/#2/#3 اسناد را merge کردند؛ شاخهٔ active نشست `arena/72006e53-hesabyar2` از merge commit PR #3 آغاز شده و app code همچنان غایب است |
-| شناسایی app source | `FOUND / OWNER CONFIRMATION PENDING` | `rahmaniho/karen-soft` به `rahmaniho/KarenYar` ارجاع می‌دهد؛ app ID/name همخوان |
-| ممیزی کد app | `COMPLETED_FOR_SNAPSHOT` | source `KarenYar/main@d41ca291...` و فایل‌های کلیدی بررسی شدند |
-| تست unit | `PASS` | 47 فایل / 369 تست |
-| typecheck/lint/build | `PASS` | هر سه فرمان موفق؛ build warning PDF chunk |
-| Android release tests | `PASS` | 35 node tests؛ `release:check` version 1.4.2/code 10402/id را تأیید کرد |
-| dependency audit | `ACTION_REQUIRED` | 3 runtime advisory؛ 30 total incl. dev/test |
-| E2E | `BLOCKED` | browser نصب نبود؛ rerun نشد |
-| production/staging audit | `DEFERRED_BY_USER / NEEDS_ENVIRONMENT_SCOPE` | کاربر وجود سرور cPanel را گزارش و صریحاً گفت فعلاً اتصال/بررسی لازم نیست؛ host و staging/production نامعلوم، هیچ server command اجرا نشده؛ ممیزی static بدون cPanel ادامه می‌یابد |
-| GitHub Pages/Android release | `NEEDS_OWNER_VERIFICATION` | Pages API `https_enforced=false` و `custom_domain=null`; Android 1.4.2 فقط test pre-release است و tag build در signing-key validation fail شد |
-| CI/CD security | `ACTION_REQUIRED / NEEDS_OWNER_VERIFICATION` | Android/Admin workflow-wide `contents:write` و build code در همان job؛ test/typecheck/lint کامل CI gate نیست؛ public `github-test` pre-release verifier دارد ولی Actions artifact پیش از verifier upload می‌شود؛ artifact-only `test-apk` اصلاً verifier ندارد؛ signed-release verifier فقط APK را می‌سنجد، نه AAB؛ Admin APK verification قبل از upload است اما signer subject/debuggable را assert نمی‌کند؛ branch/tag protection API پاسخ 403 داد؛ API metadata برای سه artifact مشاهده‌شده نام، اندازه و expiry گزارش کرد اما access policy معلوم نیست. [ماتریس پذیرش artifactها](docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md) به‌عنوان proposal آماده است و approval/implementation نشده |
-| Android/Admin security | `NEEDS_ARTIFACT_AND_DEVICE_VERIFICATION` | manifest permissions محدود و allowBackup=false؛ CLI/Android Capacitor 8.5.3 pin هستند؛ CLI مسیر عادی config خام را کپی می‌کند، پس WebView debugging override در config دیده نمی‌شود و `CapConfig` از app flag استفاده می‌کند؛ mixed-content default=false و config `server.cleartext` ندارد؛ public test APK از run `41813070224` با verifier CI روی همان tree قبول شد، اما مستقل دانلود/parse نشد؛ merged permissions و signed release بررسی نشده؛ scanner permission bridge دارد ولی setup catch ممکن است stream را روشن نگه دارد و detectهای async callback تکراری/POS qty بسازند؛ device test نشده؛ Admin session/PHP runtime نامعلوم |
-| architecture docs | `PROPOSED` | `docs/architecture/` ایجاد؛ owner approval pending |
-| source code change | `NOT_STARTED` | هیچ فایل برنامه تغییر نکرد |
-| migration/deploy | `NOT_STARTED` | هیچ DB، customer data یا production touch نشد |
+| مخزن توسعهٔ این نشست | `GREENFIELD PROTOTYPE` | `rahmaniho/Hesabyar2` پیش‌تر docs-only بود؛ PRهای #1 تا #4 ادغام شده‌اند؛ branch فعال فعلی `arena/973fe290-hesabyar2` است |
+| source اصلی موجود | `OWNER CONFIRMATION PENDING` | `rahmaniho/karen-soft`، `rahmaniho/KarenYar` را به‌عنوان source فعلی معرفی می‌کند؛ مالک آن را هنوز source رسمی Hesabyar 2.0 برای ادامهٔ توسعه تأیید نکرده است |
+| shell و UI prototype | `IN_PROGRESS / AUTHORIZED` | React 19، TypeScript، Vite 8؛ رابط فارسی RTL، dashboard، navigation و صفحه‌های نمونهٔ فروش، گردش‌ها، مشتریان، انبار، گزارش‌ها و تنظیمات |
+| محدودیت prototype | `MOCK ONLY` | همهٔ اعداد و رکوردها ساختگی و ثابت‌اند؛ هیچ عملیات مالی، persistence، API، auth یا backend وجود ندارد؛ هیچ داده‌ای ذخیره نمی‌شود |
+| تست prototype | `PASS` | ۵ تست UI: داشبورد و هشدار mock، navigation، modal غیرپایدار فروش، جست‌وجو و اعلان‌ها |
+| typecheck/build prototype | `PASS` | `npm run typecheck` و `npm run build` موفق؛ `dist/` خروجی build و در Git نادیده گرفته می‌شود |
+| ممیزی کد `KarenYar` | `COMPLETED_FOR_SNAPSHOT` | snapshot read-only `KarenYar/main@d41ca291...`؛ نتایج 369 unit tests، typecheck/lint/build و 35 release-script test متعلق به همان snapshot هستند، نه prototype جدید |
+| dependency audit | `PASS_FOR_PROTOTYPE / ACTION_REQUIRED_FOR_OLD_SNAPSHOT` | `npm audit` روی prototype جدید صفر vulnerability گزارش کرد؛ ممیزی قبلی `KarenYar` snapshot شامل 3 runtime advisory و 30 advisory کل بود و آن نتیجه جداست |
+| E2E مرورگر | `NOT RUN` | برای prototype فعلی آزمون مرورگر واقعی اجرا نشده؛ preview dev server در port `5173` فعال است |
+| production/staging و cPanel | `DEFERRED_BY_USER` | کاربر صریحاً بررسی cPanel را فعلاً نخواست؛ هیچ server command، credential یا محیطی استفاده نشد |
+| Android/release/CI برای prototype | `NOT STARTED` | APK/AAB، Capacitor، signer، workflow یا release ساخته/تغییر داده نشده‌اند |
+| DB، migration و deploy | `NOT STARTED` | هیچ DB، customer data، licensing، migration، production یا deployment لمس نشده است |
 
 ## گام بعدی
 
-static source review برای Android camera permission/stream cleanup، one-shot barcode callback، Capacitor CLI config-copy و مسیر cleartext تکمیل و ثبت شده است. موارد باز، verification روی generated/merged manifest و APKهای مجاز، permission/export/FileProvider و debug/release flags، به‌علاوهٔ camera lifecycle روی device/emulator است؛ این‌ها در این نشست اجرا نشدند. cPanel connection/server checks به درخواست کاربر همچنان deferred است. پیش از هر source change، مالک باید `rahmaniho/KarenYar` را به‌عنوان source رسمی و مخزن/branch توسعه را تأیید کند؛ سپس milestone باید scoped و reviewable باشد. پیشنهاد اولیه همچنان اصلاح conversion POS و design/fix `voidInvoice` است؛ HMAC/licensing و ledger changes به approval/spec جدا نیاز دارند.
+ادامهٔ مجاز در این branch، تکمیل و بازبینی UI prototype با mock data است؛ سپس می‌توان دربارهٔ مسیرهای تعاملیِ بدون ذخیره‌سازی تصمیم گرفت. پیش از افزودن منطق حسابداری، پول/گردکردن، تراکنش یا inventory posting، persistence/DB، API/auth، licensing، import از `KarenYar` یا Android/release باید scope جداگانه تأیید شود. معماری target در `docs/architecture/` پیشنهاد است و به‌عنوان تصمیم مصوب تلقی نمی‌شود.
