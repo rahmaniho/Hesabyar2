@@ -1,0 +1,71 @@
+# گزارش اجرایی ممیزی Hesabyar 2.0 — به‌روزرسانی پس از «ادامه بده»
+
+**تاریخ:** 2026-11-04 (UTC)
+**شاخهٔ کاری این نشست:** `arena/39118004-hesabyar2` (`active`)
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`، commit مبنا `38aedc6e1c1ea97fbe0b7b95ddf3fa8436955c05`
+**مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
+
+## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
+
+گزارش اولیه به‌درستی نشان داد مخزن متصل‌شدهٔ `Hesabyar2` فقط README دارد، اما در آن مرحله منبع برنامه پیدا نشده بود. پس از درخواست شما برای ادامه، مخزن شرکت `rahmaniho/karen-soft` و مستند `docs/hesabyar-release-update.md` بررسی شد؛ این سند `rahmaniho/KarenYar` را منبع برنامه معرفی می‌کند. package/app ID آن نیز با حساب‌یار مطابقت دارد. بنابراین ممیزی کد در ادامه روی snapshot خواندنی `KarenYar/main` انجام شد؛ `Hesabyar2` همچنان مخزن placeholder است و هیچ کدی به آن منتقل نشده است.
+
+## خلاصهٔ مدیریتی
+
+سورس موجود، برنامه‌ای فارسی، RTL، PWA/Android و local-first است. معماری آن React/Vite/TypeScript + Capacitor و Dexie/IndexedDB محلی است؛ فروش، فاکتور، کالا و موجودی، مشتری/دریافت، بودجه و بدهی شخصی، حقوق و دستمزد، محاسبه‌گر، PDF و CSV در کد وجود دارند. نسخهٔ فعلی را نمی‌توان «Business double-entry accounting» یا multi-tenant معرفی کرد: chart of accounts، journal entries، دفترکل، دوره‌بندی، خرید/تأمین‌کننده، شعبه/شرکت/کاربر و sync مالی وجود ندارد.
+
+**یافته‌های اولویت‌دار برای مالک:**
+
+1. مسیر آفلاین مجوز از HMAC با secret موجود در کد/build استفاده می‌کند؛ secret سمت کلاینت قابل محرمانه‌ماندن نیست و مجوز قابل اعتماد نیست. مسیر Ed25519 سروری اختیاری است؛ config production تأیید نشده است.
+2. `voidInvoice` درآمد فروش را از جدول `transactions` فیزیکی حذف می‌کند؛ تست فعلی نیز همین رفتار را انتظار دارد. event ابطال ثبت می‌شود، اما reversal درآمدی و trace کامل جای حذف را نمی‌گیرد.
+3. GitHub Pages API و status آخرین deployment هر دو URL با `http` گزارش کردند؛ API نیز `https_enforced=false`, `custom_domain=null` داد، در حالی که سورس CNAME و workflow از HTTPS می‌گویند. Live host بررسی نشد، پس TLS/redirect باید روی host واقعی verify شود. علاوه بر این، workflow branch آزمایشی را trigger می‌کند ولی Pages environment فقط `main` را می‌پذیرد؛ run تاریخی آن branch build موفق/deploy ناموفق داشت و علت دقیق نامعلوم است. صفحهٔ محصول Android 1.4.2 را به Pre-release با برچسب NOT FOR STORES لینک می‌دهد؛ tag build در validation کلید امضا متوقف شد و علت دقیق به‌دلیل در دسترس نبودن log تأیید نشد.
+4. در workflowهای Android/Admin `contents:write` کل job را پوشش می‌دهد و checkout credential پیش‌فرض را پایدار نگه می‌دارد، در حالی که build scripts/Gradle اجرا می‌شوند؛ علاوه بر آن، suite کامل unit/typecheck/lint در CIهای دیده‌شده gate نیست. این ریسک بالقوهٔ زنجیرهٔ تأمین و کیفیت release است؛ GitHub ruleset/required checks از API قابل تأیید نبود.
+
+علاوه بر این، چند مسیر POS ریال را با `Math.round(rial/10)` به تومان تبدیل می‌کنند، و بعضی aggregateهای گزارش/مانده از جمع مستقیم `number` استفاده می‌کنند. این موارد نیازمند اصلاح/آزمون قبل از توسعهٔ وسیع Business هستند.
+
+## نتیجهٔ آزمون مستقل این نشست
+
+روی snapshot دقیق `KarenYar/main` در فضای موقت:
+
+- `npm test`: **47 فایل، 369 تست موفق**.
+- `npm run typecheck`: موفق.
+- `npm run lint`: موفق.
+- `npm run build`: موفق؛ هشدار chunk PDF برابر 1,007.39 kB خام / 507.89 kB gzip.
+- `npm run test:android-release`: **35 تست موفق**.
+- `npm run release:check`: نسخه 1.4.2، `versionCode=10402` و app ID درست.
+- `npm audit --omit=dev`: 3 advisory؛ `npm audit` کامل: 30 advisory (از جمله 3 critical در dependencyهای dev/test). هیچ به‌روزرسانی dependency انجام نشد.
+- Playwright E2E در این محیط اجرا نشد، چون browser executable نصب نبود و دانلود آن خارج از hostهای مجاز شبکه است. گزارش داخلی مخزن از 30 E2E موفق قبلی یاد می‌کند، ولی آن نتیجه در این نشست مستقل تأیید نشد.
+
+فرمان‌ها روی snapshot موقت اجرا شدند؛ هیچ source code، branch، release، DB یا production تغییر نکرد.
+
+## وضعیت حوزه‌ها
+
+| حوزه | نتیجهٔ ممیزی کد |
+|---|---|
+| معماری و تکنولوژی | شناسایی شد؛ local-first، تک‌دستگاهی، بدون backend مالی |
+| فروش و فاکتور | پیاده‌سازی جزئی/قابل استفاده در سطح برنامه؛ شکاف void/reversal و پول POS باقی است |
+| هستهٔ دقیق مبلغ | BigInt/fixed-point برای invoice موجود و تست‌شده؛ بعضی گزارش‌ها و ابزارهای عمومی از number استفاده می‌کنند |
+| حسابداری دوطرفه | در سورس فعلی موجود نیست |
+| خرید، تأمین‌کننده، برگشت رسمی | در سورس فعلی موجود نیست |
+| انبار | گردش سادهٔ یک موجودی محلی موجود؛ چندانبار/ارزش‌گذاری رسمی وجود ندارد |
+| Personal و Business | دو edition مستقل وجود ندارد؛ feature tiers فعلی جای edition architecture نیستند |
+| دیتابیس | IndexedDB/Dexie v4 محلی؛ backup JSON v3؛ هیچ DB مرکزی نیست |
+| offline/sync | کارکرد محلی آفلاین موجود؛ همگام‌سازی مالی چنددستگاهی وجود ندارد |
+| امنیت | ریسک مجوز HMAC سمت کلاینت؛ دادهٔ محلی/backup بدون رمزنگاری؛ بدون RBAC/tenant backend |
+| اسناد فارسی | Jalali/RTL/PDF برداری و CSV موجود؛ Excel و آزمون چاپ فیزیکی/مرورگر واقعی تأیید نشده |
+| استقرار و production | `NEEDS_VERIFICATION`؛ GitHub Pages API گزارش HTTPS غیرفعال/custom domain خالی می‌دهد؛ Android 1.4.2 linked build pre-release است؛ live host از sandbox قابل دسترسی نیست |
+
+## پیشنهاد Shared Core و editionها
+
+جهت‌گیری یک هستهٔ مالی مشترک و دو edition همچنان مناسب است، اما نباید به‌عنوان وضعیت فعلی معرفی شود. معماری پیشنهادی در `docs/architecture/` با شواهد `KarenYar` تنظیم شده است: هستهٔ Money/Posting مشترک، ماژول‌های Sales/Inventory/Treasury و Reports، و entitlement جدا از RBAC. برای ساخت Business واقعی، ledger و سرویس سروری/مرز چندشرکتی لازم است؛ Modular Monolith گزینهٔ بررسی است، نه تصمیم deployment مصوب.
+
+## گام اجرایی بعدی و Approval Gate
+
+اکنون ممیزی read-only کد کامل‌تر شده و اسناد معماری هدف تهیه شده‌اند. **توسعهٔ کد هنوز متوقف است** چون مخزن این نشست `Hesabyar2` است ولی سورس برنامه در `KarenYar` قرار دارد؛ همچنین تغییرات حیاتی مانند اصلاح reversal، سیاست لایسنس یا انتقال local DB به server پرریسک‌اند.
+
+لطفاً برای شروع milestone توسعه تأیید کنید:
+
+1. آیا `rahmaniho/KarenYar` منبع رسمی برنامه‌ای است که باید Hesabyar 2.0 از آن تکامل یابد؟
+2. آیا کد باید در همان مخزن برنامه توسعه داده شود؟ در این نشست branch فعال و مجاز برای تغییر فقط `arena/39118004-hesabyar2` در `Hesabyar2` است، پس لازم است تصمیم repository/workspace با محدودیت branch سازگار شود.
+3. آیا اصلاح‌های کوچک و غیرمخربِ اولویت‌دار (HMAC/مجوز، reversal فاکتور، POS unit conversion) پس از تأیید architecture شروع شوند؟
+
+هیچ تغییر production، migration، نشر یا ادعای تأیید live انجام نشده است. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).
