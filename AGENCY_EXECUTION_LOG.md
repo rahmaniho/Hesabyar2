@@ -1,8 +1,9 @@
 # دفتر اجرای آژانس مهندسی هوش مصنوعی — Hesabyar 2.0
 
-**آخرین به‌روزرسانی:** 2026-11-04 UTC
-**شاخهٔ نشست:** `arena/39118004-hesabyar2` (`active`)
+**آخرین به‌روزرسانی:** 2026-11-05 local
+**شاخهٔ نشست فعلی:** `arena/147f6490-hesabyar2` (`active`), based on merge commit `cf0864939070073ddaeb28783da036a02a6530d8`
 **مخزن همین نشست:** `rahmaniho/Hesabyar2`
+**PR مستندات قبلی:** [#1](https://github.com/rahmaniho/Hesabyar2/pull/1), merged به `main` در `cf0864939070073ddaeb28783da036a02a6530d8`.
 **مخزن برنامهٔ شناسایی‌شده:** `rahmaniho/KarenYar`، ممیزی read-only روی `main` commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
 
 ## تاریخچهٔ اجرا
@@ -24,21 +25,27 @@
 - GitHub Actions/Pages metadata به‌صورت read-only بررسی شد: Pages deployهای `main` موفق بودند، اما Pages API `https_enforced=false` و `custom_domain=null` و deployment status هم `environment_url` با `http` گزارش دادند. `pages.yml` branch آزمایشی را trigger می‌کند، ولی Pages environment فقط `main` را مجاز می‌کند؛ اجرای تاریخی branch آزمایشی build موفق/deploy ناموفق داشت و علت دقیق معلوم نیست. tag Android `v1.4.2` در signing-key validation fail شد؛ log fetch نشد، پس علت دقیق نامعلوم است؛ 1.4.2 فعلی فقط test pre-release است و آخرین stable فهرست‌شده 1.2.5 است.
 - جزئیات به `docs/audit/DEPLOYMENT_AND_RELEASE_AUDIT.md`, security audit و risk register افزوده شد؛ هیچ Pages setting، DNS، secret، release یا workflow تغییر نکرد.
 - سه workflow عمومی `pages.yml`, `android.yml`, `admin-android.yml` از نظر least privilege و test/release gates به‌صورت read-only بررسی شدند. Android/Admin `contents:write` در سطح workflow دارند و کد build در همان job اجرا می‌شود؛ Pages write/OIDC workflow-wide است؛ full unit/typecheck/lint در CI مشاهده نشد. Rulesets/branch protection API با 403 پاسخ داد، بنابراین وضعیت آن‌ها `NEEDS_VERIFICATION` است. یافته‌ها در `docs/audit/CI_SUPPLY_CHAIN_AUDIT.md` و اسناد امنیت/ریسک ثبت شدند.
+- Admin Android shell نیز static review شد: HTTPS-only، SSL cancellation، host/path allowlist و محدودیت WebView مثبت‌اند؛ در عین حال DOM storage/cookies فعال و cookies روی pause flush می‌شوند، بدون cleanup صریح در Activity. Server session, logout, cookie flags و staging data در live host بررسی نشدند.
+- Admin PHP staging endpoints هم static بررسی شدند: server-auth guard, staging-only guard, secure session cookie flags, CSRF, rate limiting, prepared queries و hash-pinned app package مثبت‌اند؛ SHA-256 artifact از GitHub blob دوباره محاسبه و با deploy script تطبیق داده شد. Branch منبع hash-pinned فعلاً `protected=false` گزارش شد (rulesetها نامعلوم)؛ deploy in-place است و session rotation/bootstrap/runtime نیازمند verification است. PHP lint اجرا نشد چون PHP CLI موجود نیست.
+- Main Android native config نیز static بررسی شد: manifest permission set محدود، `allowBackup=false`, optional camera و non-exported FileProvider؛ external-path root در XML وجود دارد اما call-site برنامه backup/PDF/CSV را در Directory.Cache می‌نویسد/share می‌کند و delete صریح ندارد؛ test موجود فقط web path را پوشش می‌دهد. merged manifest/HTTP policy/APK نهایی نیازمند artifact-level verification هستند.
+- کاربر اعلام کرد سرور cPanel برای اجرا در صورت نیاز موجود است. lookup connector cPanel در Arena `unsupported` برگشت؛ server/host یا محیط staging/production از این sandbox متصل/شناسایی نشد و هیچ فرمانی روی آن اجرا نشد. `docs/audit/CPANEL_READ_ONLY_RUNBOOK.md` آماده شد.
+- کاربر بعداً روشن کرد cPanel را به خاطر داشته باشیم ولی فعلاً اتصال/بررسی آن لازم نیست؛ سرور در این گام خارج scope ماند و ممیزی read-only source ادامه یافت.
+- ادامهٔ Android audit در source دقیق: package-lock نسخه‌های Capacitor Android/pluginها را pin می‌کند؛ manifests همین npm packageها خالی‌اند ولی Gradle merged APK بررسی نشده. `BarcodeScannerDialog` از `getUserMedia`/`BarcodeDetector` استفاده می‌کند؛ Capacitor 8.5.3 `VIDEO_CAPTURE` را به runtime CAMERA permission bridge می‌کند؛ `Bridge.java` و `BridgeWebChromeClient.java` با GitHub tag 8.5.3 byte-for-byte تطبیق داده شدند. در setup error پس از گرفتن stream، `catch`، `stop()` را صدا نمی‌کند و stream ممکن است تا close فعال بماند. همچنین interval async بدون one-shot/in-flight guard است و `cancelled` بعد از await دوباره سنجیده نمی‌شود؛ callbackهای detect هم‌پوشان ممکن است POS basket quantity را افزایش دهند (device confirmation pending). هیچ component/device test اجرا نشد؛ یافته‌های AND-05..08، SEC-15 و R-35..36 مستند شدند.
 
 ## محدودیت‌های قطعی
 
-- مخزن فعلی شاخهٔ `arena/39118004-hesabyar2` همچنان مخزن placeholder است. همهٔ تغییرات نشست فقط مستندات هستند؛ کد برنامه در آن اضافه نشده است.
+- شاخهٔ فعال فعلی `arena/147f6490-hesabyar2` است. `Hesabyar2` در ابتدا فقط README داشت؛ PR #1 مستندات را به main ادغام کرد، اما app source همچنان در repo نیست.
 - `KarenYar` منبع بسیار محتمل و مستندشده است، ولی هنوز تأیید کتبی مالک برای اینکه همین source مبنای Hesabyar 2.0 باشد لازم است.
-- دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ GitHub Pages settings و CI run metadata بررسی شد، اما live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
+- دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
 
 ## وضعیت تغییرات
 
 - **کد برنامه:** بدون تغییر.
 - **دیتابیس/production/release:** بدون تغییر.
-- **مستندات:** audit، architecture، risk، roadmap و progress در شاخهٔ نشست ایجاد/به‌روزرسانی شدند.
-- **commit/push:** انجام نشده.
+- **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
+- **مستندات پیگیری فعلی:** `docs/audit/ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md`, hash verification و اصلاح branch/status در گزارش‌ها، decision log و implementation gate در `arena/147f6490-hesabyar2` تهیه شد؛ این تغییرات پس از PR #1 هستند و فعلاً commit/push نشده‌اند.
 
 ## گیت بعدی
 
-پیش از source changes، مالک باید `rahmaniho/KarenYar` را به‌عنوان source رسمی تأیید کند و تصمیم دهد چگونه کار روی کد با محدودیت شاخهٔ فعال `arena/39118004-hesabyar2` سازگار شود. پس از آن، مرحلهٔ بعدی جداگانه و با approval، اصلاح ریسک‌های مالی/امنیتی کوچک و reviewable است؛ نه migration بزرگ یا deployment.
+پیش از source changes، مالک باید `rahmaniho/KarenYar` را به‌عنوان source رسمی تأیید کند و تصمیم دهد چگونه کار روی کد با محدودیت شاخهٔ فعال `arena/147f6490-hesabyar2` سازگار شود. پس از آن، مرحلهٔ بعدی جداگانه و با approval، تغییر کوچک و reviewable است؛ نه migration بزرگ یا deployment.

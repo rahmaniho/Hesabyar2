@@ -42,8 +42,39 @@ GitHub Pages settings API در زمان ممیزی `html_url=http://hesabyar.kar
 
 `pages.yml` `pages:write` و `id-token:write` را workflow-wide اعلام می‌کند، در حالی‌که build job `npm ci` و rate-update script اجرا می‌کند. دسترسی‌ها را تا حد ممکن به deploy job محدود کنید؛ نیاز `configure-pages` با enablement باید جداگانه لحاظ شود.
 
+### SEC-09 — Admin WebView می‌تواند session/DOM state را روی دستگاه نگه دارد (متوسط؛ NEEDS_VERIFICATION)
+
+`admin-android`، `setDomStorageEnabled(true)`, cookie acceptance و `CookieManager.flush()` روی pause را فعال می‌کند؛ در `MainActivity` پاک‌سازی صریح cookie/WebStorage در logout/destroy مشاهده نشد. `LOAD_NO_CACHE` جایگزین پاک‌سازی DOM/cookie نیست. این به‌تنهایی ثابت نمی‌کند session حساس روی staging باقی می‌ماند: server cookie attributes, expiration, logout/revocation و محتوای dashboard زنده بررسی نشدند. جزئیات در [ممیزی Admin Android](ADMIN_ANDROID_AUDIT.md).
+
+### SEC-10 — Debug Admin APK عمومی، staging-only بودنش باید تأیید شود (متوسط)
+
+Workflow debug APK را به GitHub prerelease می‌فرستد و README، target را staging می‌داند. Public distribution باید فقط برای testerهای مجاز باشد؛ Directory Privacy/download secrecy جای server-side authorization نیست. وجود/عدم وجود دادهٔ production روی staging و protection زنده `NEEDS_VERIFICATION` است.
+
+### SEC-11 — staging admin deploy in-place است و session hardening نیازمند verification است
+
+`deploy-app.php` پس از hash-pinned download، archive را مستقیماً روی target `app` extract می‌کند؛ atomic swap/rollback مشاهده نشد. ZIP filename checks دفاع پایه دارند اما size/symlink limits در قطعهٔ بررسی‌شده دیده نشد. Admin PHP فایل‌های session را با `Secure`/`HttpOnly`/`SameSite=Strict`, CSRF و rate limit پیکربندی می‌کنند؛ با این حال `session_regenerate_id()` در فایل‌های دیده‌شده نبود و bootstrap خارج repo است. این‌ها فقط static finding برای staging code هستند؛ runtime exposure یا production effect اثبات نشده. جزئیات: [ممیزی Admin PHP staging](ADMIN_SERVER_AUDIT.md).
+
+### SEC-12 — FileProvider external root is broader than observed export flow (کم؛ hardening)
+
+`android/app/src/main/res/xml/file_paths.xml` includes `external-path` and `cache-path` roots at `.`; provider itself is non-exported and requires URI grants. Source search found only `saveBlob`, which writes to `Directory.Cache` and shares that URI; no app call-site using `external-path` was found. Plugin/runtime uses and final APK URI grants remain unverified, so this is a narrowing/hardening item—not a proven leak. See [Android platform audit](ANDROID_PLATFORM_AUDIT.md).
+
+### SEC-13 — Android merged manifest/network policy needs artifact verification
+
+App source manifest has `targetSdk=36` from Gradle but no explicit `usesCleartextTraffic`/`networkSecurityConfig`; Capacitor local scheme is HTTPS. Plugin manifest merges and the final APK were not inspected, so this is a hardening/verification item—not evidence of HTTP requests. Verify merged permissions, exported components, and cleartext block on a release APK.
+
+### SEC-14 — Backup/CSV/PDF export files remain in app cache without explicit cleanup (متوسط؛ نیازمند policy)
+
+`src/core/utils/file-save.ts` writes sensitive exports to `Directory.Cache`, opens the Share sheet, and does not call `Filesystem.deleteFile` after normal return; the catch path explicitly leaves the cache file. Call-sites include full JSON backup, CSV, payroll PDF and invoice PDF. The existing `file-save.test.ts` covers only the web download path; no native cleanup test was found. App-private cache/`allowBackup=false` reduce exposure to other apps/OS backup but do not encrypt the file or guarantee prompt deletion. Define retention and user messaging; do not delete the file before the receiving share target has consumed it. See [Android platform audit](ANDROID_PLATFORM_AUDIT.md).
+
+### SEC-15 — خطای راه‌اندازی scanner ممکن است stream دوربین را تا بسته‌شدن dialog فعال نگه دارد (کم تا متوسط؛ source finding)
+
+در `BarcodeScannerDialog.tsx:70-103`، پس از موفق‌شدن `getUserMedia`، stream به ref داده می‌شود؛ اگر `video.play()` یا ساخت `BarcodeDetector` شکست بخورد، `catch` فقط status را `denied` می‌کند و trackها را متوقف نمی‌کند. مسیر `stop()` برای scan موفق و effect cleanup هنگام close/unmount هست، اما error state خود dialog آن cleanup را اجرا نمی‌کند. این فقط وقتی مطرح است که کاربر scanner را باز و camera permission را داده باشد؛ شواهدی از فعال‌سازی بدون رضایت، رفتار live یا رخداد واقعی وجود ندارد. تست component/device در source ممیزی‌شده پیدا نشد.
+
+**پیشنهاد:** stop/clear را در تمام error paths بعد از دریافت stream تضمین کنید، و error راه‌اندازی را از permission denial جدا کنید. مجاز برای بررسی بعدی: `video.play()`/BarcodeDetector failure، close/unmount، deny/revoke و خاموش‌شدن camera indicator. جزئیات: [Android platform audit](ANDROID_PLATFORM_AUDIT.md).
+
 ## کنترل‌های مثبت مشاهده‌شده
 
+- WebChromeClient پین‌شدهٔ Capacitor 8.5.3، WebView `VIDEO_CAPTURE` را به مجوز runtime دوربین وصل می‌کند؛ این source evidence است، نه اثبات آزمون روی device.
 - WebCrypto Ed25519 client verifier، public key pin option و device key identity برای مسیر server license وجود دارند.
 - endpointهای PHP staging دارای `Cache-Control: no-store` و روش POST هستند؛ پنل staging در کد به environment guard و CSRF/session متکی است. production deployment تأیید نشد.
 - backup import پیش از clear، ساختار و برخی رابطه‌ها را validate می‌کند؛ CSV writer تست formula injection دارد.
@@ -54,6 +85,7 @@ GitHub Pages settings API در زمان ممیزی `html_url=http://hesabyar.kar
 - آیا production از server license path استفاده می‌کند؟ issuer private key و envها کجا نگهداری می‌شوند؟
 - HTTPS، CSP، headers، access logs، admin protection و rate limits روی host واقعی.
 - backup encryption، دستگاه گم‌شده، XSS/local access و بازیابی PIN.
+- Android barcode scanner: runtime camera permission، WebView `BarcodeDetector`, deny/revoke و توقف stream بعد از setup failure.
 - امضا/لغو مجوز و compatibility با مشتریانی که KS1 مادام‌العمر خریده‌اند.
 - triage advisories و برنامهٔ ارتقای کم‌ریسک با تست رگرسیون.
 
