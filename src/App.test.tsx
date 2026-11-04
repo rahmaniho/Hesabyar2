@@ -66,6 +66,32 @@ describe('Hesabyar UI prototype', () => {
     expect(within(dialog).getByText('این اطلاعات ساختگی است و برای نمایش سابقهٔ واقعی یا محاسبهٔ مالی استفاده نمی‌شود.')).toBeTruthy();
   });
 
+  it('opens read-only sample inventory details from the inventory list', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'کالا و انبار' }));
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات قهوهٔ اسپرسو ۲۵۰ گرمی' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByRole('heading', { name: 'جزئیات کالای نمونه' })).toBeTruthy();
+    expect(within(dialog).getByText('قهوهٔ اسپرسو ۲۵۰ گرمی')).toBeTruthy();
+    expect(within(dialog).getByText('SKU-1024')).toBeTruthy();
+    expect(within(dialog).getByText('۸۴ عدد')).toBeTruthy();
+    expect(within(dialog).getByText('۴۸۵,۰۰۰ تومان')).toBeTruthy();
+    expect(within(dialog).getByText('این مشخصات ساختگی‌اند؛ قیمت یا موجودی تغییر نمی‌کند و هیچ سفارش، خرید یا فروشی ثبت نمی‌شود.')).toBeTruthy();
+    expect(within(dialog).queryByRole('button', { name: /ویرایش|حذف|خرید|فروش|ثبت/ })).toBeNull();
+  });
+
+  it('opens the sample item detail directly from the low-stock dashboard list', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش چای ممتاز بهاره' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByRole('heading', { name: 'جزئیات کالای نمونه' })).toBeTruthy();
+    expect(within(dialog).getByText('چای ممتاز بهاره')).toBeTruthy();
+    expect(within(dialog).getByText('SKU-1088')).toBeTruthy();
+    expect(within(dialog).getByText('۷ عدد')).toBeTruthy();
+  });
+
   it('filters the customer sample list by status and restores the full list', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
