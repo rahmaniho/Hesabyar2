@@ -382,7 +382,7 @@ button:disabled { cursor: not-allowed; }
 
 /* Modal, toast and responsive behavior */
 .modal-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(14, 38, 33, .38); backdrop-filter: blur(4px); animation: fade-in .16s ease-out; }
-.preview-modal { position: relative; width: min(100%, 430px); padding: 25px; border: 1px solid rgba(238, 246, 242, .95); border-radius: 19px; background: #fff; box-shadow: 0 24px 80px rgba(10, 35, 29, .24); animation: modal-in .18s ease-out; }
+.preview-modal { position: relative; width: min(100%, 430px); max-height: calc(100dvh - 36px); overflow-y: auto; padding: 25px; border: 1px solid rgba(238, 246, 242, .95); border-radius: 19px; background: #fff; box-shadow: 0 24px 80px rgba(10, 35, 29, .24); overscroll-behavior: contain; animation: modal-in .18s ease-out; }
 .modal-close { position: absolute; top: 13px; left: 13px; display: grid; width: 30px; height: 30px; place-items: center; color: #8c9b96; border: 1px solid #e9efec; border-radius: 9px; background: #fff; cursor: pointer; }
 .modal-close:hover { color: #365b50; background: #f6faf8; }
 .modal-symbol { display: grid; width: 43px; height: 43px; place-items: center; margin-bottom: 16px; color: #288b74; border-radius: 14px; background: #e9f6f0; }
@@ -391,6 +391,17 @@ button:disabled { cursor: not-allowed; }
 .preview-modal > p { margin: 0; color: #7f9189; font-size: 10px; line-height: 2; }
 .sale-preview-fields { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
 .customer-preview-form { display: flex; flex-direction: column; gap: 7px; margin-top: 17px; }
+.customer-detail-card { display: flex; flex-direction: column; gap: 10px; margin-top: 17px; }
+.customer-detail-heading { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 11px; border: 1px solid #edf2ef; border-radius: 11px; background: #fbfdfc; }
+.customer-detail-heading .table-avatar { width: 38px; height: 38px; }
+.customer-detail-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 3px; }
+.customer-detail-copy strong { overflow: hidden; color: #36574d; font-size: 10px; text-overflow: ellipsis; }
+.customer-detail-copy small { overflow: hidden; color: #97a59f; font-size: 8px; text-overflow: ellipsis; }
+.customer-detail-list { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.customer-detail-list > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 10px; border: 1px solid #edf2ef; border-radius: 8px; }
+.customer-detail-list dt { color: #889992; font-size: 8px; }
+.customer-detail-list dd { margin: 0; color: #47665b; font-size: 9px; font-weight: 600; }
+.customer-detail-note { margin: 0; padding: 9px 10px; color: #887345; border: 1px solid #f1e8cf; border-radius: 8px; background: #fffbf1; font-size: 8px; line-height: 1.8; }
 .modal-input-label { margin-top: 3px; color: #667e75; font-size: 9px; font-weight: 600; }
 .customer-preview-form input { width: 100%; min-height: 39px; padding: 0 10px; color: #36564b; border: 1px solid #e5ede9; border-radius: 9px; background: #fbfdfc; font-size: 10px; }
 .customer-preview-form input::placeholder { color: #b0bcb7; }

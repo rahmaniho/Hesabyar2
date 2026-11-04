@@ -1,7 +1,7 @@
 # گیت آمادگی برای اولین تغییر اجرایی
 
 **وضعیت:** پیشنهاد/چک‌لیست و architecture کلی هنوز approval نشده است؛ این سند خود مجوز تغییر نیست. greenfield shell/UI mock در این شاخه فقط به‌واسطهٔ scope صریح کاربر مجاز است؛ تغییرات مالی/داده/منبع اصلی همچنان approval جدا می‌خواهند.
-**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ active فعلی `arena/49664ebd-hesabyar2` در `Hesabyar2` و merge commit پایهٔ PR #5 برابر `a8e55e1e4cc8f17ba6f8b1a9b3452f7b12d28d06` است. کاربر فقط greenfield shell/UI prototype و تعامل‌های mock-only را در این repo مجاز کرده است.
+**Baseline شواهد:** `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ active فعلی `arena/b19a8f51-hesabyar2` در `Hesabyar2` و merge commit پایهٔ PR #6 برابر `6b71188fb5dfa894334d9f053ef00b4475dc4e8f` است. کاربر فقط greenfield shell/UI prototype و تعامل‌های mock-only را در این repo مجاز کرده است.
 
 ## چرا این گیت لازم است؟
 
@@ -11,7 +11,7 @@
 
 | Gate | مالک/نقش لازم | تصمیم یا evidence موردنیاز | وضعیت |
 |---|---|---|---|
-| G-01 — Canonical source | product/repository owner | برای توسعهٔ فراتر از greenfield UI mock، آیا `KarenYar` منبع رسمی Hesabyar 2.0 است و مسیر کار چگونه با شاخهٔ فعال Arena `arena/49664ebd-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
+| G-01 — Canonical source | product/repository owner | برای توسعهٔ فراتر از greenfield UI mock، آیا `KarenYar` منبع رسمی Hesabyar 2.0 است و مسیر کار چگونه با شاخهٔ فعال Arena `arena/b19a8f51-hesabyar2` سازگار می‌شود؟ | `NEEDS_OWNER_CONFIRMATION` |
 | G-02 — Scope و baseline پشتیبانی | product/release owner | کدام release و کدام editionها باید حفظ شوند؟ آیا Android 1.4.2 صرفاً beta است یا انتشار عمومی مدنظر است؟ | `NEEDS_VERIFICATION` |
 | G-03 — پول و قواعد ثبت | accounting/domain owner | سیاست تومان/ریال، remainder ورودی، rounding، تاریخ مؤثر، اصلاح/ابطال فاکتور، refund و بستن دوره چیست؟ | `NEEDS_DOMAIN_APPROVAL` |
 | G-04 — سازگاری و داده | database/product owner | fixture ناشناس از backup/versionهای پشتیبانی‌شده، سناریوی restore و plan rollback کجاست؟ آیا برای legacy voidها source record قابل اتکا هست؟ | `NEEDS_VERIFICATION` |
@@ -70,5 +70,5 @@
 
 - WP-0 تا WP-3: `NOT STARTED`؛ greenfield UI shell prototype مجازشده خارج از این work packages است و فقط mock data دارد.
 - در prototype هیچ منطق مالی، workflow، DB، license، production، Android artifact یا release اضافه/تغییر نشده است.
-- گام مجاز: ادامهٔ UX/UI prototype و تعامل‌های mock در شاخهٔ `arena/49664ebd-hesabyar2`; افزودن مشتری فقط تا refresh در حافظه می‌ماند.
+- گام مجاز: ادامهٔ UX/UI prototype و تعامل‌های mock در شاخهٔ `arena/b19a8f51-hesabyar2`; افزودن مشتری و بازکردن جزئیات نمایشی آن فقط تا refresh در حافظه می‌ماند.
 - پیش از ورود به source `KarenYar`، ذخیره‌سازی پایدار، قواعد مالی، backend/licensing یا release، gateهای مربوط باید جداگانه تأیید شوند.
