@@ -67,7 +67,7 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را برای `Hesabyar2` مجاز کرده؛ PRهای #5 تا #10 آن را به `main` افزودند و شاخهٔ فعال `arena/a1600dfc-hesabyar2` تعامل‌های mock-only را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را برای `Hesabyar2` مجاز کرده؛ PRهای #5 تا #10 آن را به `main` افزودند و PR #11 روی شاخهٔ فعال `arena/a1600dfc-hesabyar2` جزئیات کالای نمونه و فیلترهای وضعیت mock را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 

@@ -111,14 +111,14 @@ button:disabled { cursor: not-allowed; }
 .range-menu button:hover, .range-menu button.selected { color: var(--brand-dark); background: #edf7f3; }
 .range-menu button.selected { font-weight: 600; }
 .range-menu p { margin: 5px 8px 3px; padding-top: 8px; color: #9baaa5; border-top: 1px solid #eef2f0; font-size: 8px; }
-.customer-filter-control { position: relative; }
-.customer-filter-control > .button.is-open { color: var(--brand-dark); border-color: #d2e8df; background: #f7fbf9; }
+.record-filter-control { position: relative; }
+.record-filter-control > .button.is-open { color: var(--brand-dark); border-color: #d2e8df; background: #f7fbf9; }
 .filter-active-dot { width: 6px; height: 6px; border-radius: 50%; background: #258c73; }
-.customer-filter-menu { width: 205px; }
-.customer-filter-menu button { display: flex; width: 100%; align-items: center; justify-content: space-between; min-height: 35px; padding: 0 9px; color: #5f756e; border: 0; border-radius: 8px; background: transparent; font-size: 10px; text-align: right; cursor: pointer; }
-.customer-filter-menu button:hover, .customer-filter-menu button.selected { color: var(--brand-dark); background: #edf7f3; }
-.customer-filter-menu button.selected { font-weight: 600; }
-.customer-filter-menu p { margin: 5px 8px 3px; padding-top: 8px; color: #9baaa5; border-top: 1px solid #eef2f0; font-size: 8px; line-height: 1.7; }
+.record-filter-menu { width: 205px; }
+.record-filter-menu button { display: flex; width: 100%; align-items: center; justify-content: space-between; min-height: 35px; padding: 0 9px; color: #5f756e; border: 0; border-radius: 8px; background: transparent; font-size: 10px; text-align: right; cursor: pointer; }
+.record-filter-menu button:hover, .record-filter-menu button.selected { color: var(--brand-dark); background: #edf7f3; }
+.record-filter-menu button.selected { font-weight: 600; }
+.record-filter-menu p { margin: 5px 8px 3px; padding-top: 8px; color: #9baaa5; border-top: 1px solid #eef2f0; font-size: 8px; line-height: 1.7; }
 .notifications-menu { right: auto; left: 0; width: 286px; padding: 0; overflow: hidden; }
 .popover-heading { display: flex; align-items: center; justify-content: space-between; padding: 14px 15px 11px; border-bottom: 1px solid #eef2f0; }
 .popover-heading strong { color: #28453e; font-size: 11px; }

@@ -46,7 +46,6 @@ const customerStatusOptions = [
   { value: 'مانده دارد', label: 'مانده دارد' },
   { value: 'نمونه', label: 'نمونه‌های موقت' },
 ] as const;
-type CustomerStatusFilter = typeof customerStatusOptions[number]['value'];
 
 interface NavItem {
   id: PageId;
@@ -191,6 +190,33 @@ const recordConfigs: Record<'sales' | 'activity' | 'customers' | 'inventory', Re
       { id: '5', initials: 'ش', primary: 'شکلات تلخ ۷۰٪', secondary: 'محصول بسته‌بندی', values: ['SKU-1452', 'تنقلات', '۹ عدد', '۱۸۵,۰۰۰ تومان'], status: 'رو به اتمام', tone: 'warning', avatarTone: 3 },
     ],
   },
+};
+
+const recordStatusOptions: Record<keyof typeof recordConfigs, readonly { value: string; label: string }[]> = {
+  sales: [
+    { value: 'all', label: 'همهٔ فاکتورها' },
+    { value: 'تسویه‌شده', label: 'تسویه‌شده' },
+    { value: 'در انتظار', label: 'در انتظار پرداخت' },
+    { value: 'پیش‌نویس', label: 'پیش‌نویس' },
+  ],
+  activity: [
+    { value: 'all', label: 'همهٔ گردش‌ها' },
+    { value: 'دریافت', label: 'دریافت‌ها' },
+    { value: 'پرداخت', label: 'پرداخت‌ها' },
+  ],
+  customers: customerStatusOptions,
+  inventory: [
+    { value: 'all', label: 'همهٔ کالاها' },
+    { value: 'موجود', label: 'موجود' },
+    { value: 'رو به اتمام', label: 'رو به اتمام' },
+  ],
+};
+
+const recordFilterLabels: Record<keyof typeof recordConfigs, string> = {
+  sales: 'فاکتورها',
+  activity: 'گردش‌ها',
+  customers: 'مشتریان',
+  inventory: 'کالاها',
 };
 
 const activityItems = [
@@ -763,26 +789,27 @@ function DataTable({ rows, columns, query, compact = false, onRowSelect }: { row
 function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, onInvoiceSelect, onInventorySelect }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[]; onCustomerSelect?: (row: DataRow) => void; onInvoiceSelect?: (row: DataRow) => void; onInventorySelect?: (row: DataRow) => void }) {
   const config = recordConfigs[pageId];
   const rows = rowsOverride ?? config.rows;
-  const [customerStatusFilter, setCustomerStatusFilter] = useState<CustomerStatusFilter>('all');
-  const [customerFilterOpen, setCustomerFilterOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilterOpen, setStatusFilterOpen] = useState(false);
   const filterControlRef = useRef<HTMLDivElement>(null);
-  const visibleRows = pageId === 'customers' && customerStatusFilter !== 'all'
-    ? rows.filter((row) => row.status === customerStatusFilter)
-    : rows;
-  const selectedStatusLabel = customerStatusOptions.find((option) => option.value === customerStatusFilter)?.label ?? 'همهٔ مشتریان';
+  const filterOptions = recordStatusOptions[pageId];
+  const filterLabel = recordFilterLabels[pageId];
+  const visibleRows = statusFilter === 'all' ? rows : rows.filter((row) => row.status === statusFilter);
+  const selectedStatusLabel = filterOptions.find((option) => option.value === statusFilter)?.label ?? filterOptions[0].label;
   const Icon = pageId === 'sales' ? Receipt : pageId === 'activity' ? CreditCard : pageId === 'customers' ? Users : Package;
 
   useEffect(() => {
-    setCustomerFilterOpen(false);
+    setStatusFilterOpen(false);
+    setStatusFilter('all');
   }, [pageId]);
 
   useEffect(() => {
-    if (!customerFilterOpen) return;
+    if (!statusFilterOpen) return;
     const closeOnOutsideClick = (event: MouseEvent) => {
-      if (!filterControlRef.current?.contains(event.target as Node)) setCustomerFilterOpen(false);
+      if (!filterControlRef.current?.contains(event.target as Node)) setStatusFilterOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setCustomerFilterOpen(false);
+      if (event.key === 'Escape') setStatusFilterOpen(false);
     };
     document.addEventListener('mousedown', closeOnOutsideClick);
     window.addEventListener('keydown', closeOnEscape);
@@ -790,7 +817,7 @@ function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, 
       document.removeEventListener('mousedown', closeOnOutsideClick);
       window.removeEventListener('keydown', closeOnEscape);
     };
-  }, [customerFilterOpen]);
+  }, [statusFilterOpen]);
 
   return (
     <section className="workspace-page">
@@ -807,23 +834,21 @@ function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, 
         <div className="card-heading records-heading">
           <div><span className="section-kicker">فهرست نمونه</span><h2>{config.title}</h2></div>
           <div className="records-toolbar">
-            {pageId === 'customers' ? (
-              <div className="customer-filter-control" ref={filterControlRef}>
-                <button type="button" className={`button button-light ${customerFilterOpen ? 'is-open' : ''}`} aria-label={`فیلتر مشتریان: ${selectedStatusLabel}`} aria-expanded={customerFilterOpen} onClick={() => setCustomerFilterOpen((open) => !open)}>
-                  <Filter size={16} /><span>فیلتر</span>{customerStatusFilter !== 'all' && <span className="filter-active-dot" aria-hidden="true" />}
-                </button>
-                {customerFilterOpen && (
-                  <div className="floating-menu customer-filter-menu" role="group" aria-label="فیلتر مشتریان بر اساس وضعیت">
-                    {customerStatusOptions.map((option) => (
-                      <button key={option.value} type="button" className={customerStatusFilter === option.value ? 'selected' : ''} aria-pressed={customerStatusFilter === option.value} onClick={() => { setCustomerStatusFilter(option.value); setCustomerFilterOpen(false); }}>
-                        <span>{option.label}</span>{customerStatusFilter === option.value && <Check size={15} />}
-                      </button>
-                    ))}
-                    <p>فقط ردیف‌های نمایشی بر اساس وضعیت فیلتر می‌شوند.</p>
-                  </div>
-                )}
-              </div>
-            ) : <button type="button" className="button button-light" onClick={() => onAction('generic')}><Filter size={16} />فیلتر</button>}
+            <div className="record-filter-control" ref={filterControlRef}>
+              <button type="button" className={`button button-light ${statusFilterOpen ? 'is-open' : ''}`} aria-label={`فیلتر ${filterLabel}: ${selectedStatusLabel}`} aria-expanded={statusFilterOpen} onClick={() => setStatusFilterOpen((open) => !open)}>
+                <Filter size={16} /><span>فیلتر</span>{statusFilter !== 'all' && <span className="filter-active-dot" aria-hidden="true" />}
+              </button>
+              {statusFilterOpen && (
+                <div className="floating-menu record-filter-menu" role="group" aria-label={`فیلتر ${filterLabel} بر اساس وضعیت`}>
+                  {filterOptions.map((option) => (
+                    <button key={option.value} type="button" className={statusFilter === option.value ? 'selected' : ''} aria-pressed={statusFilter === option.value} onClick={() => { setStatusFilter(option.value); setStatusFilterOpen(false); }}>
+                      <span>{option.label}</span>{statusFilter === option.value && <Check size={15} />}
+                    </button>
+                  ))}
+                  <p>فقط ردیف‌های نمایشی بر اساس وضعیت فیلتر می‌شوند.</p>
+                </div>
+              )}
+            </div>
             <button type="button" className="button button-light" onClick={() => onAction('generic')}><Download size={16} />خروجی</button>
             <button type="button" className="quiet-icon-button" aria-label="گزینه‌های فهرست" onClick={() => onAction('help')}><MoreHorizontal size={19} /></button>
           </div>

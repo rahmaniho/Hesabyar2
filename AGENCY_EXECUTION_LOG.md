@@ -3,7 +3,7 @@
 **آخرین به‌روزرسانی:** 2026-11-05 local
 **شاخهٔ نشست فعلی:** `arena/a1600dfc-hesabyar2` (`active`)، بر پایهٔ merge commit PR #10: `88f3fe6456b80c5e1f584112573fbb17744a37aa`
 **مخزن همین نشست:** `rahmaniho/Hesabyar2`
-**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7)، [#8](https://github.com/rahmaniho/Hesabyar2/pull/8)، [#9](https://github.com/rahmaniho/Hesabyar2/pull/9) و [#10](https://github.com/rahmaniho/Hesabyar2/pull/10) در `main` ادغام شدند؛ آخرین merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` است.
+**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7)، [#8](https://github.com/rahmaniho/Hesabyar2/pull/8)، [#9](https://github.com/rahmaniho/Hesabyar2/pull/9) و [#10](https://github.com/rahmaniho/Hesabyar2/pull/10) در `main` ادغام شدند؛ PR [#11](https://github.com/rahmaniho/Hesabyar2/pull/11) برای UI mock باز است. آخرین merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` است.
 **مخزن برنامهٔ شناسایی‌شده:** `rahmaniho/KarenYar`، ممیزی read-only روی `main` commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
 
 ## تاریخچهٔ اجرا
@@ -39,15 +39,15 @@
 
 ## محدودیت‌های قطعی
 
-- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 greenfield UI shell، PR #6 فرم موقت مشتری، PR #7 جزئیات فقط‌خواندنی مشتری، PR #8 فیلتر وضعیت مشتری، PR #9 نمودار وابسته به بازهٔ انتخابی و PR #10 جزئیات فقط‌خواندنی فاکتور را به `main` افزودند. PR #10 با merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` ادغام شد؛ شاخهٔ فعال فعلی `arena/a1600dfc-hesabyar2` از همین commit آغاز می‌شود. `main` اکنون UI mock دارد ولی هنوز source کامل/منطق محصول ندارد؛ `KarenYar` همچنان source candidate جدا و تأییدنشده است.
+- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. PR #10 با merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` ادغام شد؛ PR #11 برای ادامهٔ همین prototype باز است؛ شاخهٔ فعال `arena/a1600dfc-hesabyar2` از commit PR #10 آغاز می‌شود. `main` اکنون UI mock دارد ولی هنوز source کامل/منطق محصول ندارد؛ `KarenYar` همچنان source candidate جدا و تأییدنشده است.
 - `KarenYar` منبع بسیار محتمل و مستندشده است، ولی هنوز تأیید کتبی مالک برای اینکه همین source مبنای Hesabyar 2.0 باشد لازم است.
 - دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
 
 ## وضعیت تغییرات
 
-- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ فعال `arena/a1600dfc-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل موقت مشتری، جزئیات فقط‌خواندنی مشتری/فاکتور/کالا، فهرست اقلام فاکتور ثابت و جزئیات کالا از جدول/کارت کم‌موجودی. منطق مالی، محاسبهٔ موجودی یا persistence وجود ندارد.
-- **اعتبارسنجی prototype:** ۱۲ UI tests، typecheck و build موفق؛ `npm audit` بدون آسیب‌پذیری گزارش کرد. E2E مرورگر در این مرحله اجرا نشده است.
+- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ فعال `arena/a1600dfc-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل موقت مشتری، فیلترهای وضعیت mock برای فاکتور/گردش/مشتری/کالا، و جزئیات فقط‌خواندنی مشتری/فاکتور/کالا. منطق مالی، محاسبهٔ موجودی یا persistence وجود ندارد.
+- **اعتبارسنجی prototype:** ۱۵ UI tests، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و ماژول را با HTTP 200 پاسخ می‌دهد. E2E مرورگر در این مرحله اجرا نشده است.
 - **دیتابیس/production/release:** بدون تغییر؛ هیچ API، license، migration، APK یا deployment اجرا/تغییر نشده.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
 - **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. شاخهٔ فعلی `arena/a1600dfc-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.
@@ -55,4 +55,4 @@
 
 ## گیت بعدی
 
-ادامهٔ UI prototype و mock interactions در شاخهٔ فعال `arena/a1600dfc-hesabyar2` مجاز است. این شاخه جزئیات فقط‌خواندنی کالای نمونه را از جدول انبار و داشبورد به prototype می‌افزاید. پیش از واردکردن یا ویرایش source اصلی، ذخیره‌سازی پایدار، منطق مالی، backend, licensing, migration یا release، مالک باید `rahmaniho/KarenYar` و مسیر توسعه را جداگانه تأیید کند؛ اگر برای این تصمیم‌ها ورودی لازم شد، مرحله‌به‌مرحله از کاربر خواسته می‌شود.
+ادامهٔ UI prototype و mock interactions در شاخهٔ فعال `arena/a1600dfc-hesabyar2` مجاز است. این شاخه فیلتر وضعیت mock را برای فاکتور، گردش، مشتری و کالا تکمیل می‌کند و جزئیات فقط‌خواندنی کالای نمونه را از جدول انبار و داشبورد نشان می‌دهد. پیش از واردکردن یا ویرایش source اصلی، ذخیره‌سازی پایدار، منطق مالی، backend, licensing, migration یا release، مالک باید `rahmaniho/KarenYar` و مسیر توسعه را جداگانه تأیید کند؛ اگر برای این تصمیم‌ها ورودی لازم شد، مرحله‌به‌مرحله از کاربر خواسته می‌شود.

@@ -6,11 +6,11 @@
 
 | محدوده | وضعیت | شواهد |
 |---|---|---|
-| مخزن توسعهٔ محصول | `GREENFIELD PROTOTYPE` | PRهای #5 تا #10، UI prototype و تعامل‌های mock را به `Hesabyar2/main` افزودند؛ شاخهٔ فعال فعلی `arena/a1600dfc-hesabyar2` است |
+| مخزن توسعهٔ محصول | `GREENFIELD PROTOTYPE` | PRهای #5 تا #10، UI prototype و تعامل‌های mock را به `Hesabyar2/main` افزودند؛ PR #11 برای جزئیات کالا و فیلترهای فهرست باز است؛ شاخهٔ فعال `arena/a1600dfc-hesabyar2` است |
 | source رسمی Hesabyar 2.0 | `OWNER CONFIRMATION PENDING` | `KarenYar` source فعلی محتمل است، اما مالک آن را برای ادامهٔ Hesabyar 2.0 تأیید نکرده؛ source آن import/ویرایش نشده |
-| UI prototype | `IN_PROGRESS / MOCK ONLY` | RTL dashboard و صفحه‌های نمونه؛ افزودن مشتری در حافظهٔ موقت، فیلتر وضعیت و سری‌های chart ساختگی؛ جزئیات مشتری/فاکتور/کالا فقط‌خواندنی؛ اقلام، موجودی و قیمت نمونه ثابت‌اند و هیچ مبلغ یا موجودی محاسبه/تغییر نمی‌شود |
+| UI prototype | `IN_PROGRESS / MOCK ONLY` | RTL dashboard و صفحه‌های نمونه؛ افزودن مشتری در حافظهٔ موقت، فیلتر وضعیت mock برای فاکتور/گردش/مشتری/کالا، سری‌های chart ساختگی، و جزئیات فقط‌خواندنی مشتری/فاکتور/کالا؛ هیچ مبلغ یا موجودی محاسبه/تغییر نمی‌شود |
 | داده و حریم خصوصی prototype | `NO PERSISTENCE / NO API` | کد اجرایی app از localStorage/sessionStorage/IndexedDB/fetch/backend استفاده نمی‌کند؛ تست فقط نبودن write به localStorage را assert می‌کند؛ لطفاً اطلاعات واقعی مشتری یا فاکتور وارد نکنید |
-| تست prototype | `PASS` | ۱۲ تست UI؛ شامل جزئیات فقط‌خواندنی فاکتور/کالا، بازشدن جزئیات کالا از جدول انبار و داشبورد، فیلتر مشتری و افزودن مشتری موقت |
+| تست prototype | `PASS` | ۱۵ تست UI؛ شامل جزئیات فقط‌خواندنی فاکتور/کالا، بازشدن جزئیات کالا از جدول انبار و داشبورد، فیلتر وضعیت چهار فهرست و افزودن مشتری موقت |
 | typecheck/build prototype | `PASS` | `npm run typecheck` و `npm run build` موفق؛ `dist/` در Git نادیده گرفته می‌شود |
 | dependency audit prototype | `PASS` | `npm audit`: صفر vulnerability |
 | ممیزی source قدیمی `KarenYar` | `COMPLETED_FOR_SNAPSHOT` | snapshot read-only `KarenYar/main@d41ca291...`؛ 369 unit tests، typecheck/lint/build و 35 release tests مربوط به prototype فعلی نیستند |

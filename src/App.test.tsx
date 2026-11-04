@@ -109,6 +109,55 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByText('مینا رضایی')).toBeTruthy();
   });
 
+  it('filters sample invoices by payment status and restores the full list', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر فاکتورها: همهٔ فاکتورها' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر فاکتورها بر اساس وضعیت' })).getByRole('button', { name: 'در انتظار پرداخت' }));
+
+    expect(screen.getByText('مینا رضایی')).toBeTruthy();
+    expect(screen.queryByText('فروشگاه آوید')).toBeNull();
+    expect(screen.getByText('نمایش ۱ مورد نمونه')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر فاکتورها: در انتظار پرداخت' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر فاکتورها بر اساس وضعیت' })).getByRole('button', { name: 'همهٔ فاکتورها' }));
+    expect(screen.getByText('فروشگاه آوید')).toBeTruthy();
+  });
+
+  it('filters sample activity by direction and restores the full list', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر گردش‌ها: همهٔ گردش‌ها' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر گردش‌ها بر اساس وضعیت' })).getByRole('button', { name: 'پرداخت‌ها' }));
+
+    expect(screen.getByText('خرید ملزومات')).toBeTruthy();
+    expect(screen.getByText('پرداخت قبض')).toBeTruthy();
+    expect(screen.queryByText('واریز مشتری')).toBeNull();
+    expect(screen.getByText('نمایش ۲ مورد نمونه')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر گردش‌ها: پرداخت‌ها' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر گردش‌ها بر اساس وضعیت' })).getByRole('button', { name: 'همهٔ گردش‌ها' }));
+    expect(screen.getByText('واریز مشتری')).toBeTruthy();
+  });
+
+  it('filters sample inventory by stock status and restores the full list', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'کالا و انبار' }));
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر کالاها: همهٔ کالاها' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر کالاها بر اساس وضعیت' })).getByRole('button', { name: 'رو به اتمام' }));
+
+    expect(screen.getByText('چای ممتاز بهاره')).toBeTruthy();
+    expect(screen.getByText('دانهٔ قهوهٔ عربیکا')).toBeTruthy();
+    expect(screen.getByText('شکلات تلخ ۷۰٪')).toBeTruthy();
+    expect(screen.queryByText('لیوان سرامیکی سفید')).toBeNull();
+    expect(screen.getByText('نمایش ۳ مورد نمونه')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر کالاها: رو به اتمام' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر کالاها بر اساس وضعیت' })).getByRole('button', { name: 'همهٔ کالاها' }));
+    expect(screen.getByText('لیوان سرامیکی سفید')).toBeTruthy();
+    expect(screen.getByText('نمایش ۵ مورد نمونه')).toBeTruthy();
+  });
+
   it('adds a sample customer in page memory without writing to browser storage', () => {
     window.localStorage.clear();
     render(<App />);

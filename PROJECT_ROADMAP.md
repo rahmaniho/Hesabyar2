@@ -1,6 +1,6 @@
 # نقشهٔ راه Hesabyar 2.0
 
-**وضعیت:** بر پایهٔ ممیزی read-only `KarenYar` به‌روزرسانی شد؛ greenfield UI prototype پس از ادغام PRهای #5 تا #10 در `main` موجود است و در شاخهٔ فعال `arena/a1600dfc-hesabyar2` با تعامل‌های mock ادامه می‌یابد. معماری پیشنهادی در `docs/architecture/` هنوز نیازمند approval مالک است.
+**وضعیت:** بر پایهٔ ممیزی read-only `KarenYar` به‌روزرسانی شد؛ greenfield UI prototype پس از ادغام PRهای #5 تا #10 در `main` موجود است. PR #11 برای جزئیات کالا و فیلتر وضعیت mock باز است و در شاخهٔ فعال `arena/a1600dfc-hesabyar2` ادامه دارد. معماری پیشنهادی در `docs/architecture/` هنوز نیازمند approval مالک است.
 **تاریخ:** 2026-11-05
 
 | مرحله | هدف | وضعیت فعلی | گیت/معیار خروج |
@@ -15,13 +15,13 @@
 | M7 — Licensing/entitlements | مهاجرت امن بدون از دست‌دادن lifetime license | `PLANNED`; HMAC سمت client یک ریسک جاری است | سازگاری مشتریان و سرور/کلیدها تأیید شود |
 | M8 — Offline/synchronization | sync queue، idempotency و conflict strategy | `PLANNED`; فعلاً فقط offline single-device، نه مالی sync | معماری و آزمون conflict؛ بدون last-write-wins |
 | M9 — Persian documents/export | RTL، تقویم، PDF/print/CSV، در صورت نیاز XLSX | `PARTIALLY_COMPLETED`; PDF/CSV code موجود، XLSX/چاپ واقعی نامعلوم | browser/device matrix و پذیرش مالک |
-| M10 — UX modernization | تجربهٔ مستقل Personal/Business | `IN_PROGRESS / UI PROTOTYPE ONLY`؛ shell فارسی RTL، navigation و صفحه‌های mock در Hesabyar2 ساخته شده؛ افزودن مشتری در حافظهٔ موقت، فیلتر وضعیت، سری‌های نمودار ساختگی، و جزئیات فقط‌خواندنی مشتری/فاکتور/کالا با دادهٔ نمونه وجود دارند؛ موجودی و قیمت کالا محاسبه یا تغییر نمی‌شوند؛ مرز editionها و UX نهایی هنوز تصویب نشده | بازبینی UI و آزمون دسترس‌پذیری/اندازه‌ها؛ هیچ منطق مالی یا storage تا approval اضافه نشود |
+| M10 — UX modernization | تجربهٔ مستقل Personal/Business | `IN_PROGRESS / UI PROTOTYPE ONLY`؛ shell فارسی RTL، navigation و صفحه‌های mock در Hesabyar2 ساخته شده؛ افزودن مشتری در حافظهٔ موقت، فیلتر وضعیت mock در فهرست‌های فاکتور/گردش/مشتری/کالا، سری‌های نمودار ساختگی، و جزئیات فقط‌خواندنی مشتری/فاکتور/کالا با دادهٔ نمونه وجود دارند؛ موجودی و قیمت کالا محاسبه یا تغییر نمی‌شوند؛ مرز editionها و UX نهایی هنوز تصویب نشده | بازبینی UI و آزمون دسترس‌پذیری/اندازه‌ها؛ هیچ منطق مالی یا storage تا approval اضافه نشود |
 | M11 — Security/privacy hardening | local data, licensing, RBAC/tenant، HTTPS delivery، CI supply chain، Android FileProvider/Admin session/camera lifecycle/WebView debug and mixed-content policy | `PLANNED`; HMAC/data-at-rest و privilegeهای CI ریسک‌اند، Pages metadata با CNAME/HTTPS ناسازگار است و app/admin artifact/session زنده verify نشده | threat model، merged manifest/URI grant and host/session verification، CI permission/release gates، remediation plan و tests |
 | M12 — QA/performance | unit/integration/E2E/security/performance regression | `IN_PROGRESS`; unit/typecheck/lint/build/release tests در ممیزی محلی اجرا شدند، اما workflowهای دیده‌شده suite کامل را gate نمی‌کنند؛ E2E/browser، native export/cache cleanup، camera permission/setup-error/one-shot lifecycle، merged-manifest، debuggable/WebView-debug state، debug Actions artifactهای پیش از verifier، artifact-only `test-apk`، AAB verification، Admin signer/debuggable gate و production QA باز است؛ public test APK run `41813070224` از همان source tree verifier را گذراند | PR CI/required checks، device/artifact review، مستقل review و تمام acceptance evidence |
 | M13 — Controlled release | staging, rollback, production release | `NOT_STARTED`; latest stable GitHub release `v1.2.5`; 1.4.2 فعلاً test pre-release و tag build در signing-key validation متوقف شد؛ deployment واقعی بررسی نشده | signing/build verification، HTTPS/host check، rollback evidence و approval جداگانهٔ production |
 
 ## گیت‌های تغییر
 
-- ادامهٔ greenfield shell/UI mock در شاخهٔ فعال `arena/a1600dfc-hesabyar2` مجاز است؛ افزودن مشتری در حافظهٔ موقت، نمایش جزئیات مشتری/فاکتور/کالا، فیلتر وضعیت و تغییر سری chart صرفاً تعامل mock-only است. این اجازه تأیید `KarenYar` به‌عنوان source رسمی یا مجوز تغییر منطق مالی/داده/persistence نیست.
+- ادامهٔ greenfield shell/UI mock در شاخهٔ فعال `arena/a1600dfc-hesabyar2` مجاز است؛ افزودن مشتری در حافظهٔ موقت، نمایش جزئیات مشتری/فاکتور/کالا، فیلتر وضعیت چهار فهرست و تغییر سری chart صرفاً تعامل mock-only است. این اجازه تأیید `KarenYar` به‌عنوان source رسمی یا مجوز تغییر منطق مالی/داده/persistence نیست.
 - ویرایش/import source اصلی، اصلاح `voidInvoice`, پول/rounding، HMAC/licensing، schema migration، entitlement و production deployment هرکدام approval/spec جدا می‌خواهند.
 - هر مرحله باید بر source دقیق، diff و آزمون واقعی استوار باشد؛ تست‌های داخلی source repo صرفاً شواهد کمکی‌اند، نه جایگزین اجرای جاری.

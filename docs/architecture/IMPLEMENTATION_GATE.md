@@ -70,5 +70,5 @@
 
 - WP-0 تا WP-3: `NOT STARTED`؛ greenfield UI shell prototype مجازشده خارج از این work packages است و فقط mock data دارد.
 - در prototype هیچ منطق مالی، workflow، DB، license، production، Android artifact یا release اضافه/تغییر نشده است.
-- گام مجاز: ادامهٔ UX/UI prototype و تعامل‌های mock در شاخهٔ `arena/a1600dfc-hesabyar2`; افزودن مشتری در حافظهٔ موقت، نمایش جزئیات مشتری/فاکتور/کالا، فیلتر وضعیت و تغییر سری نمودار فقط نمایش mock است.
+- گام مجاز: ادامهٔ UX/UI prototype و تعامل‌های mock در شاخهٔ `arena/a1600dfc-hesabyar2`; افزودن مشتری در حافظهٔ موقت، نمایش جزئیات مشتری/فاکتور/کالا، فیلتر وضعیت در فهرست‌های نمونه و تغییر سری نمودار فقط نمایش mock است.
 - پیش از ورود به source `KarenYar`، ذخیره‌سازی پایدار، قواعد مالی، backend/licensing یا release، gateهای مربوط باید جداگانه تأیید شوند.
