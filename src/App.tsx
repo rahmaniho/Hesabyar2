@@ -40,6 +40,14 @@ type PageId = 'overview' | 'sales' | 'activity' | 'customers' | 'inventory' | 'r
 type ModalKind = 'sale' | 'customer' | 'customer-detail' | 'help' | 'report' | 'generic' | null;
 type StatusTone = 'success' | 'warning' | 'muted' | 'danger' | 'info';
 
+const customerStatusOptions = [
+  { value: 'all', label: 'همهٔ مشتریان' },
+  { value: 'فعال', label: 'فعال' },
+  { value: 'مانده دارد', label: 'مانده دارد' },
+  { value: 'نمونه', label: 'نمونه‌های موقت' },
+] as const;
+type CustomerStatusFilter = typeof customerStatusOptions[number]['value'];
+
 interface NavItem {
   id: PageId;
   label: string;
@@ -653,7 +661,34 @@ function DataTable({ rows, columns, query, compact = false, onRowSelect }: { row
 function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[]; onCustomerSelect?: (row: DataRow) => void }) {
   const config = recordConfigs[pageId];
   const rows = rowsOverride ?? config.rows;
+  const [customerStatusFilter, setCustomerStatusFilter] = useState<CustomerStatusFilter>('all');
+  const [customerFilterOpen, setCustomerFilterOpen] = useState(false);
+  const filterControlRef = useRef<HTMLDivElement>(null);
+  const visibleRows = pageId === 'customers' && customerStatusFilter !== 'all'
+    ? rows.filter((row) => row.status === customerStatusFilter)
+    : rows;
+  const selectedStatusLabel = customerStatusOptions.find((option) => option.value === customerStatusFilter)?.label ?? 'همهٔ مشتریان';
   const Icon = pageId === 'sales' ? Receipt : pageId === 'activity' ? CreditCard : pageId === 'customers' ? Users : Package;
+
+  useEffect(() => {
+    setCustomerFilterOpen(false);
+  }, [pageId]);
+
+  useEffect(() => {
+    if (!customerFilterOpen) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!filterControlRef.current?.contains(event.target as Node)) setCustomerFilterOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setCustomerFilterOpen(false);
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [customerFilterOpen]);
 
   return (
     <section className="workspace-page">
@@ -670,14 +705,30 @@ function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect }
         <div className="card-heading records-heading">
           <div><span className="section-kicker">فهرست نمونه</span><h2>{config.title}</h2></div>
           <div className="records-toolbar">
-            <button type="button" className="button button-light" onClick={() => onAction('generic')}><Filter size={16} />فیلتر</button>
+            {pageId === 'customers' ? (
+              <div className="customer-filter-control" ref={filterControlRef}>
+                <button type="button" className={`button button-light ${customerFilterOpen ? 'is-open' : ''}`} aria-label={`فیلتر مشتریان: ${selectedStatusLabel}`} aria-expanded={customerFilterOpen} onClick={() => setCustomerFilterOpen((open) => !open)}>
+                  <Filter size={16} /><span>فیلتر</span>{customerStatusFilter !== 'all' && <span className="filter-active-dot" aria-hidden="true" />}
+                </button>
+                {customerFilterOpen && (
+                  <div className="floating-menu customer-filter-menu" role="group" aria-label="فیلتر مشتریان بر اساس وضعیت">
+                    {customerStatusOptions.map((option) => (
+                      <button key={option.value} type="button" className={customerStatusFilter === option.value ? 'selected' : ''} aria-pressed={customerStatusFilter === option.value} onClick={() => { setCustomerStatusFilter(option.value); setCustomerFilterOpen(false); }}>
+                        <span>{option.label}</span>{customerStatusFilter === option.value && <Check size={15} />}
+                      </button>
+                    ))}
+                    <p>فقط ردیف‌های نمایشی بر اساس وضعیت فیلتر می‌شوند.</p>
+                  </div>
+                )}
+              </div>
+            ) : <button type="button" className="button button-light" onClick={() => onAction('generic')}><Filter size={16} />فیلتر</button>}
             <button type="button" className="button button-light" onClick={() => onAction('generic')}><Download size={16} />خروجی</button>
             <button type="button" className="quiet-icon-button" aria-label="گزینه‌های فهرست" onClick={() => onAction('help')}><MoreHorizontal size={19} /></button>
           </div>
         </div>
         <div className="records-hint"><span className="small-dot" />جست‌وجوی بالای صفحه روی فهرست نمونه اعمال می‌شود.</div>
-        <DataTable rows={rows} columns={config.columns} query={query} onRowSelect={pageId === 'customers' ? onCustomerSelect : undefined} />
-        <div className="records-footer"><span>نمایش {rows.length} مورد نمونه</span><div className="pagination"><button type="button" disabled aria-label="صفحهٔ قبل"><ChevronLeft size={16} /></button><span className="page-number is-current">۱</span><span className="page-number">۲</span><span className="page-number">۳</span><button type="button" aria-label="صفحهٔ بعد" onClick={() => onAction('generic')}><ChevronLeft size={16} /></button></div></div>
+        <DataTable rows={visibleRows} columns={config.columns} query={query} onRowSelect={pageId === 'customers' ? onCustomerSelect : undefined} />
+        <div className="records-footer"><span>نمایش {visibleRows.length.toLocaleString('fa-IR')} مورد نمونه</span><div className="pagination"><button type="button" disabled aria-label="صفحهٔ قبل"><ChevronLeft size={16} /></button><span className="page-number is-current">۱</span><span className="page-number">۲</span><span className="page-number">۳</span><button type="button" aria-label="صفحهٔ بعد" onClick={() => onAction('generic')}><ChevronLeft size={16} /></button></div></div>
       </section>
 
       <div className="prototype-note"><Sparkles size={17} /><span>{pageId === 'customers' ? 'افزودن مشتری فقط یک رکورد نمونه در حافظهٔ موقت صفحه می‌سازد؛ با تازه‌سازی پاک می‌شود.' : 'این صفحه فقط رابط را نمایش می‌دهد؛ ساخت و ویرایش رکوردها هنوز فعال نیست.'}</span></div>

@@ -1,8 +1,8 @@
 # گزارش اجرایی ممیزی Hesabyar 2.0 — به‌روزرسانی پس از «ادامه بده»
 
 **تاریخ:** 2026-11-05
-**شاخهٔ کاری فعلی:** `arena/b19a8f51-hesabyar2` (`active`)
-**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit PR #6، `6b71188fb5dfa894334d9f053ef00b4475dc4e8f`, شروع می‌شود. PRهای #1 تا #6 به `main` ادغام شده‌اند؛ PRهای #5 و #6 greenfield UI prototype و فرم مشتری نمونه را افزودند. `main` اکنون shell/UI mock دارد، اما منطق کامل محصول را ندارد؛ `KarenYar` همچنان source candidate جداگانه و تأییدنشده است.
+**شاخهٔ کاری فعلی:** `arena/622c2021-hesabyar2` (`active`)
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit PR #7، `13a3be46a84903074b041ff7b363befb706df798`, شروع می‌شود. PRهای #1 تا #7 به `main` ادغام شده‌اند؛ PRهای #5 تا #7 greenfield UI prototype و تعامل‌های mock مشتری را افزودند. `main` اکنون shell/UI mock دارد، اما منطق کامل محصول را ندارد؛ `KarenYar` همچنان source candidate جداگانه و تأییدنشده است.
 **مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
 
 ## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
@@ -67,7 +67,7 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را در شاخهٔ فعال `arena/b19a8f51-hesabyar2` مجاز کرده؛ PRهای #5 و #6 آن را به `main` افزودند و این شاخه تعامل‌های mock-only مشتری را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را در شاخهٔ فعال `arena/622c2021-hesabyar2` مجاز کرده؛ PRهای #5 تا #7 آن را به `main` افزودند و این شاخه تعامل‌های mock-only مشتری را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 

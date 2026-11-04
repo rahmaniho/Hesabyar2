@@ -24,12 +24,13 @@
 | D-020 | 2026-11-05 | GitHub Actions API metadata برای test APKهای runs `41813070224`, `41645205606` و Admin run `41274386135` نام/اندازه/expiry را گزارش می‌کند؛ این metadata محتوا یا access policy را اثبات نمی‌کند و run `41645205606` پیش از source baseline فعلی است | read-only API/workflow/job metadata؛ archiveها دانلود/parse نشدند |
 | D-021 | 2026-11-05 | کاربر ساخت greenfield app در `Hesabyar2` را برای shell/UI prototype با mock data مجاز کرد؛ این مجوز شامل حسابداری/تراکنش، persistence/DB، backend/auth، licensing، migration، import از `KarenYar` یا release نیست | انتخاب صریح کاربر هنگام شروع UI؛ branch آن مرحله `arena/973fe290-hesabyar2` |
 | D-022 | 2026-11-05 | PR #5 greenfield UI shell را در `main` ادغام کرد؛ شاخهٔ فعال آن نشست `arena/49664ebd-hesabyar2` بر merge commit `a8e55e1e4cc8f17ba6f8b1a9b3452f7b12d28d06` بنا شده بود | `gh pr merge 5 --merge` موفق؛ source اصلی `KarenYar` منتقل نشد |
-| D-023 | 2026-11-05 | PR #6 فرم افزودن مشتری نمونه را با state موقت React ادغام کرد؛ branch فعلی `arena/b19a8f51-hesabyar2` ادامهٔ UI mock است و جزئیات مشتری نیز فقط‌خواندنی می‌مانند | `gh pr merge 6 --merge` موفق؛ هیچ persistence یا منطق مالی اضافه نشد |
+| D-023 | 2026-11-05 | PR #6 فرم افزودن مشتری نمونه را با state موقت React ادغام کرد؛ branch آن مرحله `arena/b19a8f51-hesabyar2` و جزئیات مشتری در PR #7 فقط‌خواندنی بود | `gh pr merge 6 --merge` موفق؛ هیچ persistence یا منطق مالی اضافه نشد |
+| D-024 | 2026-11-05 | PR #7 جزئیات مشتری نمونه را به `main` افزود؛ شاخهٔ فعلی `arena/622c2021-hesabyar2` ادامهٔ UI mock است و فیلتر وضعیت مشتری فقط ردیف‌های نمایشی را محدود می‌کند | `gh pr merge 7 --merge` موفق؛ source اصلی `KarenYar`، persistence و منطق مالی تغییر نکردند |
 
 ## تصمیم‌های باز برای مالک
 
 - آیا `KarenYar` source رسمی Hesabyar 2.0 است؟
-- مسیر source رسمی برای development فراتر از UI prototype چیست؟ مالک باید `KarenYar` را تأیید کند یا greenfield `Hesabyar2` را به‌عنوان کدبیس کامل انتخاب کند؛ شاخهٔ فعال فعلی `arena/b19a8f51-hesabyar2` است.
+- مسیر source رسمی برای development فراتر از UI prototype چیست؟ مالک باید `KarenYar` را تأیید کند یا greenfield `Hesabyar2` را به‌عنوان کدبیس کامل انتخاب کند؛ شاخهٔ فعال فعلی `arena/622c2021-hesabyar2` است.
 - آیا HMAC/void/POS money fixes بعد از تصویب TDR به‌عنوان اولین milestone اجرا شوند؟
 - آیا Business multi-user حتماً server-authoritative است و Personal همچنان local-first می‌ماند؟
 - آیا Pages branch آزمایشی باید build-only بماند یا preview deploy داشته باشد؛ و چه TLS/redirect policy روی host واقعی اعمال می‌شود؟

@@ -34,6 +34,23 @@ describe('Hesabyar UI prototype', () => {
     expect(within(dialog).getByText('این اطلاعات ساختگی است و برای نمایش سابقهٔ واقعی یا محاسبهٔ مالی استفاده نمی‌شود.')).toBeTruthy();
   });
 
+  it('filters the customer sample list by status and restores the full list', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' }));
+
+    const filterMenu = screen.getByRole('group', { name: 'فیلتر مشتریان بر اساس وضعیت' });
+    fireEvent.click(within(filterMenu).getByRole('button', { name: 'فعال' }));
+    expect(screen.getByText('آوید کریمی')).toBeTruthy();
+    expect(screen.getByText('کافه رُستا')).toBeTruthy();
+    expect(screen.queryByText('مینا رضایی')).toBeNull();
+    expect(screen.getByText('نمایش ۲ مورد نمونه')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: فعال' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر مشتریان بر اساس وضعیت' })).getByRole('button', { name: 'همهٔ مشتریان' }));
+    expect(screen.getByText('مینا رضایی')).toBeTruthy();
+  });
+
   it('adds a sample customer in page memory without writing to browser storage', () => {
     window.localStorage.clear();
     render(<App />);
@@ -48,6 +65,13 @@ describe('Hesabyar UI prototype', () => {
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات نگار آزمایشی' }));
     expect(within(screen.getByRole('dialog')).getByText('نگار آزمایشی')).toBeTruthy();
     expect(window.localStorage.length).toBe(0);
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر مشتریان بر اساس وضعیت' })).getByRole('button', { name: 'نمونه‌های موقت' }));
+    expect(screen.getByText('نگار آزمایشی')).toBeTruthy();
+    expect(screen.queryByText('آوید کریمی')).toBeNull();
+    expect(screen.getByText('نمایش ۱ مورد نمونه')).toBeTruthy();
   });
 
   it('opens a non-persistent sale preview instead of recording a transaction', () => {
