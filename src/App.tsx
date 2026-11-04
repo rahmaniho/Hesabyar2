@@ -37,7 +37,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 
 type PageId = 'overview' | 'sales' | 'activity' | 'customers' | 'inventory' | 'reports' | 'settings';
-type ModalKind = 'sale' | 'customer' | 'help' | 'report' | 'generic' | null;
+type ModalKind = 'sale' | 'customer' | 'customer-detail' | 'help' | 'report' | 'generic' | null;
 type StatusTone = 'success' | 'warning' | 'muted' | 'danger' | 'info';
 
 interface NavItem {
@@ -199,6 +199,7 @@ function getPersianDate() {
 export default function App() {
   const [activePage, setActivePage] = useState<PageId>('overview');
   const [prototypeCustomers, setPrototypeCustomers] = useState<DataRow[]>(recordConfigs.customers.rows);
+  const [selectedCustomer, setSelectedCustomer] = useState<DataRow | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -226,6 +227,18 @@ export default function App() {
     setRangeOpen(false);
   };
 
+  const closeModal = () => {
+    setModalKind(null);
+    setSelectedCustomer(null);
+  };
+
+  const openCustomerDetails = (customer: DataRow) => {
+    setSelectedCustomer(customer);
+    setModalKind('customer-detail');
+    setNotificationsOpen(false);
+    setRangeOpen(false);
+  };
+
   const addPrototypeCustomer = (name: string, phone: string) => {
     const normalizedName = name.trim();
     if (!normalizedName) return;
@@ -242,7 +255,7 @@ export default function App() {
     }, ...customers]);
     setActivePage('customers');
     setSearchQuery('');
-    setModalKind(null);
+    closeModal();
     showToast('رکورد نمونه فقط تا تازه‌سازی صفحه در حافظه می‌ماند.');
   };
 
@@ -256,6 +269,7 @@ export default function App() {
       }
       if (event.key === 'Escape') {
         setModalKind(null);
+        setSelectedCustomer(null);
         setSidebarOpen(false);
         setNotificationsOpen(false);
         setRangeOpen(false);
@@ -270,6 +284,7 @@ export default function App() {
   }, []);
 
   const handlePrimaryAction = (kind: ModalKind) => {
+    setSelectedCustomer(null);
     setModalKind(kind);
     setNotificationsOpen(false);
     setRangeOpen(false);
@@ -369,7 +384,7 @@ export default function App() {
           </div>
 
           {activePage === 'overview' && <Dashboard onAction={handlePrimaryAction} onNavigate={navigate} query={searchQuery} selectedRange={selectedRange} />}
-          {isRecordsPage && <RecordsPage pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} />}
+          {isRecordsPage && <RecordsPage pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} onCustomerSelect={activePage === 'customers' ? openCustomerDetails : undefined} />}
           {activePage === 'reports' && <ReportsPage onAction={handlePrimaryAction} selectedRange={selectedRange} />}
           {activePage === 'settings' && <SettingsPage onAction={handlePrimaryAction} showToast={showToast} />}
 
@@ -381,7 +396,7 @@ export default function App() {
         </main>
       </div>
 
-      {modalKind && <PreviewModal kind={modalKind} onClose={() => setModalKind(null)} onNavigate={navigate} onCreateCustomer={addPrototypeCustomer} />}
+      {modalKind && <PreviewModal kind={modalKind} onClose={closeModal} onNavigate={navigate} onCreateCustomer={addPrototypeCustomer} selectedCustomer={selectedCustomer} />}
       {toast && <div className="toast" role="status"><Check size={17} />{toast}</div>}
     </div>
   );
@@ -600,7 +615,7 @@ function ChartPanel({ selectedRange }: { selectedRange: string }) {
   );
 }
 
-function DataTable({ rows, columns, query, compact = false }: { rows: DataRow[]; columns: string[]; query: string; compact?: boolean }) {
+function DataTable({ rows, columns, query, compact = false, onRowSelect }: { rows: DataRow[]; columns: string[]; query: string; compact?: boolean; onRowSelect?: (row: DataRow) => void }) {
   const filteredRows = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase('fa-IR');
     if (!normalized) return rows;
@@ -614,7 +629,7 @@ function DataTable({ rows, columns, query, compact = false }: { rows: DataRow[];
   return (
     <div className={`table-scroll ${compact ? 'is-compact' : ''}`}>
       <table className="data-table">
-        <thead><tr><th scope="col">عنوان</th>{columns.map((column) => <th scope="col" key={column}>{column}</th>)}<th scope="col">وضعیت</th></tr></thead>
+        <thead><tr><th scope="col">عنوان</th>{columns.map((column) => <th scope="col" key={column}>{column}</th>)}<th scope="col">وضعیت</th>{onRowSelect && <th scope="col">جزئیات</th>}</tr></thead>
         <tbody>
           {filteredRows.map((row) => (
             <tr key={row.id}>
@@ -626,6 +641,7 @@ function DataTable({ rows, columns, query, compact = false }: { rows: DataRow[];
               </td>
               {row.values.map((value, index) => <td key={`${row.id}-${index}`} className={value.includes('تومان') && (value.startsWith('+') || value.startsWith('−')) ? 'amount-cell' : ''}>{value}</td>)}
               <td><span className={`status-pill status-${row.tone}`}><span />{row.status}</span></td>
+              {onRowSelect && <td><button type="button" className="row-action" aria-label={`نمایش جزئیات ${row.primary}`} onClick={() => onRowSelect(row)}><ChevronLeft size={16} /></button></td>}
             </tr>
           ))}
         </tbody>
@@ -634,7 +650,7 @@ function DataTable({ rows, columns, query, compact = false }: { rows: DataRow[];
   );
 }
 
-function RecordsPage({ pageId, query, onAction, rowsOverride }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[] }) {
+function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[]; onCustomerSelect?: (row: DataRow) => void }) {
   const config = recordConfigs[pageId];
   const rows = rowsOverride ?? config.rows;
   const Icon = pageId === 'sales' ? Receipt : pageId === 'activity' ? CreditCard : pageId === 'customers' ? Users : Package;
@@ -660,7 +676,7 @@ function RecordsPage({ pageId, query, onAction, rowsOverride }: { pageId: keyof 
           </div>
         </div>
         <div className="records-hint"><span className="small-dot" />جست‌وجوی بالای صفحه روی فهرست نمونه اعمال می‌شود.</div>
-        <DataTable rows={rows} columns={config.columns} query={query} />
+        <DataTable rows={rows} columns={config.columns} query={query} onRowSelect={pageId === 'customers' ? onCustomerSelect : undefined} />
         <div className="records-footer"><span>نمایش {rows.length} مورد نمونه</span><div className="pagination"><button type="button" disabled aria-label="صفحهٔ قبل"><ChevronLeft size={16} /></button><span className="page-number is-current">۱</span><span className="page-number">۲</span><span className="page-number">۳</span><button type="button" aria-label="صفحهٔ بعد" onClick={() => onAction('generic')}><ChevronLeft size={16} /></button></div></div>
       </section>
 
@@ -741,7 +757,7 @@ function NotificationsPanel() {
   );
 }
 
-function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void }) {
+function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCustomer }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void; selectedCustomer: DataRow | null }) {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const handleCustomerSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -752,6 +768,8 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer }: { kind: M
     ? { icon: ShoppingCart, title: 'پیش‌نمایش ثبت فروش', label: 'فروش واقعی ثبت نمی‌شود', description: 'این نسخه فقط رابط را نشان می‌دهد. ثبت فروش، محاسبهٔ مبلغ، پرداخت و موجودی تا تصویب قواعد مالی و پیاده‌سازی امن غیرفعال است.' }
     : kind === 'customer'
       ? { icon: Users, title: 'مشتری نمونه جدید', label: 'افزودن موقت به پیش‌نمایش', description: 'این فرم فقط یک رکورد ساختگی را در حافظهٔ موقت صفحه اضافه می‌کند؛ لطفاً اطلاعات واقعی مشتری وارد نکنید.' }
+      : kind === 'customer-detail'
+        ? { icon: Users, title: 'جزئیات مشتری نمونه', label: 'اطلاعات نمایشی و موقت', description: 'این نمای ساختگی فقط برای مرور چیدمان است و هیچ پرونده یا سابقهٔ واقعی مشتری را نمایش نمی‌دهد.' }
       : kind === 'report'
         ? { icon: FileText, title: 'خروجی گزارش', label: 'در این نسخه آماده نیست', description: 'گزارش‌ها نمونه هستند و هیچ فایل یا خروجی واقعی تولید نمی‌شود.' }
         : kind === 'help'
@@ -774,6 +792,21 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer }: { kind: M
             <div className="preview-total"><span>جمع نمونه</span><strong>۱۲,۴۸۰,۰۰۰ تومان</strong></div>
           </div>
         )}
+        {kind === 'customer-detail' && selectedCustomer && (
+          <div className="customer-detail-card">
+            <div className="customer-detail-heading">
+              <span className={`table-avatar tone-${selectedCustomer.avatarTone ?? 1}`}>{selectedCustomer.initials}</span>
+              <div className="customer-detail-copy"><strong>{selectedCustomer.primary}</strong><small>{selectedCustomer.secondary}</small></div>
+              <span className={`status-pill status-${selectedCustomer.tone}`}><span />{selectedCustomer.status}</span>
+            </div>
+            <dl className="customer-detail-list">
+              <div><dt>شمارهٔ نمایشی</dt><dd>{selectedCustomer.values[0] || 'ثبت نشده'}</dd></div>
+              <div><dt>آخرین خرید نمونه</dt><dd>{selectedCustomer.values[1] || 'ثبت نشده'}</dd></div>
+              <div><dt>ماندهٔ نمایشی</dt><dd>{selectedCustomer.values[2] || 'ثبت نشده'}</dd></div>
+            </dl>
+            <p className="customer-detail-note">این اطلاعات ساختگی است و برای نمایش سابقهٔ واقعی یا محاسبهٔ مالی استفاده نمی‌شود.</p>
+          </div>
+        )}
         {kind === 'customer' ? (
           <form className="customer-preview-form" onSubmit={handleCustomerSubmit}>
             <label className="modal-input-label" htmlFor="prototype-customer-name">نام نمونه</label>
@@ -788,7 +821,7 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer }: { kind: M
           </form>
         ) : (
           <div className="modal-actions">
-            <button type="button" className="button button-primary" onClick={onClose}>متوجه شدم</button>
+            <button type="button" className="button button-primary" onClick={onClose}>{kind === 'customer-detail' ? 'بستن' : 'متوجه شدم'}</button>
             {kind === 'sale' && <button type="button" className="button button-secondary" onClick={() => { onClose(); onNavigate('sales'); }}>دیدن فاکتورهای نمونه</button>}
           </div>
         )}

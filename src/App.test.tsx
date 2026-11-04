@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import App from './App';
 
 afterEach(() => cleanup());
@@ -22,6 +22,18 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByText('آوید کریمی')).toBeTruthy();
   });
 
+  it('opens a read-only detail preview for a sample customer', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات آوید کریمی' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByRole('heading', { name: 'جزئیات مشتری نمونه' })).toBeTruthy();
+    expect(within(dialog).getByText('آوید کریمی')).toBeTruthy();
+    expect(within(dialog).getByText('۰۹۱۲ ۴۵۶ ۷۸۹۰')).toBeTruthy();
+    expect(within(dialog).getByText('این اطلاعات ساختگی است و برای نمایش سابقهٔ واقعی یا محاسبهٔ مالی استفاده نمی‌شود.')).toBeTruthy();
+  });
+
   it('adds a sample customer in page memory without writing to browser storage', () => {
     window.localStorage.clear();
     render(<App />);
@@ -33,6 +45,8 @@ describe('Hesabyar UI prototype', () => {
 
     expect(screen.getByText('نگار آزمایشی')).toBeTruthy();
     expect(screen.getByText('مشتری نمونه · حافظهٔ موقت همین صفحه')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات نگار آزمایشی' }));
+    expect(within(screen.getByRole('dialog')).getByText('نگار آزمایشی')).toBeTruthy();
     expect(window.localStorage.length).toBe(0);
   });
 
