@@ -178,15 +178,68 @@ const activityItems = [
   { title: 'خرید ملزومات', caption: 'فروشگاه مرکزی · هزینهٔ جاری', time: '۰۹:۱۲', amount: '−۱,۴۵۰,۰۰۰', tone: 'expense' },
 ];
 
-const chartData = [
-  { label: 'ش', sales: 49, received: 30 },
-  { label: 'ی', sales: 70, received: 44 },
-  { label: 'د', sales: 56, received: 36 },
-  { label: 'س', sales: 82, received: 57 },
-  { label: 'چ', sales: 61, received: 38 },
-  { label: 'پ', sales: 91, received: 68 },
-  { label: 'ج', sales: 73, received: 48 },
-];
+interface ChartPoint {
+  label: string;
+  sales: number;
+  received: number;
+}
+
+interface ChartSeries {
+  periodLabel: string;
+  currentIndex: number;
+  points: ChartPoint[];
+}
+
+const chartDataByRange: Record<string, ChartSeries> = {
+  امروز: {
+    periodLabel: 'ساعتی',
+    currentIndex: 6,
+    points: [
+      { label: '۸', sales: 24, received: 12 },
+      { label: '۱۰', sales: 43, received: 28 },
+      { label: '۱۲', sales: 69, received: 42 },
+      { label: '۱۴', sales: 58, received: 39 },
+      { label: '۱۶', sales: 87, received: 61 },
+      { label: '۱۸', sales: 74, received: 53 },
+      { label: '۲۰', sales: 81, received: 66 },
+    ],
+  },
+  'این هفته': {
+    periodLabel: 'روزانه',
+    currentIndex: 5,
+    points: [
+      { label: 'ش', sales: 49, received: 30 },
+      { label: 'ی', sales: 70, received: 44 },
+      { label: 'د', sales: 56, received: 36 },
+      { label: 'س', sales: 82, received: 57 },
+      { label: 'چ', sales: 61, received: 38 },
+      { label: 'پ', sales: 91, received: 68 },
+      { label: 'ج', sales: 73, received: 48 },
+    ],
+  },
+  'این ماه': {
+    periodLabel: 'روزهای ماه',
+    currentIndex: 3,
+    points: [
+      { label: '۱', sales: 35, received: 21 },
+      { label: '۵', sales: 52, received: 33 },
+      { label: '۱۰', sales: 67, received: 49 },
+      { label: '۱۴', sales: 78, received: 58 },
+      { label: '۲۰', sales: 63, received: 44 },
+      { label: '۲۵', sales: 88, received: 62 },
+      { label: '۳۰', sales: 72, received: 55 },
+    ],
+  },
+  'این فصل': {
+    periodLabel: 'ماهانه',
+    currentIndex: 1,
+    points: [
+      { label: 'مهر', sales: 63, received: 42 },
+      { label: 'آبان', sales: 82, received: 61 },
+      { label: 'آذر', sales: 71, received: 54 },
+    ],
+  },
+};
 
 const lowStockItems = [
   { name: 'چای ممتاز بهاره', category: 'نوشیدنی', quantity: '۷ عدد', tone: 'amber' },
@@ -590,6 +643,8 @@ function StatCard({ label, value, unit, change, caption, trend, icon: Icon, tone
 }
 
 function ChartPanel({ selectedRange }: { selectedRange: string }) {
+  const series = chartDataByRange[selectedRange] ?? chartDataByRange['این هفته'];
+
   return (
     <section className="card chart-card">
       <div className="card-heading chart-heading">
@@ -601,13 +656,13 @@ function ChartPanel({ selectedRange }: { selectedRange: string }) {
         <span><i className="legend-received" />دریافت</span>
         <strong>مبالغ و روندها ساختگی‌اند</strong>
       </div>
-      <div className="bar-chart" role="img" aria-label="نمودار نمونهٔ فروش و دریافت در هفت روز هفته">
+      <div className="bar-chart" role="img" aria-label={`نمودار نمونهٔ فروش و دریافت برای ${selectedRange}؛ داده‌ها ساختگی‌اند`}>
         <div className="chart-y-labels"><span>۲۰ میلیون</span><span>۱۵ میلیون</span><span>۱۰ میلیون</span><span>۵ میلیون</span><span>۰</span></div>
         <div className="chart-plot">
           <div className="chart-gridlines"><i /><i /><i /><i /><i /></div>
           <div className="chart-columns">
-            {chartData.map((day, index) => (
-              <div className={`chart-day ${index === 5 ? 'is-current' : ''}`} key={`${day.label}-${index}`}>
+            {series.points.map((day, index) => (
+              <div className={`chart-day ${index === series.currentIndex ? 'is-current' : ''}`} key={`${day.label}-${index}`}>
                 <div className="bar-pair">
                   <span className="bar bar-sales" style={{ height: `${day.sales}%` }} />
                   <span className="bar bar-received" style={{ height: `${day.received}%` }} />
@@ -618,7 +673,7 @@ function ChartPanel({ selectedRange }: { selectedRange: string }) {
           </div>
         </div>
       </div>
-      <div className="chart-bottom"><span><span className="chart-foot-dot" /> نمایش هفتگی نمونه</span><span>واحد مبالغ: تومان · نمایشی</span></div>
+      <div className="chart-bottom"><span><span className="chart-foot-dot" /> نمایش {series.periodLabel} نمونه</span><span>واحد مبالغ: تومان · نمایشی</span></div>
     </section>
   );
 }
