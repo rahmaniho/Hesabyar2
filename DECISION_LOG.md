@@ -21,6 +21,7 @@
 | D-017 | 2026-11-05 | PR #2 شامل مستندات follow-up در `main` ادغام شد؛ شاخهٔ active آن مرحله `arena/0b07fc58-hesabyar2` بر merge commit `68588c0e...` بنا شده بود | `gh pr merge 2 --merge` موفق؛ PR state=`MERGED` |
 | D-018 | 2026-11-05 | PR #3، شامل follow-up ممیزی Android/CI و artifact gates، در `main` ادغام شد؛ شاخهٔ active فعلی نشست `arena/72006e53-hesabyar2` بر merge commit `64cafd61f803f641fabe13d032256a822159859f` بنا شده است | `gh pr merge 3 --merge` موفق؛ PR state=`MERGED` |
 | D-019 | 2026-11-05 | معیار پذیرش CI برای Android debug، signed APK/AAB و Admin debug در `ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد؛ صرفاً proposal است و هیچ workflow/artifact/signing setting تغییر نکرد | static source/CI findings در CI-06..08 و ADM-04؛ نیازمند approval owner/security پیش از اجرا |
+| D-020 | 2026-11-05 | GitHub Actions API metadata برای test APKهای runs `41813070224`, `41645205606` و Admin run `41274386135` نام/اندازه/expiry را گزارش می‌کند؛ این metadata محتوا یا access policy را اثبات نمی‌کند و run `41645205606` پیش از source baseline فعلی است | read-only API/workflow/job metadata؛ archiveها دانلود/parse نشدند |
 
 ## تصمیم‌های باز برای مالک
 

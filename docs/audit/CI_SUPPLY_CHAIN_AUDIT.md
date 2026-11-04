@@ -51,6 +51,8 @@
 
 Run `41813070224` از همان tree source build/sync و publication verifier را با موفقیت گذراند؛ این، نقص ordering برای Actions artifact و فقدان verifier در target `test-apk` را رفع نمی‌کند. تست Node `test:android-release` کد guardها را می‌آزماید، نه APK خروجی `test-apk` را.
 
+برای نمونهٔ اجرای artifact-only، run [`41645205606`](https://github.com/rahmaniho/KarenYar/actions/runs/41645205606) از push به `arena/bec0e04f-karenyar` با head `63b882febb78473854ddb09a2fbe46b73751cc67` پیدا شد. Workflow و `android-test-release.mjs` در همان commit branch را به `test-apk` نگاشت می‌کنند؛ job، build و `Upload debug APK` را موفق و `Publish verified testing APK` را skipped ثبت کرده است. GitHub Actions API artifact را با ID `13235042667`, اندازهٔ `9,314,231` بایت و expiry `2026-12-03T13:35:36Z` گزارش می‌کند (`expired=false` در query مورخ 2026-11-05). این run پیش از baseline ممیزی است و binary مستقلاً download/parse نشد؛ API metadata اندازه/retention را می‌دهد، نه محتوای artifact یا access policy. برای baseline فعلی، فقدان verifier در `test-apk` از بررسی workflow source نتیجه شده است.
+
 **کاهش ریسک پیشنهادی:** verifier مشترک `verifyTestApk` را پیش از هر upload debug artifact اجرا کنید؛ app ID/version/minSdk/debuggable/signing identity و checksum را validate و verification را fail-closed کنید. اگر upload قبل از validation از نظر workflow ناگزیر است، artifact را تا موفقیت verifier غیرقابل‌دسترسی نگه دارید.
 
 ### CI-07 — signed-release AAB بدون verifier مستقل upload/publish می‌شود (کم؛ نیازمند تأیید artifact)
@@ -81,7 +83,7 @@ Run `41813070224` از همان tree source build/sync و publication verifier �
 ## حدود و گیت بعدی
 
 - Branch protection، rulesets، tag rules، required checks، Environment approvals و secret scopes به‌علت 403 در GitHub API قابل بررسی نبودند؛ هیچ‌کدام را absent فرض نمی‌کنیم.
-- Secret value/keystore، host زنده و دستگاه واقعی بررسی نشدند؛ APK public release فقط از طریق run/asset metadata و verifier source بررسی شد، binary مستقل دانلود/parse نشد؛ دسترسی Actions artifactها و signed-release AAB نیز بررسی نشد.
+- Secret value/keystore، host زنده و دستگاه واقعی بررسی نشدند؛ APKها فقط از طریق run/asset metadata و verifier source بررسی شدند و binary مستقل download/parse نشد. برای Actions artifactهای runهای مشاهده‌شدهٔ `41813070224`, `41645205606` و `41274386135`، GitHub API نام/اندازه/expiry را گزارش کرد؛ archiveها یا access policy آن‌ها بررسی نشدند. signed-release AAB نیز مشاهده/دانلود نشد.
 - workflow logs برای run Android امضا به‌علت خطای دریافت log در دسترس نبودند؛ علت شکست مشخص نیست.
 - پیشنهادها صرفاً remediation هستند؛ هیچ workflow/config/release/secret در این ممیزی تغییر نکرد.
 
