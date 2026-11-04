@@ -84,3 +84,7 @@ Run `41813070224` از همان tree source build/sync و publication verifier �
 - Secret value/keystore، host زنده و دستگاه واقعی بررسی نشدند؛ APK public release فقط از طریق run/asset metadata و verifier source بررسی شد، binary مستقل دانلود/parse نشد؛ دسترسی Actions artifactها و signed-release AAB نیز بررسی نشد.
 - workflow logs برای run Android امضا به‌علت خطای دریافت log در دسترس نبودند؛ علت شکست مشخص نیست.
 - پیشنهادها صرفاً remediation هستند؛ هیچ workflow/config/release/secret در این ممیزی تغییر نکرد.
+
+## برنامهٔ پذیرش artifactها
+
+برای تبدیل یافته‌های CI-06..08 و ADM-04 به معیارهای قابل‌آزمون، ماتریس پیشنهادی [راستی‌آزمایی artifactهای Android/Admin](ANDROID_ARTIFACT_VERIFICATION_PLAN.md) تهیه شده است. این سند ترتیب gateها، metadata و manifest checks، signer policy، checksum/provenance و negative tests را مشخص می‌کند؛ **تصویب یا پیاده‌سازی CI محسوب نمی‌شود** و اجرای workflow همچنان نیازمند تأیید owner/security است.

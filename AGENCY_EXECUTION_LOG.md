@@ -49,6 +49,7 @@
 - **دیتابیس/production/release:** بدون تغییر.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
 - **مستندات پیگیری ادغام‌شده:** PR #2، `ADMIN_ANDROID_AUDIT.md`, `ADMIN_SERVER_AUDIT.md`, `ANDROID_PLATFORM_AUDIT.md`, `CPANEL_READ_ONLY_RUNBOOK.md` را به `main` افزود؛ PR #3 نیز Capacitor CLI config-copy، Android/Admin artifact verifier coverage، evidence, risks و gates را تکمیل کرد. شاخهٔ فعلی `arena/72006e53-hesabyar2` است؛ app source تغییر نکرده. ادامهٔ کار source/owner approval gate را دور نمی‌زند.
+- در follow-up جاری، ماتریس پیشنهادی راستی‌آزمایی APK/AAB و Admin debug artifact در `docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد تا CI-06..08 و ADM-04 معیار پذیرش و negative-testهای مشخص داشته باشند؛ workflow، signer config یا artifact تغییر نکرد و اجرای این معیارها نیازمند approval است.
 
 ## گیت بعدی
 
