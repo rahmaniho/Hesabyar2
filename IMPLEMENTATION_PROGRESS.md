@@ -14,7 +14,7 @@
 | تست prototype و WP-1 | `PASS` | ۲۳ تست: ۱۵ تست UI و ۸ تست helper مبلغ برای واحد ریال/تومان، ورودی‌های ۱..۱۱، رقم فارسی/لاتین، remainder دقیق، ورودی نامعتبر/منفی/صفر و BigInt بزرگ |
 | typecheck/build prototype | `PASS` | `npm run typecheck` و `npm run build` موفق؛ `dist/` در Git نادیده گرفته می‌شود |
 | dependency audit prototype | `PASS` | `npm audit`: صفر vulnerability |
-| CI کیفیت | `IN PROGRESS / REMOTE RUN PENDING` | `.github/workflows/ci.yml` با `contents: read`، Actionsهای SHA-pinned، Node 22، `npm ci`, tests/typecheck/build و `npm audit --audit-level=low`; بدون deploy/sign/release؛ GitHub run پس از push باید تأیید شود؛ lint script/config و branch protection هنوز تنظیم نشده‌اند |
+| CI کیفیت | `IN PROGRESS / WORKFLOW ACTIVE` | `.github/workflows/ci.yml` با `contents: read`، Actionsهای SHA-pinned، Node 22، `npm ci`, tests/typecheck/build و `npm audit --audit-level=low`; بدون deploy/sign/release؛ نتیجهٔ جاری در PR #11 است؛ lint script/config و branch protection هنوز تنظیم نشده‌اند |
 | ممیزی source قدیمی `KarenYar` | `COMPLETED_FOR_SNAPSHOT` | snapshot read-only `KarenYar/main@d41ca291...`؛ 369 unit tests، typecheck/lint/build و 35 release tests مربوط به prototype فعلی نیستند |
 | E2E مرورگر | `NOT RUN` | مرورگر واقعی/device در این مرحله تست نشده؛ صفحه و app module در Vite preview با HTTP 200 پاسخ دادند |
 | production/staging و cPanel | `DEFERRED_BY_USER` | کاربر بررسی cPanel را فعلاً نخواست؛ هیچ server command/credential/environment استفاده نشد |
@@ -23,4 +23,4 @@
 
 ## گام بعدی
 
-WP-1 helper خالص پیاده و تست شده است. WP-0 اکنون workflow کیفیت کم‌دسترسی دارد؛ گام بعدی مشاهدهٔ GitHub run روی PR #11 و تأیید موفقیت check است. Branch protection/required-check settings و lint configuration جداگانه بررسی نشده‌اند. پیش از اتصال helper به فرم فروش یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، برگشت وجه، persistence، API/auth، licensing، migration از `KarenYar`، Android و release هنوز شروع نشده‌اند و به تصمیم‌های جداگانه نیاز دارند.
+WP-1 helper خالص پیاده و تست شده است. WP-0 اکنون workflow کیفیت کم‌دسترسی دارد؛ آخرین GitHub check در PR #11 باید سبز بماند و owner باید branch-protection/required-check policy را جداگانه تأیید کند؛ lint configuration هم وجود ندارد. پیش از اتصال helper به فرم فروش یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، برگشت وجه، persistence، API/auth، licensing، migration از `KarenYar`، Android و release هنوز شروع نشده‌اند و به تصمیم‌های جداگانه نیاز دارند.

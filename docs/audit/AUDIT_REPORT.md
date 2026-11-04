@@ -67,7 +67,7 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 در شاخهٔ `arena/a1600dfc-hesabyar2` UI mock و helper خالص WP‑1 را دارد. برای WP‑0 فایل `.github/workflows/ci.yml` نیز به‌صورت test-only و با دسترسی read-only افزوده شده است؛ GitHub run روی PR باید هنوز مشاهده شود. helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 در شاخهٔ `arena/a1600dfc-hesabyar2` UI mock و helper خالص WP‑1 را دارد. برای WP‑0 فایل `.github/workflows/ci.yml` نیز به‌صورت test-only و با دسترسی read-only افزوده شده است؛ اجرای اولیهٔ GitHub روی commit `3f191dc` موفق بود و نتیجهٔ هر commit بعدی در PR #11 دیده می‌شود؛ branch protection هنوز تنظیم نشده است. helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 

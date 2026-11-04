@@ -21,7 +21,7 @@ npm run typecheck
 npm run build
 ```
 
-GitHub Actions runs these checks plus a low-threshold dependency audit for pull requests and pushes to `main` and `arena/**`. The workflow is read-only and does not deploy, sign, publish artifacts, or release.
+GitHub Actions runs these checks plus a low-threshold dependency audit for pull requests and pushes to `main`. The workflow is read-only and does not deploy, sign, publish artifacts, or release.
 
 ## Current prototype scope
 

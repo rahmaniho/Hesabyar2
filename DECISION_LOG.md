@@ -32,7 +32,7 @@
 | D-028 | 2026-11-05 | در ادامهٔ mock-only، فیلترهای وضعیت فهرست فاکتور، گردش، مشتری و کالا در PR #11 تعمیم داده شدند؛ منطق فقط ردیف‌های همان نمونه را موقتاً پنهان/نمایان می‌کند | ۱۵ تست UI پوشش فیلترها و بازگرداندن فهرست را دارند؛ هیچ داده، مبلغ، موجودی یا تراکنشی تغییر نمی‌کند |
 | D-029 | 2026-11-05 | کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرد؛ WP‑1 ورودی پول به‌عنوان اولین بسته انتخاب شد، با واحد صریح ریال/تومان، عدد صحیح مثبت، حفظ remainder بدون rounding، رد صفر/منفی و رقم فارسی/لاتین | انتخاب‌های صریح کاربر در همین نشست؛ refund flow، transaction posting، limit، backend، architecture details و production هنوز خارج از تصمیم‌اند |
 | D-030 | 2026-11-05 | helper مستقل `src/domain/money.ts` برای WP‑1 با BigInt و نمایش دقیق `۱۱ ریال → ۱ تومان و ۱ ریال` افزوده شد؛ به POS، ledger یا persistence وصل نیست | ۸ unit tests جدید؛ قرارداد helper فقط input parsing/formatting است، نه accounting engine یا transaction flow |
-| D-031 | 2026-11-05 | برای WP‑0، `.github/workflows/ci.yml` با `contents: read` و actionsهای pin‌شده به SHA، `npm ci`, tests, typecheck, build و `npm audit --audit-level=low` افزوده شد؛ فقط PR و push به `main`/`arena/**` را می‌سنجد و هیچ deploy/sign/release ندارد | اجرای GitHub روی PR #11 هنوز pending؛ lint script/config ندارد و branch protection/required checks تغییر نکرده‌اند |
+| D-031 | 2026-11-05 | برای WP‑0، `.github/workflows/ci.yml` با `contents: read` و actionsهای pin‌شده به SHA، `npm ci`, tests, typecheck, build و `npm audit --audit-level=low` افزوده شد؛ فقط pull requestها و push به `main` را می‌سنجد و هیچ deploy/sign/release ندارد | اولین اجرای PR #11 روی commit `3f191dc` موفق شد؛ lint script/config ندارد و branch protection/required checks تغییر نکرده‌اند |
 
 ## تصمیم‌های باز برای مالک
 
