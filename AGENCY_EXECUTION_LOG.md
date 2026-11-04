@@ -46,7 +46,7 @@
 
 ## وضعیت تغییرات
 
-- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ `arena/cd2e7fc5-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل‌های موقت مشتری، جزئیات فقط‌خواندنی فاکتور و مشتری، فیلتر وضعیت و سری‌های hard-coded نمودار. منطق مالی یا persistence وجود ندارد.
+- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ `arena/cd2e7fc5-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل‌های موقت مشتری، جزئیات فقط‌خواندنی فاکتور/مشتری با اقلام ثابت و بدون جمع‌زدن، فیلتر وضعیت و سری‌های hard-coded نمودار. منطق مالی یا persistence وجود ندارد.
 - **اعتبارسنجی prototype:** ۱۰ UI tests، typecheck و build موفق؛ `npm audit` صفر vulnerability گزارش کرد. Vite preview روی `0.0.0.0:5173` فعال است و صفحه/module با HTTP 200 پاسخ می‌دهند.
 - **دیتابیس/production/release:** بدون تغییر؛ هیچ API، license، migration، APK یا deployment اجرا/تغییر نشده.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.

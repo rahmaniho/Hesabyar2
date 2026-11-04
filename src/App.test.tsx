@@ -48,6 +48,9 @@ describe('Hesabyar UI prototype', () => {
     expect(within(dialog).getByText('امروز، ۱۰:۴۲')).toBeTruthy();
     expect(within(dialog).getByText('۳ قلم')).toBeTruthy();
     expect(within(dialog).getByText('۱۲,۴۸۰,۰۰۰ تومان')).toBeTruthy();
+    expect(within(dialog).getByText('اقلام نمونه · تعداد نمایشی')).toBeTruthy();
+    expect(within(dialog).getByText('قهوهٔ اسپرسو ۲۵۰ گرمی')).toBeTruthy();
+    expect(within(dialog).getByText(/مبلغ از اقلام محاسبه نمی‌شود/)).toBeTruthy();
     expect(within(dialog).queryByRole('button', { name: /تسویه|ویرایش|حذف/ })).toBeNull();
   });
 

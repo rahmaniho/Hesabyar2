@@ -102,6 +102,26 @@ const invoiceRows: DataRow[] = [
   { id: '2478', initials: 'ن', primary: 'نوید محمدی', secondary: 'فاکتور شمارهٔ ۲۴۷۸', values: ['دیروز، ۱۸:۲۰', '۱ قلم', '۳,۹۰۰,۰۰۰ تومان'], status: 'پیش‌نویس', tone: 'muted', avatarTone: 4 },
 ];
 
+const invoicePreviewItems: Record<string, { name: string; quantity: string }[]> = {
+  '2481': [
+    { name: 'قهوهٔ اسپرسو ۲۵۰ گرمی', quantity: '۱ بسته' },
+    { name: 'چای ممتاز بهاره', quantity: '۱ بسته' },
+    { name: 'لیوان سرامیکی سفید', quantity: '۱ عدد' },
+  ],
+  '2480': [
+    { name: 'دانهٔ قهوهٔ عربیکا', quantity: '۱ بسته' },
+    { name: 'قهوهٔ اسپرسو ۲۵۰ گرمی', quantity: '۱ بسته' },
+  ],
+  '2479': [
+    { name: 'چای ممتاز بهاره', quantity: '۱ بسته' },
+    { name: 'قهوهٔ اسپرسو ۲۵۰ گرمی', quantity: '۱ بسته' },
+    { name: 'لیوان سرامیکی سفید', quantity: '۱ عدد' },
+    { name: 'دانهٔ قهوهٔ عربیکا', quantity: '۱ بسته' },
+    { name: 'شکلات تلخ ۷۰٪', quantity: '۱ عدد' },
+  ],
+  '2478': [{ name: 'شکلات تلخ ۷۰٪', quantity: '۱ عدد' }],
+};
+
 const recordConfigs: Record<'sales' | 'activity' | 'customers' | 'inventory', RecordConfig> = {
   sales: {
     title: 'فروش و فاکتورها',
@@ -925,7 +945,15 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
               <div><dt>تعداد اقلام نمونه</dt><dd>{selectedInvoice.values[1]}</dd></div>
             </dl>
             <div className="invoice-sample-total"><span>مبلغ نمایشی</span><strong>{selectedInvoice.values[2]}</strong></div>
-            <p className="invoice-detail-note">این مبلغ و وضعیت فقط دادهٔ ثابت نمایشی‌اند؛ فاکتور ثبت، ویرایش یا تسویه نمی‌شود.</p>
+            <div className="invoice-items-preview">
+              <h3>اقلام نمونه · تعداد نمایشی</h3>
+              <ul>
+                {(invoicePreviewItems[selectedInvoice.id] ?? []).map((item) => (
+                  <li key={item.name}><span>{item.name}</span><strong>{item.quantity}</strong></li>
+                ))}
+              </ul>
+            </div>
+            <p className="invoice-detail-note">اقلام، مبلغ و وضعیت ثابت و ساختگی‌اند؛ مبلغ از اقلام محاسبه نمی‌شود و فاکتور قابل ثبت، ویرایش یا تسویه نیست.</p>
           </div>
         )}
         {kind === 'customer-detail' && selectedCustomer && (
