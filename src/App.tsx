@@ -408,7 +408,8 @@ export default function App() {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       const isTyping = target && ['INPUT', 'TEXTAREA'].includes(target.tagName);
-      if (event.key === '/' && !isTyping) {
+      const modalIsOpen = document.querySelector('[role="dialog"][aria-modal="true"]') !== null;
+      if (event.key === '/' && !isTyping && !modalIsOpen) {
         event.preventDefault();
         searchInput.current?.focus();
       }
@@ -950,6 +951,45 @@ function NotificationsPanel() {
 function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCustomer, selectedInvoice, selectedInventoryItem, selectedActivity }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void; selectedCustomer: DataRow | null; selectedInvoice: DataRow | null; selectedInventoryItem: DataRow | null; selectedActivity: DataRow | null }) {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const modalRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const modal = modalRef.current;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (!modal) return;
+
+    const getFocusableElements = () => Array.from(modal.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )).filter((element) => !element.closest('[hidden], [aria-hidden="true"]'));
+    getFocusableElements()[0]?.focus();
+
+    const keepFocusInsideModal = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        modal.focus();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const focusIsOutsideModal = !modal.contains(document.activeElement);
+      if (event.shiftKey && (document.activeElement === firstElement || focusIsOutsideModal)) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && (document.activeElement === lastElement || focusIsOutsideModal)) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', keepFocusInsideModal);
+    return () => {
+      document.removeEventListener('keydown', keepFocusInsideModal);
+      if (previouslyFocused?.isConnected) previouslyFocused.focus();
+    };
+  }, []);
+
   const handleCustomerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (customerName.trim()) onCreateCustomer(customerName, customerPhone);
@@ -975,7 +1015,7 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="preview-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <section ref={modalRef} className="preview-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabIndex={-1}>
         <button type="button" className="modal-close" aria-label="بستن" onClick={onClose}><X size={19} /></button>
         <span className="modal-symbol"><Icon size={23} /></span>
         <span className="section-kicker">{content.label}</span>

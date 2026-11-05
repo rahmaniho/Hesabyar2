@@ -221,6 +221,30 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByText(/فروش واقعی ثبت نمی‌شود/)).toBeTruthy();
   });
 
+  it('keeps keyboard focus inside a preview dialog and restores it after closing', () => {
+    render(<App />);
+    const trigger = screen.getByRole('button', { name: 'ثبت فروش' });
+    trigger.focus();
+    fireEvent.click(trigger);
+
+    const dialog = screen.getByRole('dialog');
+    const dialogButtons = within(dialog).getAllByRole('button');
+    const firstButton = dialogButtons[0];
+    const lastButton = dialogButtons[dialogButtons.length - 1];
+    expect(document.activeElement).toBe(firstButton);
+    fireEvent.keyDown(firstButton, { key: '/' });
+    expect(document.activeElement).toBe(firstButton);
+
+    fireEvent.keyDown(firstButton, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(lastButton);
+    fireEvent.keyDown(lastButton, { key: 'Tab' });
+    expect(document.activeElement).toBe(firstButton);
+
+    fireEvent.click(firstButton);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+
   it('filters the sample invoice list from the global search', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
