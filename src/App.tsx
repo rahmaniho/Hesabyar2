@@ -37,7 +37,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 
 type PageId = 'overview' | 'sales' | 'activity' | 'customers' | 'inventory' | 'reports' | 'settings';
-type ModalKind = 'sale' | 'customer' | 'customer-detail' | 'invoice-detail' | 'help' | 'report' | 'generic' | null;
+type ModalKind = 'sale' | 'customer' | 'customer-detail' | 'invoice-detail' | 'inventory-detail' | 'help' | 'report' | 'generic' | null;
 type StatusTone = 'success' | 'warning' | 'muted' | 'danger' | 'info';
 
 const customerStatusOptions = [
@@ -46,7 +46,6 @@ const customerStatusOptions = [
   { value: 'مانده دارد', label: 'مانده دارد' },
   { value: 'نمونه', label: 'نمونه‌های موقت' },
 ] as const;
-type CustomerStatusFilter = typeof customerStatusOptions[number]['value'];
 
 interface NavItem {
   id: PageId;
@@ -188,8 +187,36 @@ const recordConfigs: Record<'sales' | 'activity' | 'customers' | 'inventory', Re
       { id: '2', initials: 'چ', primary: 'چای ممتاز بهاره', secondary: 'محصول بسته‌بندی', values: ['SKU-1088', 'نوشیدنی', '۷ عدد', '۳۲۰,۰۰۰ تومان'], status: 'رو به اتمام', tone: 'warning', avatarTone: 2 },
       { id: '3', initials: 'ل', primary: 'لیوان سرامیکی سفید', secondary: 'لوازم جانبی', values: ['SKU-1201', 'لوازم جانبی', '۴۲ عدد', '۲۸۰,۰۰۰ تومان'], status: 'موجود', tone: 'success', avatarTone: 3 },
       { id: '4', initials: 'د', primary: 'دانهٔ قهوهٔ عربیکا', secondary: 'محصول پر‌فروش', values: ['SKU-1340', 'نوشیدنی', '۳ عدد', '۶۸۰,۰۰۰ تومان'], status: 'رو به اتمام', tone: 'warning', avatarTone: 4 },
+      { id: '5', initials: 'ش', primary: 'شکلات تلخ ۷۰٪', secondary: 'محصول بسته‌بندی', values: ['SKU-1452', 'تنقلات', '۹ عدد', '۱۸۵,۰۰۰ تومان'], status: 'رو به اتمام', tone: 'warning', avatarTone: 3 },
     ],
   },
+};
+
+const recordStatusOptions: Record<keyof typeof recordConfigs, readonly { value: string; label: string }[]> = {
+  sales: [
+    { value: 'all', label: 'همهٔ فاکتورها' },
+    { value: 'تسویه‌شده', label: 'تسویه‌شده' },
+    { value: 'در انتظار', label: 'در انتظار پرداخت' },
+    { value: 'پیش‌نویس', label: 'پیش‌نویس' },
+  ],
+  activity: [
+    { value: 'all', label: 'همهٔ گردش‌ها' },
+    { value: 'دریافت', label: 'دریافت‌ها' },
+    { value: 'پرداخت', label: 'پرداخت‌ها' },
+  ],
+  customers: customerStatusOptions,
+  inventory: [
+    { value: 'all', label: 'همهٔ کالاها' },
+    { value: 'موجود', label: 'موجود' },
+    { value: 'رو به اتمام', label: 'رو به اتمام' },
+  ],
+};
+
+const recordFilterLabels: Record<keyof typeof recordConfigs, string> = {
+  sales: 'فاکتورها',
+  activity: 'گردش‌ها',
+  customers: 'مشتریان',
+  inventory: 'کالاها',
 };
 
 const activityItems = [
@@ -261,11 +288,9 @@ const chartDataByRange: Record<string, ChartSeries> = {
   },
 };
 
-const lowStockItems = [
-  { name: 'چای ممتاز بهاره', category: 'نوشیدنی', quantity: '۷ عدد', tone: 'amber' },
-  { name: 'دانهٔ قهوهٔ عربیکا', category: 'نوشیدنی', quantity: '۳ عدد', tone: 'rose' },
-  { name: 'شکلات تلخ ۷۰٪', category: 'تنقلات', quantity: '۹ عدد', tone: 'amber' },
-];
+const lowStockItems = recordConfigs.inventory.rows
+  .filter((row) => row.status === 'رو به اتمام')
+  .map((row, index) => ({ row, tone: index === 1 ? 'rose' : 'amber' }));
 
 function getPersianDate() {
   return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
@@ -282,6 +307,7 @@ export default function App() {
   const [prototypeCustomers, setPrototypeCustomers] = useState<DataRow[]>(recordConfigs.customers.rows);
   const [selectedCustomer, setSelectedCustomer] = useState<DataRow | null>(null);
   const [selectedInvoice, setSelectedInvoice] = useState<DataRow | null>(null);
+  const [selectedInventoryItem, setSelectedInventoryItem] = useState<DataRow | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -313,11 +339,13 @@ export default function App() {
     setModalKind(null);
     setSelectedCustomer(null);
     setSelectedInvoice(null);
+    setSelectedInventoryItem(null);
   };
 
   const openCustomerDetails = (customer: DataRow) => {
     setSelectedCustomer(customer);
     setSelectedInvoice(null);
+    setSelectedInventoryItem(null);
     setModalKind('customer-detail');
     setNotificationsOpen(false);
     setRangeOpen(false);
@@ -326,7 +354,17 @@ export default function App() {
   const openInvoiceDetails = (invoice: DataRow) => {
     setSelectedInvoice(invoice);
     setSelectedCustomer(null);
+    setSelectedInventoryItem(null);
     setModalKind('invoice-detail');
+    setNotificationsOpen(false);
+    setRangeOpen(false);
+  };
+
+  const openInventoryDetails = (item: DataRow) => {
+    setSelectedInventoryItem(item);
+    setSelectedCustomer(null);
+    setSelectedInvoice(null);
+    setModalKind('inventory-detail');
     setNotificationsOpen(false);
     setRangeOpen(false);
   };
@@ -363,6 +401,7 @@ export default function App() {
         setModalKind(null);
         setSelectedCustomer(null);
         setSelectedInvoice(null);
+        setSelectedInventoryItem(null);
         setSidebarOpen(false);
         setNotificationsOpen(false);
         setRangeOpen(false);
@@ -379,6 +418,7 @@ export default function App() {
   const handlePrimaryAction = (kind: ModalKind) => {
     setSelectedCustomer(null);
     setSelectedInvoice(null);
+    setSelectedInventoryItem(null);
     setModalKind(kind);
     setNotificationsOpen(false);
     setRangeOpen(false);
@@ -477,8 +517,8 @@ export default function App() {
             </button>
           </div>
 
-          {activePage === 'overview' && <Dashboard onAction={handlePrimaryAction} onNavigate={navigate} query={searchQuery} selectedRange={selectedRange} />}
-          {isRecordsPage && <RecordsPage pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} onCustomerSelect={activePage === 'customers' ? openCustomerDetails : undefined} onInvoiceSelect={activePage === 'sales' ? openInvoiceDetails : undefined} />}
+          {activePage === 'overview' && <Dashboard onAction={handlePrimaryAction} onNavigate={navigate} onInventorySelect={openInventoryDetails} query={searchQuery} selectedRange={selectedRange} />}
+          {isRecordsPage && <RecordsPage key={activePage} pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} onCustomerSelect={activePage === 'customers' ? openCustomerDetails : undefined} onInvoiceSelect={activePage === 'sales' ? openInvoiceDetails : undefined} onInventorySelect={activePage === 'inventory' ? openInventoryDetails : undefined} />}
           {activePage === 'reports' && <ReportsPage onAction={handlePrimaryAction} selectedRange={selectedRange} />}
           {activePage === 'settings' && <SettingsPage onAction={handlePrimaryAction} showToast={showToast} />}
 
@@ -490,7 +530,7 @@ export default function App() {
         </main>
       </div>
 
-      {modalKind && <PreviewModal kind={modalKind} onClose={closeModal} onNavigate={navigate} onCreateCustomer={addPrototypeCustomer} selectedCustomer={selectedCustomer} selectedInvoice={selectedInvoice} />}
+      {modalKind && <PreviewModal kind={modalKind} onClose={closeModal} onNavigate={navigate} onCreateCustomer={addPrototypeCustomer} selectedCustomer={selectedCustomer} selectedInvoice={selectedInvoice} selectedInventoryItem={selectedInventoryItem} />}
       {toast && <div className="toast" role="status"><Check size={17} />{toast}</div>}
     </div>
   );
@@ -551,7 +591,7 @@ function Sidebar({ activePage, open, onNavigate, onHelp }: { activePage: PageId;
   );
 }
 
-function Dashboard({ onAction, onNavigate, query, selectedRange }: { onAction: (kind: ModalKind) => void; onNavigate: (id: PageId) => void; query: string; selectedRange: string }) {
+function Dashboard({ onAction, onNavigate, onInventorySelect, query, selectedRange }: { onAction: (kind: ModalKind) => void; onNavigate: (id: PageId) => void; onInventorySelect: (item: DataRow) => void; query: string; selectedRange: string }) {
   const stats = [
     { label: 'فروش امروز', value: '۱۲,۸۴۰,۰۰۰', unit: 'تومان', change: '۱۲.۸٪', caption: 'نسبت به روز قبل', trend: 'up', icon: Wallet, tone: 'mint' },
     { label: 'دریافت‌های امروز', value: '۸,۴۲۰,۰۰۰', unit: 'تومان', change: '۶.۴٪', caption: 'نسبت به روز قبل', trend: 'up', icon: ArrowDownLeft, tone: 'blue' },
@@ -635,12 +675,12 @@ function Dashboard({ onAction, onNavigate, query, selectedRange }: { onAction: (
             <button type="button" className="text-link" onClick={() => onNavigate('inventory')}>همهٔ کالاها <ChevronLeft size={15} /></button>
           </div>
           <div className="stock-list">
-            {lowStockItems.map((item) => (
-              <div className="stock-row" key={item.name}>
+            {lowStockItems.map(({ row, tone }) => (
+              <div className="stock-row" key={row.id}>
                 <div className="stock-product-icon"><Package size={18} /></div>
-                <div className="stock-product-copy"><strong>{item.name}</strong><small>{item.category}</small></div>
-                <span className={`stock-quantity stock-${item.tone}`}>{item.quantity}</span>
-                <button type="button" className="row-action" aria-label={`نمایش ${item.name}`} onClick={() => onNavigate('inventory')}><ChevronLeft size={16} /></button>
+                <div className="stock-product-copy"><strong>{row.primary}</strong><small>{row.values[1]}</small></div>
+                <span className={`stock-quantity stock-${tone}`}>{row.values[2]}</span>
+                <button type="button" className="row-action" aria-label={`نمایش ${row.primary}`} onClick={() => onInventorySelect(row)}><ChevronLeft size={16} /></button>
               </div>
             ))}
           </div>
@@ -746,29 +786,25 @@ function DataTable({ rows, columns, query, compact = false, onRowSelect }: { row
   );
 }
 
-function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, onInvoiceSelect }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[]; onCustomerSelect?: (row: DataRow) => void; onInvoiceSelect?: (row: DataRow) => void }) {
+function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, onInvoiceSelect, onInventorySelect }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[]; onCustomerSelect?: (row: DataRow) => void; onInvoiceSelect?: (row: DataRow) => void; onInventorySelect?: (row: DataRow) => void }) {
   const config = recordConfigs[pageId];
   const rows = rowsOverride ?? config.rows;
-  const [customerStatusFilter, setCustomerStatusFilter] = useState<CustomerStatusFilter>('all');
-  const [customerFilterOpen, setCustomerFilterOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilterOpen, setStatusFilterOpen] = useState(false);
   const filterControlRef = useRef<HTMLDivElement>(null);
-  const visibleRows = pageId === 'customers' && customerStatusFilter !== 'all'
-    ? rows.filter((row) => row.status === customerStatusFilter)
-    : rows;
-  const selectedStatusLabel = customerStatusOptions.find((option) => option.value === customerStatusFilter)?.label ?? 'همهٔ مشتریان';
+  const filterOptions = recordStatusOptions[pageId];
+  const filterLabel = recordFilterLabels[pageId];
+  const visibleRows = statusFilter === 'all' ? rows : rows.filter((row) => row.status === statusFilter);
+  const selectedStatusLabel = filterOptions.find((option) => option.value === statusFilter)?.label ?? filterOptions[0].label;
   const Icon = pageId === 'sales' ? Receipt : pageId === 'activity' ? CreditCard : pageId === 'customers' ? Users : Package;
 
   useEffect(() => {
-    setCustomerFilterOpen(false);
-  }, [pageId]);
-
-  useEffect(() => {
-    if (!customerFilterOpen) return;
+    if (!statusFilterOpen) return;
     const closeOnOutsideClick = (event: MouseEvent) => {
-      if (!filterControlRef.current?.contains(event.target as Node)) setCustomerFilterOpen(false);
+      if (!filterControlRef.current?.contains(event.target as Node)) setStatusFilterOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setCustomerFilterOpen(false);
+      if (event.key === 'Escape') setStatusFilterOpen(false);
     };
     document.addEventListener('mousedown', closeOnOutsideClick);
     window.addEventListener('keydown', closeOnEscape);
@@ -776,7 +812,7 @@ function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, 
       document.removeEventListener('mousedown', closeOnOutsideClick);
       window.removeEventListener('keydown', closeOnEscape);
     };
-  }, [customerFilterOpen]);
+  }, [statusFilterOpen]);
 
   return (
     <section className="workspace-page">
@@ -793,29 +829,27 @@ function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, 
         <div className="card-heading records-heading">
           <div><span className="section-kicker">فهرست نمونه</span><h2>{config.title}</h2></div>
           <div className="records-toolbar">
-            {pageId === 'customers' ? (
-              <div className="customer-filter-control" ref={filterControlRef}>
-                <button type="button" className={`button button-light ${customerFilterOpen ? 'is-open' : ''}`} aria-label={`فیلتر مشتریان: ${selectedStatusLabel}`} aria-expanded={customerFilterOpen} onClick={() => setCustomerFilterOpen((open) => !open)}>
-                  <Filter size={16} /><span>فیلتر</span>{customerStatusFilter !== 'all' && <span className="filter-active-dot" aria-hidden="true" />}
-                </button>
-                {customerFilterOpen && (
-                  <div className="floating-menu customer-filter-menu" role="group" aria-label="فیلتر مشتریان بر اساس وضعیت">
-                    {customerStatusOptions.map((option) => (
-                      <button key={option.value} type="button" className={customerStatusFilter === option.value ? 'selected' : ''} aria-pressed={customerStatusFilter === option.value} onClick={() => { setCustomerStatusFilter(option.value); setCustomerFilterOpen(false); }}>
-                        <span>{option.label}</span>{customerStatusFilter === option.value && <Check size={15} />}
-                      </button>
-                    ))}
-                    <p>فقط ردیف‌های نمایشی بر اساس وضعیت فیلتر می‌شوند.</p>
-                  </div>
-                )}
-              </div>
-            ) : <button type="button" className="button button-light" onClick={() => onAction('generic')}><Filter size={16} />فیلتر</button>}
+            <div className="record-filter-control" ref={filterControlRef}>
+              <button type="button" className={`button button-light ${statusFilterOpen ? 'is-open' : ''}`} aria-label={`فیلتر ${filterLabel}: ${selectedStatusLabel}`} aria-expanded={statusFilterOpen} onClick={() => setStatusFilterOpen((open) => !open)}>
+                <Filter size={16} /><span>فیلتر</span>{statusFilter !== 'all' && <span className="filter-active-dot" aria-hidden="true" />}
+              </button>
+              {statusFilterOpen && (
+                <div className="floating-menu record-filter-menu" role="group" aria-label={`فیلتر ${filterLabel} بر اساس وضعیت`}>
+                  {filterOptions.map((option) => (
+                    <button key={option.value} type="button" className={statusFilter === option.value ? 'selected' : ''} aria-pressed={statusFilter === option.value} onClick={() => { setStatusFilter(option.value); setStatusFilterOpen(false); }}>
+                      <span>{option.label}</span>{statusFilter === option.value && <Check size={15} />}
+                    </button>
+                  ))}
+                  <p>فقط ردیف‌های نمایشی بر اساس وضعیت فیلتر می‌شوند.</p>
+                </div>
+              )}
+            </div>
             <button type="button" className="button button-light" onClick={() => onAction('generic')}><Download size={16} />خروجی</button>
             <button type="button" className="quiet-icon-button" aria-label="گزینه‌های فهرست" onClick={() => onAction('help')}><MoreHorizontal size={19} /></button>
           </div>
         </div>
         <div className="records-hint"><span className="small-dot" />جست‌وجوی بالای صفحه روی فهرست نمونه اعمال می‌شود.</div>
-        <DataTable rows={visibleRows} columns={config.columns} query={query} onRowSelect={pageId === 'customers' ? onCustomerSelect : pageId === 'sales' ? onInvoiceSelect : undefined} />
+        <DataTable rows={visibleRows} columns={config.columns} query={query} onRowSelect={pageId === 'customers' ? onCustomerSelect : pageId === 'sales' ? onInvoiceSelect : pageId === 'inventory' ? onInventorySelect : undefined} />
         <div className="records-footer"><span>نمایش {visibleRows.length.toLocaleString('fa-IR')} مورد نمونه</span><div className="pagination"><button type="button" disabled aria-label="صفحهٔ قبل"><ChevronLeft size={16} /></button><span className="page-number is-current">۱</span><span className="page-number">۲</span><span className="page-number">۳</span><button type="button" aria-label="صفحهٔ بعد" onClick={() => onAction('generic')}><ChevronLeft size={16} /></button></div></div>
       </section>
 
@@ -896,7 +930,7 @@ function NotificationsPanel() {
   );
 }
 
-function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCustomer, selectedInvoice }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void; selectedCustomer: DataRow | null; selectedInvoice: DataRow | null }) {
+function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCustomer, selectedInvoice, selectedInventoryItem }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void; selectedCustomer: DataRow | null; selectedInvoice: DataRow | null; selectedInventoryItem: DataRow | null }) {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const handleCustomerSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -911,6 +945,8 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
         ? { icon: Users, title: 'جزئیات مشتری نمونه', label: 'اطلاعات نمایشی و موقت', description: 'این نمای ساختگی فقط برای مرور چیدمان است و هیچ پرونده یا سابقهٔ واقعی مشتری را نمایش نمی‌دهد.' }
       : kind === 'invoice-detail'
         ? { icon: Receipt, title: 'جزئیات فاکتور نمونه', label: 'فقط نمایش · بدون عملیات', description: 'اطلاعات زیر عیناً از ردیف‌های ساختگی پیش‌نمایش می‌آیند؛ هیچ جمع، پرداخت یا ثبت مالی انجام نمی‌شود.' }
+      : kind === 'inventory-detail'
+        ? { icon: Package, title: 'جزئیات کالای نمونه', label: 'فقط نمایش · موجودی بدون تغییر', description: 'اطلاعات زیر ساختگی‌اند؛ قیمت یا موجودی تغییر نمی‌کند و هیچ خرید یا فروشی ثبت نمی‌شود.' }
       : kind === 'report'
         ? { icon: FileText, title: 'خروجی گزارش', label: 'در این نسخه آماده نیست', description: 'گزارش‌ها نمونه هستند و هیچ فایل یا خروجی واقعی تولید نمی‌شود.' }
         : kind === 'help'
@@ -971,6 +1007,22 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
             <p className="customer-detail-note">این اطلاعات ساختگی است و برای نمایش سابقهٔ واقعی یا محاسبهٔ مالی استفاده نمی‌شود.</p>
           </div>
         )}
+        {kind === 'inventory-detail' && selectedInventoryItem && (
+          <div className="inventory-detail-card">
+            <div className="customer-detail-heading">
+              <span className={`table-avatar tone-${selectedInventoryItem.avatarTone ?? 1}`}>{selectedInventoryItem.initials}</span>
+              <div className="customer-detail-copy"><strong>{selectedInventoryItem.primary}</strong><small>{selectedInventoryItem.secondary}</small></div>
+              <span className={`status-pill status-${selectedInventoryItem.tone}`}><span />{selectedInventoryItem.status}</span>
+            </div>
+            <dl className="customer-detail-list inventory-detail-list">
+              <div><dt>شناسهٔ کالای نمونه</dt><dd>{selectedInventoryItem.values[0]}</dd></div>
+              <div><dt>دسته‌بندی نمونه</dt><dd>{selectedInventoryItem.values[1]}</dd></div>
+              <div><dt>موجودی نمایشی</dt><dd>{selectedInventoryItem.values[2]}</dd></div>
+              <div><dt>قیمت نمونه</dt><dd>{selectedInventoryItem.values[3]}</dd></div>
+            </dl>
+            <p className="inventory-detail-note">این مشخصات ساختگی‌اند؛ قیمت یا موجودی تغییر نمی‌کند و هیچ سفارش، خرید یا فروشی ثبت نمی‌شود.</p>
+          </div>
+        )}
         {kind === 'customer' ? (
           <form className="customer-preview-form" onSubmit={handleCustomerSubmit}>
             <label className="modal-input-label" htmlFor="prototype-customer-name">نام نمونه</label>
@@ -985,7 +1037,7 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
           </form>
         ) : (
           <div className="modal-actions">
-            <button type="button" className="button button-primary" onClick={onClose}>{kind === 'customer-detail' || kind === 'invoice-detail' ? 'بستن' : 'متوجه شدم'}</button>
+            <button type="button" className="button button-primary" onClick={onClose}>{kind === 'customer-detail' || kind === 'invoice-detail' || kind === 'inventory-detail' ? 'بستن' : 'متوجه شدم'}</button>
             {kind === 'sale' && <button type="button" className="button button-secondary" onClick={() => { onClose(); onNavigate('sales'); }}>دیدن فاکتورهای نمونه</button>}
           </div>
         )}

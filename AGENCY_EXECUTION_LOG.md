@@ -1,9 +1,9 @@
 # دفتر اجرای آژانس مهندسی هوش مصنوعی — Hesabyar 2.0
 
 **آخرین به‌روزرسانی:** 2026-11-05 local
-**شاخهٔ نشست فعلی:** `arena/cd2e7fc5-hesabyar2` (`active`)، بر پایهٔ merge commit PR #9: `efb08c1367179fd3025fe3abc85fd6263d703939`
+**شاخهٔ نشست فعلی:** `arena/a1600dfc-hesabyar2` (`active`)، بر پایهٔ merge commit PR #10: `88f3fe6456b80c5e1f584112573fbb17744a37aa`
 **مخزن همین نشست:** `rahmaniho/Hesabyar2`
-**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7)، [#8](https://github.com/rahmaniho/Hesabyar2/pull/8) و [#9](https://github.com/rahmaniho/Hesabyar2/pull/9) در `main` ادغام شدند؛ آخرین merge commit `efb08c1367179fd3025fe3abc85fd6263d703939` است.
+**PRهای مستندات/پروتوتایپ:** PRهای [#1](https://github.com/rahmaniho/Hesabyar2/pull/1)، [#2](https://github.com/rahmaniho/Hesabyar2/pull/2)، [#3](https://github.com/rahmaniho/Hesabyar2/pull/3)، [#4](https://github.com/rahmaniho/Hesabyar2/pull/4)، [#5](https://github.com/rahmaniho/Hesabyar2/pull/5)، [#6](https://github.com/rahmaniho/Hesabyar2/pull/6)، [#7](https://github.com/rahmaniho/Hesabyar2/pull/7)، [#8](https://github.com/rahmaniho/Hesabyar2/pull/8)، [#9](https://github.com/rahmaniho/Hesabyar2/pull/9) و [#10](https://github.com/rahmaniho/Hesabyar2/pull/10) در `main` ادغام شدند؛ PR [#11](https://github.com/rahmaniho/Hesabyar2/pull/11) برای UI mock و helper مستقل WP‑1 باز است. آخرین merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` است.
 **مخزن برنامهٔ شناسایی‌شده:** `rahmaniho/KarenYar`، ممیزی read-only روی `main` commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
 
 ## تاریخچهٔ اجرا
@@ -39,20 +39,21 @@
 
 ## محدودیت‌های قطعی
 
-- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 greenfield UI shell، PR #6 فرم موقت مشتری، PR #7 جزئیات فقط‌خواندنی مشتری، PR #8 فیلتر وضعیت مشتری و PR #9 نمودار وابسته به بازهٔ انتخابی را به `main` افزودند. PR #9 با merge commit `efb08c1367179fd3025fe3abc85fd6263d703939` ادغام شد؛ شاخهٔ فعال فعلی `arena/cd2e7fc5-hesabyar2` از همین commit آغاز می‌شود. `main` اکنون UI shell دارد ولی هنوز source کامل/منطق محصول ندارد؛ `KarenYar` همچنان source candidate جدا و تأییدنشده است.
-- `KarenYar` منبع بسیار محتمل و مستندشده است، ولی هنوز تأیید کتبی مالک برای اینکه همین source مبنای Hesabyar 2.0 باشد لازم است.
+- PR #2 و #3 اسناد follow-up، PR #4 ماتریس artifact verification، PR #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. PR #10 با merge commit `88f3fe6456b80c5e1f584112573fbb17744a37aa` ادغام شد؛ PR #11 برای UI mock، helper محدود WP‑1 و CI workflow کم‌دسترسی باز است؛ شاخهٔ فعال `arena/a1600dfc-hesabyar2` از commit PR #10 آغاز می‌شود. کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرد؛ `main` هنوز محصول کامل/ledger ندارد و `KarenYar` جدا و واردنشده باقی مانده است.
+- `KarenYar` یک snapshot مرجع legacy است؛ کاربر source greenfield را `Hesabyar2` انتخاب کرده و هیچ فایل از `KarenYar` به این مخزن منتقل نشده است.
 - دامنه‌های رسمی خارج از allowlist شبکهٔ این sandbox هستند؛ کاربر cPanel server را قابل اجرا گزارش کرده، اما cPanel connector پشتیبانی نمی‌شود و server/host/environment این نشست متصل نشده؛ live application/HTTP headers، production DB و secrets بررسی نشده‌اند.
 - execution نقش‌ها مستقل نیست؛ هیچ گزارش specialist نباید به‌عنوان تأیید چندعامل یا code review مستقل انسانی تلقی شود.
 
 ## وضعیت تغییرات
 
-- **کد برنامه:** greenfield shell/UI prototype در `main` و شاخهٔ `arena/cd2e7fc5-hesabyar2`: React/TypeScript/Vite، رابط RTL، dashboard و صفحه‌های mock، navigation/search/notification/modal، تعامل‌های موقت مشتری، جزئیات فقط‌خواندنی فاکتور/مشتری با اقلام ثابت و بدون جمع‌زدن، فیلتر وضعیت و سری‌های hard-coded نمودار. منطق مالی یا persistence وجود ندارد.
-- **اعتبارسنجی prototype:** ۱۰ UI tests، typecheck و build موفق؛ `npm audit` صفر vulnerability گزارش کرد. Vite preview روی `0.0.0.0:5173` فعال است و صفحه/module با HTTP 200 پاسخ می‌دهند.
+- **کد برنامه:** greenfield app در `Hesabyar2` و شاخهٔ فعال `arena/a1600dfc-hesabyar2`: React/TypeScript/Vite، UI RTL و mock pages؛ PR #11 جزئیات فقط‌خواندنی، فیلترهای mock و helper خالص WP‑1 را شامل می‌شود. Helper فقط ورودی صحیح مثبت با واحد صریح را به integer Rial تبدیل و remainder را دقیق قالب‌بندی می‌کند؛ به POS، ledger، تراکنش یا persistence وصل نیست.
+- **اعتبارسنجی محلی:** ۲۴ تست (۱۶ UI + ۸ WP‑1 helper)، lint، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و helper module را HTTP 200 پاسخ می‌دهد؛ E2E مرورگر اجرا نشده است.
+- **CI کیفیت:** `.github/workflows/ci.yml` روی PR و push به `main` اضافه شد؛ read-only `contents`, Actionsهای SHA-pinned، Node 22, `npm ci`, lint, tests, typecheck, build و `npm audit --audit-level=low`; بدون deploy/sign/release. اولین check پیش از افزودن lint روی commit `3f191dc` موفق بود؛ check lint-enabled روی commit `c0924d8` هم با run `41939046732` موفق شد؛ branch protection/required-check policy هنوز تأیید نشده است.
 - **دیتابیس/production/release:** بدون تغییر؛ هیچ API، license، migration، APK یا deployment اجرا/تغییر نشده.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
-- **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #9 greenfield UI و تعامل‌های mock را به `main` افزودند. شاخهٔ فعلی `arena/cd2e7fc5-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.
-- در follow-up جاری، ماتریس پیشنهادی راستی‌آزمایی APK/AAB و Admin debug artifact در `docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد تا CI-06..08 و ADM-04 معیار پذیرش و negative-testهای مشخص داشته باشند؛ workflow، signer config یا artifact تغییر نکرد و اجرای این معیارها نیازمند approval است.
+- **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. شاخهٔ فعلی `arena/a1600dfc-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.
+- در audit تاریخی Android، ماتریس پیشنهادی راستی‌آزمایی APK/AAB و Admin debug artifact در `docs/audit/ANDROID_ARTIFACT_VERIFICATION_PLAN.md` تهیه شد تا CI-06..08 و ADM-04 معیار پذیرش و negative-testهای مشخص داشته باشند؛ workflowهای Android/Admin قدیمی، signer config و artifact آن‌ها تغییر نکرده‌اند و اجرای آن معیارها نیازمند approval است. این موضوع جدا از CI test-only جدید Hesabyar2 است.
 
 ## گیت بعدی
 
-ادامهٔ UI prototype و mock interactions در شاخهٔ فعال `arena/cd2e7fc5-hesabyar2` مجاز است. پیش از واردکردن یا ویرایش source اصلی، ذخیره‌سازی پایدار، منطق مالی، backend, licensing, migration یا release، مالک باید `rahmaniho/KarenYar` و مسیر توسعه را جداگانه تأیید کند؛ اگر برای این تصمیم‌ها ورودی لازم شد، مرحله‌به‌مرحله از کاربر خواسته می‌شود.
+کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ WP‑1 helper خالص آماده است و WP‑0 اکنون CI workflow کم‌دسترسی دارد. CI lint-enabled روی commit `c0924d8` موفق شد؛ branch protection/required-check policy همچنان باید توسط مالک تأیید و تنظیم شود. پیش از اتصال helper به POS یا جریان ثبت واقعی، CI باید سبز بماند و review مستقل انجام شود. پیش از اتصال helper به POS یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، refund flow، persistence/backend، licensing، migration، Android و release هنوز مجوز/تصمیم جدا می‌خواهند؛ `KarenYar` وارد یا ویرایش نشده است.

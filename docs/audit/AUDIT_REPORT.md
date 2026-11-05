@@ -1,8 +1,8 @@
 # گزارش اجرایی ممیزی Hesabyar 2.0 — به‌روزرسانی پس از «ادامه بده»
 
 **تاریخ:** 2026-11-05
-**شاخهٔ کاری فعلی:** `arena/cd2e7fc5-hesabyar2` (`active`)
-**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ شاخهٔ فعلی از merge commit PR #9، `efb08c1367179fd3025fe3abc85fd6263d703939`, شروع می‌شود. PRهای #1 تا #9 به `main` ادغام شده‌اند؛ PRهای #5 تا #9 greenfield UI prototype و تعامل‌های mock مشتری/داشبورد را افزودند. `main` اکنون shell/UI mock دارد، اما منطق کامل محصول را ندارد؛ `KarenYar` همچنان source candidate جداگانه و تأییدنشده است.
+**شاخهٔ کاری فعلی:** `arena/a1600dfc-hesabyar2` (`active`)
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ کاربر این مخزن را source greenfield توسعهٔ جدید و Shared Core را هدف سطح‌بالا انتخاب کرده است. شاخهٔ فعلی از merge commit PR #10، `88f3fe6456b80c5e1f584112573fbb17744a37aa`, شروع می‌شود؛ PRهای #1 تا #10 در `main` ادغام شده‌اند. PR #11 شامل جزئیات کالا و فیلترهای mock به‌علاوهٔ helper خالص WP‑1 است؛ `main` هنوز منطق کامل محصول ندارد و `KarenYar` به این مخزن وارد نشده است.
 **مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
 
 ## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
@@ -67,12 +67,13 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر greenfield shell/UI prototype را در شاخهٔ فعال `arena/cd2e7fc5-hesabyar2` مجاز کرده؛ PRهای #5 تا #9 آن را به `main` افزودند و این شاخه تعامل‌های mock-only مشتری/داشبورد/فاکتور را ادامه می‌دهد. این مجوز شامل منطق حسابداری، تراکنش واقعی، persistence/DB، licensing، migration، import از `KarenYar` یا release نیست؛ آن موارد همچنان به تأیید جداگانه نیاز دارند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 در شاخهٔ `arena/a1600dfc-hesabyar2` UI mock و helper خالص WP‑1 را دارد. برای WP‑0 فایل `.github/workflows/ci.yml` نیز به‌صورت test-only و با دسترسی read-only افزوده شده است؛ اجرای اولیهٔ GitHub روی commit `3f191dc` موفق بود و نتیجهٔ هر commit بعدی در PR #11 دیده می‌شود؛ branch protection هنوز تنظیم نشده است. helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 
-1. آیا `rahmaniho/KarenYar` منبع رسمی برنامه‌ای است که باید Hesabyar 2.0 از آن تکامل یابد؟
-2. آیا توسعهٔ کامل باید روی source فعلی `KarenYar` باشد یا greenfield در `Hesabyar2` ادامه یابد؟ prototype فعلی فقط shell/UI است و این تصمیم را پیشاپیش حل نمی‌کند.
-3. قواعد مالی برای POS conversion، invoice reversal و مجوزدهی چه هستند و چه ownerهایی باید پیش از تغییرات اجرایی آن‌ها را تصویب کنند؟
+1. آیا/چه زمانی legacy data یا رفتارهای `KarenYar` باید سازگار، import یا migrate شوند؟
+2. مرزهای دقیق Personal/Business، tenant model و انتخاب backend برای Shared Core چه هستند؟
+3. قواعد گسترده‌تر مالی (posting، refund، tax، تاریخ مؤثر و reversal) و owner sign-off آن‌ها چیست؟
+4. آیا owner branch protection و required CI check را برای repository فعال می‌کند؟ workflow فقط status می‌دهد و تنظیم repository را عوض نمی‌کند.
 
 هیچ تغییر production، migration، نشر یا ادعای تأیید live انجام نشده است. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [ماتریس راستی‌آزمایی artifactهای Android/Admin](ANDROID_ARTIFACT_VERIFICATION_PLAN.md)، [Admin Android](ADMIN_ANDROID_AUDIT.md)، [Admin PHP staging](ADMIN_SERVER_AUDIT.md)، [cPanel read-only runbook](CPANEL_READ_ONLY_RUNBOOK.md)، [Android platform](ANDROID_PLATFORM_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).

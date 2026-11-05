@@ -111,14 +111,14 @@ button:disabled { cursor: not-allowed; }
 .range-menu button:hover, .range-menu button.selected { color: var(--brand-dark); background: #edf7f3; }
 .range-menu button.selected { font-weight: 600; }
 .range-menu p { margin: 5px 8px 3px; padding-top: 8px; color: #9baaa5; border-top: 1px solid #eef2f0; font-size: 8px; }
-.customer-filter-control { position: relative; }
-.customer-filter-control > .button.is-open { color: var(--brand-dark); border-color: #d2e8df; background: #f7fbf9; }
+.record-filter-control { position: relative; }
+.record-filter-control > .button.is-open { color: var(--brand-dark); border-color: #d2e8df; background: #f7fbf9; }
 .filter-active-dot { width: 6px; height: 6px; border-radius: 50%; background: #258c73; }
-.customer-filter-menu { width: 205px; }
-.customer-filter-menu button { display: flex; width: 100%; align-items: center; justify-content: space-between; min-height: 35px; padding: 0 9px; color: #5f756e; border: 0; border-radius: 8px; background: transparent; font-size: 10px; text-align: right; cursor: pointer; }
-.customer-filter-menu button:hover, .customer-filter-menu button.selected { color: var(--brand-dark); background: #edf7f3; }
-.customer-filter-menu button.selected { font-weight: 600; }
-.customer-filter-menu p { margin: 5px 8px 3px; padding-top: 8px; color: #9baaa5; border-top: 1px solid #eef2f0; font-size: 8px; line-height: 1.7; }
+.record-filter-menu { width: 205px; }
+.record-filter-menu button { display: flex; width: 100%; align-items: center; justify-content: space-between; min-height: 35px; padding: 0 9px; color: #5f756e; border: 0; border-radius: 8px; background: transparent; font-size: 10px; text-align: right; cursor: pointer; }
+.record-filter-menu button:hover, .record-filter-menu button.selected { color: var(--brand-dark); background: #edf7f3; }
+.record-filter-menu button.selected { font-weight: 600; }
+.record-filter-menu p { margin: 5px 8px 3px; padding-top: 8px; color: #9baaa5; border-top: 1px solid #eef2f0; font-size: 8px; line-height: 1.7; }
 .notifications-menu { right: auto; left: 0; width: 286px; padding: 0; overflow: hidden; }
 .popover-heading { display: flex; align-items: center; justify-content: space-between; padding: 14px 15px 11px; border-bottom: 1px solid #eef2f0; }
 .popover-heading strong { color: #28453e; font-size: 11px; }
@@ -399,7 +399,7 @@ button:disabled { cursor: not-allowed; }
 .preview-modal > p { margin: 0; color: #7f9189; font-size: 10px; line-height: 2; }
 .sale-preview-fields { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
 .customer-preview-form { display: flex; flex-direction: column; gap: 7px; margin-top: 17px; }
-.customer-detail-card, .invoice-detail-card { display: flex; flex-direction: column; gap: 10px; margin-top: 17px; }
+.customer-detail-card, .invoice-detail-card, .inventory-detail-card { display: flex; flex-direction: column; gap: 10px; margin-top: 17px; }
 .invoice-detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px; border: 1px solid #edf2ef; border-radius: 11px; background: #fbfdfc; }
 .invoice-detail-heading > div { display: flex; flex-direction: column; gap: 3px; }
 .invoice-detail-heading > div span { color: #97a59f; font-size: 8px; }
@@ -415,7 +415,7 @@ button:disabled { cursor: not-allowed; }
 .customer-detail-list dd, .invoice-detail-list dd { margin: 0; color: #47665b; font-size: 9px; font-weight: 600; }
 .invoice-sample-total { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 10px; color: #879890; border: 1px solid #edf2ef; border-radius: 9px; background: #f8fbf9; font-size: 9px; }
 .invoice-sample-total strong { color: #2f725e; font-size: 11px; }
-.customer-detail-note, .invoice-detail-note { margin: 0; padding: 9px 10px; color: #887345; border: 1px solid #f1e8cf; border-radius: 8px; background: #fffbf1; font-size: 8px; line-height: 1.8; }
+.customer-detail-note, .invoice-detail-note, .inventory-detail-note { margin: 0; padding: 9px 10px; color: #887345; border: 1px solid #f1e8cf; border-radius: 8px; background: #fffbf1; font-size: 8px; line-height: 1.8; }
 .modal-input-label { margin-top: 3px; color: #667e75; font-size: 9px; font-weight: 600; }
 .customer-preview-form input { width: 100%; min-height: 39px; padding: 0 10px; color: #36564b; border: 1px solid #e5ede9; border-radius: 9px; background: #fbfdfc; font-size: 10px; }
 .customer-preview-form input::placeholder { color: #b0bcb7; }
