@@ -109,6 +109,20 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByText('مینا رضایی')).toBeTruthy();
   });
 
+  it('resets a mock status filter when switching between record pages', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر مشتریان بر اساس وضعیت' })).getByRole('button', { name: 'فعال' }));
+    expect(screen.getByRole('button', { name: 'فیلتر مشتریان: فعال' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
+    expect(screen.getByRole('button', { name: 'فیلتر گردش‌ها: همهٔ گردش‌ها' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    expect(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' })).toBeTruthy();
+  });
+
   it('filters sample invoices by payment status and restores the full list', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));

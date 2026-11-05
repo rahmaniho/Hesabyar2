@@ -47,8 +47,8 @@
 ## وضعیت تغییرات
 
 - **کد برنامه:** greenfield app در `Hesabyar2` و شاخهٔ فعال `arena/a1600dfc-hesabyar2`: React/TypeScript/Vite، UI RTL و mock pages؛ PR #11 جزئیات فقط‌خواندنی، فیلترهای mock و helper خالص WP‑1 را شامل می‌شود. Helper فقط ورودی صحیح مثبت با واحد صریح را به integer Rial تبدیل و remainder را دقیق قالب‌بندی می‌کند؛ به POS، ledger، تراکنش یا persistence وصل نیست.
-- **اعتبارسنجی محلی:** ۲۳ تست (۱۵ UI + ۸ WP‑1 helper)، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و helper module را HTTP 200 پاسخ می‌دهد؛ E2E مرورگر اجرا نشده است.
-- **CI کیفیت:** `.github/workflows/ci.yml` روی PR و push به `main` اضافه شد؛ read-only `contents`, Actionsهای SHA-pinned، Node 22, `npm ci`, tests, typecheck, build و `npm audit --audit-level=low`; بدون deploy/sign/release. نتیجهٔ جاری در PR #11 منعکس می‌شود؛ اجرای اولیه روی commit `3f191dc` موفق بود؛ branch protection و lint configuration تنظیم/تأیید نشده‌اند.
+- **اعتبارسنجی محلی:** ۲۴ تست (۱۶ UI + ۸ WP‑1 helper)، lint، typecheck، build و `git diff --check` موفق؛ `npm audit` صفر آسیب‌پذیری گزارش کرد؛ Vite preview صفحه و helper module را HTTP 200 پاسخ می‌دهد؛ E2E مرورگر اجرا نشده است.
+- **CI کیفیت:** `.github/workflows/ci.yml` روی PR و push به `main` اضافه شد؛ read-only `contents`, Actionsهای SHA-pinned، Node 22, `npm ci`, lint, tests, typecheck, build و `npm audit --audit-level=low`; بدون deploy/sign/release. اولین check پیش از افزودن lint روی commit `3f191dc` موفق بود؛ check lint-enabled روی commit تازه باید بررسی شود؛ branch protection/required-check policy هنوز تأیید نشده است.
 - **دیتابیس/production/release:** بدون تغییر؛ هیچ API، license، migration، APK یا deployment اجرا/تغییر نشده.
 - **مستندات قبلی:** commit `612c011` از PR #1 به `main` ادغام شد.
 - **مستندات و prototype ادغام‌شده:** PRهای #1 تا #4 اسناد ممیزی/معماری را و PRهای #5 تا #10 greenfield UI و تعامل‌های mock را به `main` افزودند. شاخهٔ فعلی `arena/a1600dfc-hesabyar2` ادامهٔ prototype را با mock data می‌دهد؛ اجازه هنوز منطق مالی، persistence پایدار، backend یا source اصلی `KarenYar` را پوشش نمی‌دهد.

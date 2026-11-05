@@ -518,7 +518,7 @@ export default function App() {
           </div>
 
           {activePage === 'overview' && <Dashboard onAction={handlePrimaryAction} onNavigate={navigate} onInventorySelect={openInventoryDetails} query={searchQuery} selectedRange={selectedRange} />}
-          {isRecordsPage && <RecordsPage pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} onCustomerSelect={activePage === 'customers' ? openCustomerDetails : undefined} onInvoiceSelect={activePage === 'sales' ? openInvoiceDetails : undefined} onInventorySelect={activePage === 'inventory' ? openInventoryDetails : undefined} />}
+          {isRecordsPage && <RecordsPage key={activePage} pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} onCustomerSelect={activePage === 'customers' ? openCustomerDetails : undefined} onInvoiceSelect={activePage === 'sales' ? openInvoiceDetails : undefined} onInventorySelect={activePage === 'inventory' ? openInventoryDetails : undefined} />}
           {activePage === 'reports' && <ReportsPage onAction={handlePrimaryAction} selectedRange={selectedRange} />}
           {activePage === 'settings' && <SettingsPage onAction={handlePrimaryAction} showToast={showToast} />}
 
@@ -797,11 +797,6 @@ function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, 
   const visibleRows = statusFilter === 'all' ? rows : rows.filter((row) => row.status === statusFilter);
   const selectedStatusLabel = filterOptions.find((option) => option.value === statusFilter)?.label ?? filterOptions[0].label;
   const Icon = pageId === 'sales' ? Receipt : pageId === 'activity' ? CreditCard : pageId === 'customers' ? Users : Package;
-
-  useEffect(() => {
-    setStatusFilterOpen(false);
-    setStatusFilter('all');
-  }, [pageId]);
 
   useEffect(() => {
     if (!statusFilterOpen) return;

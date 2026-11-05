@@ -32,9 +32,9 @@
 ### WP-0 — منبع و CI قابل تکرار (`IN PROGRESS / WORKFLOW ACTIVE; BRANCH POLICY PENDING`)
 
 - source greenfield در سطح بالا `Hesabyar2` انتخاب شده؛ baseline برنامه روی شاخهٔ فعلی تثبیت است و معماری/edition boundaries جزئی‌تر هنوز ADR می‌خواهند.
-- `.github/workflows/ci.yml` روی pull requestها و push به `main` اجرا می‌شود: Node 22، `npm ci`, tests, typecheck, build و `npm audit --audit-level=low`.
+- `.github/workflows/ci.yml` روی pull requestها و push به `main` اجرا می‌شود: Node 22، `npm ci`, `npm run lint`, tests, typecheck, build و `npm audit --audit-level=low`.
 - Workflow فقط `contents: read` دارد، `actions/checkout` و `actions/setup-node` را به commit SHA کامل pin می‌کند، checkout credential را نگه نمی‌دارد، timeout/concurrency دارد و هیچ deploy، sign، release یا artifact publication انجام نمی‌دهد.
-- در این مخزن lint script/config موجود نیست؛ این workflow lint اجرا یا آن را ادعا نمی‌کند. Release guard هم موضوع این test-only workflow نیست.
+- Lint با Oxlint 1.91 در `.oxlintrc.json` تنظیم شده: قواعد correctness برای TypeScript/React/Vitest/import و قواعد React Hooks مشخص؛ style/pedantic lint عمداً فعال نشده‌اند. Release guard هم موضوع این test-only workflow نیست.
 - **خروجی پذیرش:** GitHub run برای PR #11 باید سبز شود؛ سپس owner باید required-check/branch-protection policy را جداگانه تأیید کند. تنظیمات branch protection در این مرحله تغییر نکرده‌اند؛ workflow به‌تنهایی required check را enforce نمی‌کند.
 
 ### WP-1 — مرز ورودی پول POS (`IN PROGRESS / PURE HELPER ONLY`)
@@ -71,7 +71,7 @@
 ## وضعیت فعلی
 
 - WP-0: `IN PROGRESS / CI ACTIVE; BRANCH POLICY PENDING`; WP-1: `IN PROGRESS / PURE HELPER ONLY`; WP-2/WP-3: `NOT STARTED`.
-- `.github/workflows/ci.yml` تست، typecheck، build و npm audit را با دسترسی read-only اجرا می‌کند؛ وضعیت آخرین اجرا در PR #11 دیده می‌شود؛ branch protection/required-check policy تغییر نکرده است.
+- `.github/workflows/ci.yml` lint، test، typecheck، build و npm audit را با دسترسی read-only اجرا می‌کند؛ وضعیت آخرین اجرا در PR #11 دیده می‌شود؛ branch protection/required-check policy تغییر نکرده است.
 - `src/domain/money.ts` تنها helper مستقلِ WP-1 است؛ هیچ sales flow، posting، ledger، DB، license، production، Android artifact یا release به آن وصل نشده است.
 - UI prototype و تعامل‌های mock در `arena/a1600dfc-hesabyar2` ادامه دارد؛ PR #11 باز است. local tests/typecheck/build موفق‌اند؛ workflow خودکار است اما به‌تنهایی check را اجباری نمی‌کند.
 - پیش از اتصال helper به POS، تراکنش/ابطال/refund، ledger، persistence/backend، licensing، migration یا release، WP-0 و gateهای domain/security مربوط باید جداگانه بسته شوند؛ `KarenYar` هنوز import یا ویرایش نشده است.

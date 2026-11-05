@@ -16,6 +16,7 @@ npm run dev
 The Vite server binds to `0.0.0.0:5173` for the Arena preview. Useful checks:
 
 ```bash
+npm run lint
 npm run test
 npm run typecheck
 npm run build

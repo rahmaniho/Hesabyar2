@@ -11,10 +11,10 @@
 | UI prototype | `IN_PROGRESS / MOCK ONLY` | RTL dashboard و صفحه‌های نمونه؛ افزودن مشتری در حافظهٔ موقت، فیلتر وضعیت mock برای فاکتور/گردش/مشتری/کالا، سری‌های chart ساختگی، و جزئیات فقط‌خواندنی مشتری/فاکتور/کالا؛ هیچ مبلغ یا موجودی در app محاسبه/تغییر نمی‌شود |
 | WP-1 مبلغ | `IN_PROGRESS / PURE HELPER ONLY` | helper مستقل و بدون اتصال به فروش: واحد صریح ریال/تومان، عدد صحیح مثبت، حفظ remainder بدون گردکردن، رقم فارسی/لاتین، خروجی BigInt ریالی؛ صفر/منفی/اعشار رد می‌شود؛ ledger، معامله یا persistence ندارد |
 | داده و حریم خصوصی prototype | `NO PERSISTENCE / NO API` | کد اجرایی app از localStorage/sessionStorage/IndexedDB/fetch/backend استفاده نمی‌کند؛ تست فقط نبودن write به localStorage را assert می‌کند؛ لطفاً اطلاعات واقعی مشتری یا فاکتور وارد نکنید |
-| تست prototype و WP-1 | `PASS` | ۲۳ تست: ۱۵ تست UI و ۸ تست helper مبلغ برای واحد ریال/تومان، ورودی‌های ۱..۱۱، رقم فارسی/لاتین، remainder دقیق، ورودی نامعتبر/منفی/صفر و BigInt بزرگ |
+| تست prototype و WP-1 | `PASS` | ۲۴ تست: ۱۶ تست UI و ۸ تست helper مبلغ برای واحد ریال/تومان، ورودی‌های ۱..۱۱، رقم فارسی/لاتین، remainder دقیق، ورودی نامعتبر/منفی/صفر، BigInt بزرگ و بازنشانی فیلتر هنگام تعویض فهرست |
 | typecheck/build prototype | `PASS` | `npm run typecheck` و `npm run build` موفق؛ `dist/` در Git نادیده گرفته می‌شود |
 | dependency audit prototype | `PASS` | `npm audit`: صفر vulnerability |
-| CI کیفیت | `IN PROGRESS / WORKFLOW ACTIVE` | `.github/workflows/ci.yml` با `contents: read`، Actionsهای SHA-pinned، Node 22، `npm ci`, tests/typecheck/build و `npm audit --audit-level=low`; بدون deploy/sign/release؛ نتیجهٔ جاری در PR #11 است؛ lint script/config و branch protection هنوز تنظیم نشده‌اند |
+| CI کیفیت | `IN PROGRESS / WORKFLOW ACTIVE` | `.github/workflows/ci.yml` با `contents: read`، Actionsهای SHA-pinned، Node 22، `npm ci`, lint/test/typecheck/build و `npm audit --audit-level=low`; بدون deploy/sign/release؛ CI اکنون lint را هم اجرا می‌کند؛ branch protection/required-check policy هنوز تنظیم نشده است |
 | ممیزی source قدیمی `KarenYar` | `COMPLETED_FOR_SNAPSHOT` | snapshot read-only `KarenYar/main@d41ca291...`؛ 369 unit tests، typecheck/lint/build و 35 release tests مربوط به prototype فعلی نیستند |
 | E2E مرورگر | `NOT RUN` | مرورگر واقعی/device در این مرحله تست نشده؛ صفحه و app module در Vite preview با HTTP 200 پاسخ دادند |
 | production/staging و cPanel | `DEFERRED_BY_USER` | کاربر بررسی cPanel را فعلاً نخواست؛ هیچ server command/credential/environment استفاده نشد |
@@ -23,4 +23,4 @@
 
 ## گام بعدی
 
-WP-1 helper خالص پیاده و تست شده است. WP-0 اکنون workflow کیفیت کم‌دسترسی دارد؛ آخرین GitHub check در PR #11 باید سبز بماند و owner باید branch-protection/required-check policy را جداگانه تأیید کند؛ lint configuration هم وجود ندارد. پیش از اتصال helper به فرم فروش یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، برگشت وجه، persistence، API/auth، licensing، migration از `KarenYar`، Android و release هنوز شروع نشده‌اند و به تصمیم‌های جداگانه نیاز دارند.
+WP-1 helper خالص پیاده و تست شده است. WP-0 اکنون workflow کم‌دسترسی و lint configuration دارد؛ check جدید باید روی PR #11 اجرا و تأیید شود و owner باید branch-protection/required-check policy را جداگانه تأیید کند. پیش از اتصال helper به فرم فروش یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، برگشت وجه، persistence، API/auth، licensing، migration از `KarenYar`، Android و release هنوز شروع نشده‌اند و به تصمیم‌های جداگانه نیاز دارند.
