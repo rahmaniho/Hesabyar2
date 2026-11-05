@@ -1,8 +1,8 @@
 # گزارش اجرایی ممیزی Hesabyar 2.0 — به‌روزرسانی پس از «ادامه بده»
 
 **تاریخ:** 2026-11-05
-**شاخهٔ کاری فعلی:** `arena/67897961-hesabyar2` (`active`)
-**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ کاربر این مخزن را source greenfield توسعهٔ جدید و Shared Core را هدف سطح‌بالا انتخاب کرده است. PRهای #1 تا #11 در `main` ادغام شده‌اند؛ PR #11 با merge commit `f13e3d95e6af86a394a42e22a2e0ea031de0a7f0` جزئیات کالا، فیلترهای mock، helper خالص WP‑1 و CI/lint را آورد. شاخهٔ فعال از همین commit آغاز می‌شود؛ `main` هنوز منطق کامل محصول ندارد و `KarenYar` به این مخزن وارد نشده است.
+**شاخهٔ کاری فعلی:** `arena/4085f085-hesabyar2` (`active`)
+**مخزن متصل به نشست:** `rahmaniho/Hesabyar2`؛ کاربر این مخزن را source greenfield توسعهٔ جدید و Shared Core را هدف سطح‌بالا انتخاب کرده است. PRهای #1 تا #12 در `main` ادغام شده‌اند؛ PR #11 با merge `f13e3d9` جزئیات کالا، فیلترهای mock، helper خالص WP‑1 و CI/lint را آورد؛ PR #12 با merge `6211365` وضعیت را sync کرد و ADR-001 پیش‌نویس را افزود. `main` هنوز منطق کامل محصول ندارد و `KarenYar` به این مخزن وارد نشده است.
 **مخزن برنامهٔ بازرسی‌شده:** `rahmaniho/KarenYar`، `main` در commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`، نسخهٔ برنامه 1.4.2.
 
 ## نکتهٔ اصلاحی دربارهٔ گزارش قبلی
@@ -67,7 +67,7 @@
 
 ## گام اجرایی بعدی و Approval Gate
 
-اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #11 در main ادغام شده و شاخهٔ فعال `arena/67897961-hesabyar2` بر merge commit `f13e3d9` بناست. به درخواست کاربر، `docs/architecture/ADR-001-SHARED-CORE.md` به‌صورت پیش‌نویس تهیه شده؛ تصمیم‌ها و مجوزهای implementation بازند. CI روی main با run `41939981854` موفق شد؛ branch protection/required-check policy در این مرحله تغییر یا مستقل تأیید نشده و تأیید owner لازم است. merge به‌طور خودکار Pages build/deploy را اجرا کرد (run `41939981195` موفق)، اما صفحهٔ خروجی بررسی نشده و این deploy دستی نبود؛ کاربر دستور داده Pages deploy دیگری تا اجازهٔ جداگانه انجام نشود. helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
+اکنون ممیزی source و معماری مفهومی موجود است. کاربر `Hesabyar2` را source greenfield و Shared Core را هدف سطح‌بالا انتخاب کرده؛ PR #12 با merge commit `6211365` ادغام شده و ADR-001 در main به‌صورت پیش‌نویس است؛ هیچ جزئیات معماری یا implementation تصویب نشده است. CI روی main با run `42004918329` موفق شد؛ branch protection/required-check policy تغییر یا مستقل تأیید نشده و owner confirmation لازم است. mergeهای #11 و #12 به‌طور خودکار Pages build/deploy را اجرا کردند (آخرین run `42004917176` موفق)، اما محتوای صفحه بررسی نشده و این deploy دستی نبود. کاربر خواسته Pages deployment دیگری تا اجازهٔ جداگانه انجام نشود. helper به فروش/ledger/storage وصل نیست؛ transaction posting، refunds، persistence/DB، licensing، migration، import از `KarenYar` یا release همچنان نیازمند gate/approval جدا هستند.
 
 تصمیم‌های باز پیش از توسعهٔ فراتر از UI:
 
@@ -76,4 +76,4 @@
 3. قواعد گسترده‌تر مالی (posting، refund، tax، تاریخ مؤثر و reversal) و owner sign-off آن‌ها چیست؟
 4. آیا owner branch protection و required CI check را برای repository فعال می‌کند؟ workflow فقط status می‌دهد و تنظیم repository را عوض نمی‌کند.
 
-هیچ DB/server/cPanel production change، migration یا release دستی انجام نشده و live content تأیید نشده است؛ تنها استثنا، GitHub Pages build/deploy خودکار پس از merge است که در run `41939981195` موفق شد، بدون بررسی مستقل محتوای منتشرشده. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [ماتریس راستی‌آزمایی artifactهای Android/Admin](ANDROID_ARTIFACT_VERIFICATION_PLAN.md)، [Admin Android](ADMIN_ANDROID_AUDIT.md)، [Admin PHP staging](ADMIN_SERVER_AUDIT.md)، [cPanel read-only runbook](CPANEL_READ_ONLY_RUNBOOK.md)، [Android platform](ANDROID_PLATFORM_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).
+هیچ DB/server/cPanel production change، migration یا release دستی انجام نشده و live content تأیید نشده است؛ GitHub Pages build/deploy پس از mergeهای #11 و #12 به‌طور خودکار در runs `41939981195` و `42004917176` موفق شد، بدون بررسی مستقل محتوای منتشرشده. گزارش جزئی: [ممیزی کد برنامه](APP_CODE_AUDIT.md)، [deployment و release](DEPLOYMENT_AND_RELEASE_AUDIT.md)، [CI و زنجیرهٔ تأمین](CI_SUPPLY_CHAIN_AUDIT.md)، [ماتریس راستی‌آزمایی artifactهای Android/Admin](ANDROID_ARTIFACT_VERIFICATION_PLAN.md)، [Admin Android](ADMIN_ANDROID_AUDIT.md)، [Admin PHP staging](ADMIN_SERVER_AUDIT.md)، [cPanel read-only runbook](CPANEL_READ_ONLY_RUNBOOK.md)، [Android platform](ANDROID_PLATFORM_AUDIT.md)، [صفحهٔ محصول و SEO](PRODUCT_PAGE_AND_SEO_AUDIT.md)، [شواهد منبع](SOURCE_EVIDENCE.md)، [معماری فعلی](CURRENT_ARCHITECTURE.md)، [گیت آمادگی توسعه](../architecture/IMPLEMENTATION_GATE.md) و [گزارش ریسک](../../RISK_REGISTER.md).

@@ -37,7 +37,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 
 type PageId = 'overview' | 'sales' | 'activity' | 'customers' | 'inventory' | 'reports' | 'settings';
-type ModalKind = 'sale' | 'customer' | 'customer-detail' | 'invoice-detail' | 'inventory-detail' | 'help' | 'report' | 'generic' | null;
+type ModalKind = 'sale' | 'customer' | 'customer-detail' | 'invoice-detail' | 'inventory-detail' | 'activity-detail' | 'help' | 'report' | 'generic' | null;
 type StatusTone = 'success' | 'warning' | 'muted' | 'danger' | 'info';
 
 const customerStatusOptions = [
@@ -308,6 +308,7 @@ export default function App() {
   const [selectedCustomer, setSelectedCustomer] = useState<DataRow | null>(null);
   const [selectedInvoice, setSelectedInvoice] = useState<DataRow | null>(null);
   const [selectedInventoryItem, setSelectedInventoryItem] = useState<DataRow | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<DataRow | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -340,12 +341,14 @@ export default function App() {
     setSelectedCustomer(null);
     setSelectedInvoice(null);
     setSelectedInventoryItem(null);
+    setSelectedActivity(null);
   };
 
   const openCustomerDetails = (customer: DataRow) => {
     setSelectedCustomer(customer);
     setSelectedInvoice(null);
     setSelectedInventoryItem(null);
+    setSelectedActivity(null);
     setModalKind('customer-detail');
     setNotificationsOpen(false);
     setRangeOpen(false);
@@ -355,6 +358,7 @@ export default function App() {
     setSelectedInvoice(invoice);
     setSelectedCustomer(null);
     setSelectedInventoryItem(null);
+    setSelectedActivity(null);
     setModalKind('invoice-detail');
     setNotificationsOpen(false);
     setRangeOpen(false);
@@ -364,7 +368,18 @@ export default function App() {
     setSelectedInventoryItem(item);
     setSelectedCustomer(null);
     setSelectedInvoice(null);
+    setSelectedActivity(null);
     setModalKind('inventory-detail');
+    setNotificationsOpen(false);
+    setRangeOpen(false);
+  };
+
+  const openActivityDetails = (activity: DataRow) => {
+    setSelectedActivity(activity);
+    setSelectedCustomer(null);
+    setSelectedInvoice(null);
+    setSelectedInventoryItem(null);
+    setModalKind('activity-detail');
     setNotificationsOpen(false);
     setRangeOpen(false);
   };
@@ -393,7 +408,8 @@ export default function App() {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       const isTyping = target && ['INPUT', 'TEXTAREA'].includes(target.tagName);
-      if (event.key === '/' && !isTyping) {
+      const modalIsOpen = document.querySelector('[role="dialog"][aria-modal="true"]') !== null;
+      if (event.key === '/' && !isTyping && !modalIsOpen) {
         event.preventDefault();
         searchInput.current?.focus();
       }
@@ -402,6 +418,7 @@ export default function App() {
         setSelectedCustomer(null);
         setSelectedInvoice(null);
         setSelectedInventoryItem(null);
+        setSelectedActivity(null);
         setSidebarOpen(false);
         setNotificationsOpen(false);
         setRangeOpen(false);
@@ -419,6 +436,7 @@ export default function App() {
     setSelectedCustomer(null);
     setSelectedInvoice(null);
     setSelectedInventoryItem(null);
+    setSelectedActivity(null);
     setModalKind(kind);
     setNotificationsOpen(false);
     setRangeOpen(false);
@@ -518,7 +536,7 @@ export default function App() {
           </div>
 
           {activePage === 'overview' && <Dashboard onAction={handlePrimaryAction} onNavigate={navigate} onInventorySelect={openInventoryDetails} query={searchQuery} selectedRange={selectedRange} />}
-          {isRecordsPage && <RecordsPage key={activePage} pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} onCustomerSelect={activePage === 'customers' ? openCustomerDetails : undefined} onInvoiceSelect={activePage === 'sales' ? openInvoiceDetails : undefined} onInventorySelect={activePage === 'inventory' ? openInventoryDetails : undefined} />}
+          {isRecordsPage && <RecordsPage key={activePage} pageId={activePage as keyof typeof recordConfigs} query={searchQuery} onAction={handlePrimaryAction} rowsOverride={activePage === 'customers' ? prototypeCustomers : undefined} onCustomerSelect={activePage === 'customers' ? openCustomerDetails : undefined} onInvoiceSelect={activePage === 'sales' ? openInvoiceDetails : undefined} onInventorySelect={activePage === 'inventory' ? openInventoryDetails : undefined} onActivitySelect={activePage === 'activity' ? openActivityDetails : undefined} />}
           {activePage === 'reports' && <ReportsPage onAction={handlePrimaryAction} selectedRange={selectedRange} />}
           {activePage === 'settings' && <SettingsPage onAction={handlePrimaryAction} showToast={showToast} />}
 
@@ -530,7 +548,7 @@ export default function App() {
         </main>
       </div>
 
-      {modalKind && <PreviewModal kind={modalKind} onClose={closeModal} onNavigate={navigate} onCreateCustomer={addPrototypeCustomer} selectedCustomer={selectedCustomer} selectedInvoice={selectedInvoice} selectedInventoryItem={selectedInventoryItem} />}
+      {modalKind && <PreviewModal kind={modalKind} onClose={closeModal} onNavigate={navigate} onCreateCustomer={addPrototypeCustomer} selectedCustomer={selectedCustomer} selectedInvoice={selectedInvoice} selectedInventoryItem={selectedInventoryItem} selectedActivity={selectedActivity} />}
       {toast && <div className="toast" role="status"><Check size={17} />{toast}</div>}
     </div>
   );
@@ -786,7 +804,7 @@ function DataTable({ rows, columns, query, compact = false, onRowSelect }: { row
   );
 }
 
-function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, onInvoiceSelect, onInventorySelect }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[]; onCustomerSelect?: (row: DataRow) => void; onInvoiceSelect?: (row: DataRow) => void; onInventorySelect?: (row: DataRow) => void }) {
+function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, onInvoiceSelect, onInventorySelect, onActivitySelect }: { pageId: keyof typeof recordConfigs; query: string; onAction: (kind: ModalKind) => void; rowsOverride?: DataRow[]; onCustomerSelect?: (row: DataRow) => void; onInvoiceSelect?: (row: DataRow) => void; onInventorySelect?: (row: DataRow) => void; onActivitySelect?: (row: DataRow) => void }) {
   const config = recordConfigs[pageId];
   const rows = rowsOverride ?? config.rows;
   const [statusFilter, setStatusFilter] = useState('all');
@@ -849,7 +867,7 @@ function RecordsPage({ pageId, query, onAction, rowsOverride, onCustomerSelect, 
           </div>
         </div>
         <div className="records-hint"><span className="small-dot" />جست‌وجوی بالای صفحه روی فهرست نمونه اعمال می‌شود.</div>
-        <DataTable rows={visibleRows} columns={config.columns} query={query} onRowSelect={pageId === 'customers' ? onCustomerSelect : pageId === 'sales' ? onInvoiceSelect : pageId === 'inventory' ? onInventorySelect : undefined} />
+        <DataTable rows={visibleRows} columns={config.columns} query={query} onRowSelect={pageId === 'customers' ? onCustomerSelect : pageId === 'sales' ? onInvoiceSelect : pageId === 'inventory' ? onInventorySelect : pageId === 'activity' ? onActivitySelect : undefined} />
         <div className="records-footer"><span>نمایش {visibleRows.length.toLocaleString('fa-IR')} مورد نمونه</span><div className="pagination"><button type="button" disabled aria-label="صفحهٔ قبل"><ChevronLeft size={16} /></button><span className="page-number is-current">۱</span><span className="page-number">۲</span><span className="page-number">۳</span><button type="button" aria-label="صفحهٔ بعد" onClick={() => onAction('generic')}><ChevronLeft size={16} /></button></div></div>
       </section>
 
@@ -930,9 +948,48 @@ function NotificationsPanel() {
   );
 }
 
-function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCustomer, selectedInvoice, selectedInventoryItem }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void; selectedCustomer: DataRow | null; selectedInvoice: DataRow | null; selectedInventoryItem: DataRow | null }) {
+function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCustomer, selectedInvoice, selectedInventoryItem, selectedActivity }: { kind: ModalKind; onClose: () => void; onNavigate: (page: PageId) => void; onCreateCustomer: (name: string, phone: string) => void; selectedCustomer: DataRow | null; selectedInvoice: DataRow | null; selectedInventoryItem: DataRow | null; selectedActivity: DataRow | null }) {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const modalRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const modal = modalRef.current;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (!modal) return;
+
+    const getFocusableElements = () => Array.from(modal.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )).filter((element) => !element.closest('[hidden], [aria-hidden="true"]'));
+    getFocusableElements()[0]?.focus();
+
+    const keepFocusInsideModal = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        modal.focus();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const focusIsOutsideModal = !modal.contains(document.activeElement);
+      if (event.shiftKey && (document.activeElement === firstElement || focusIsOutsideModal)) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && (document.activeElement === lastElement || focusIsOutsideModal)) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', keepFocusInsideModal);
+    return () => {
+      document.removeEventListener('keydown', keepFocusInsideModal);
+      if (previouslyFocused?.isConnected) previouslyFocused.focus();
+    };
+  }, []);
+
   const handleCustomerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (customerName.trim()) onCreateCustomer(customerName, customerPhone);
@@ -947,6 +1004,8 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
         ? { icon: Receipt, title: 'جزئیات فاکتور نمونه', label: 'فقط نمایش · بدون عملیات', description: 'اطلاعات زیر عیناً از ردیف‌های ساختگی پیش‌نمایش می‌آیند؛ هیچ جمع، پرداخت یا ثبت مالی انجام نمی‌شود.' }
       : kind === 'inventory-detail'
         ? { icon: Package, title: 'جزئیات کالای نمونه', label: 'فقط نمایش · موجودی بدون تغییر', description: 'اطلاعات زیر ساختگی‌اند؛ قیمت یا موجودی تغییر نمی‌کند و هیچ خرید یا فروشی ثبت نمی‌شود.' }
+      : kind === 'activity-detail'
+        ? { icon: Activity, title: 'جزئیات گردش نمونه', label: 'فقط نمایش · بدون ثبت عملیات', description: 'این گردش، مبلغ و وضعیت فقط برای پیش‌نمایش هستند؛ هیچ دریافت، پرداخت یا تغییر مانده‌ای انجام نمی‌شود.' }
       : kind === 'report'
         ? { icon: FileText, title: 'خروجی گزارش', label: 'در این نسخه آماده نیست', description: 'گزارش‌ها نمونه هستند و هیچ فایل یا خروجی واقعی تولید نمی‌شود.' }
         : kind === 'help'
@@ -956,7 +1015,7 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="preview-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <section ref={modalRef} className="preview-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabIndex={-1}>
         <button type="button" className="modal-close" aria-label="بستن" onClick={onClose}><X size={19} /></button>
         <span className="modal-symbol"><Icon size={23} /></span>
         <span className="section-kicker">{content.label}</span>
@@ -1023,6 +1082,21 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
             <p className="inventory-detail-note">این مشخصات ساختگی‌اند؛ قیمت یا موجودی تغییر نمی‌کند و هیچ سفارش، خرید یا فروشی ثبت نمی‌شود.</p>
           </div>
         )}
+        {kind === 'activity-detail' && selectedActivity && (
+          <div className="activity-detail-card">
+            <div className="customer-detail-heading">
+              <span className={`table-avatar tone-${selectedActivity.avatarTone ?? 1}`}>{selectedActivity.initials}</span>
+              <div className="customer-detail-copy"><strong>{selectedActivity.primary}</strong><small>{selectedActivity.secondary}</small></div>
+              <span className={`status-pill status-${selectedActivity.tone}`}><span />{selectedActivity.status}</span>
+            </div>
+            <dl className="customer-detail-list">
+              <div><dt>دسته‌بندی نمایشی</dt><dd>{selectedActivity.values[0]}</dd></div>
+              <div><dt>زمان نمایشی</dt><dd>{selectedActivity.values[1]}</dd></div>
+              <div><dt>مبلغ نمایشی</dt><dd>{selectedActivity.values[2]}</dd></div>
+            </dl>
+            <p className="activity-detail-note">این اطلاعات ساختگی و ثابت‌اند؛ هیچ دریافت یا پرداخت واقعی ثبت نمی‌شود و مانده‌ای تغییر نمی‌کند.</p>
+          </div>
+        )}
         {kind === 'customer' ? (
           <form className="customer-preview-form" onSubmit={handleCustomerSubmit}>
             <label className="modal-input-label" htmlFor="prototype-customer-name">نام نمونه</label>
@@ -1037,7 +1111,7 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
           </form>
         ) : (
           <div className="modal-actions">
-            <button type="button" className="button button-primary" onClick={onClose}>{kind === 'customer-detail' || kind === 'invoice-detail' || kind === 'inventory-detail' ? 'بستن' : 'متوجه شدم'}</button>
+            <button type="button" className="button button-primary" onClick={onClose}>{kind === 'customer-detail' || kind === 'invoice-detail' || kind === 'inventory-detail' || kind === 'activity-detail' ? 'بستن' : 'متوجه شدم'}</button>
             {kind === 'sale' && <button type="button" className="button button-secondary" onClick={() => { onClose(); onNavigate('sales'); }}>دیدن فاکتورهای نمونه</button>}
           </div>
         )}

@@ -1,7 +1,7 @@
 # ماتریس وضعیت قابلیت‌ها — کد منبع در برابر محصول زنده
 
 **Source snapshot:** `rahmaniho/KarenYar/main`، commit `d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`.
-**محدودیت:** live app/production بررسی نشده؛ ستون «Live» همواره تا مشاهدهٔ محیط `NEEDS_VERIFICATION` می‌ماند. کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرده است؛ PR #11 در main ادغام شده (merge commit `f13e3d9`) و جزئیات کالا، فیلترهای mock و helper مستقل WP‑1 را دارد؛ شاخهٔ فعال نشست `arena/67897961-hesabyar2` از همین merge آغاز می‌شود. main هنوز UI prototype است، نه محصول کامل. helper فقط ورودی صحیح ریال/تومان را دقیق تبدیل/قالب‌بندی می‌کند؛ به POS، ledger یا persistence وصل نیست و قابلیت واقعی محصول محسوب نمی‌شود.
+**محدودیت:** live app/production بررسی نشده؛ ستون «Live» همواره تا مشاهدهٔ محیط `NEEDS_VERIFICATION` می‌ماند. کاربر `Hesabyar2` را برای توسعهٔ greenfield انتخاب کرده است؛ PR #11 در main ادغام شده (merge `f13e3d9`) و جزئیات کالا، فیلترهای mock و helper مستقل WP‑1 را دارد؛ PR #12 صرفاً مستندات/ADR را افزود (merge `6211365`). شاخهٔ فعال نشست `arena/4085f085-hesabyar2` روی merge #12 قرار دارد. main هنوز UI prototype است، نه محصول کامل. helper فقط ورودی صحیح ریال/تومان را دقیق تبدیل/قالب‌بندی می‌کند؛ به POS، ledger یا persistence وصل نیست و قابلیت واقعی محصول محسوب نمی‌شود.
 
 | حوزه | وضعیت در source | وضعیت live | توضیح |
 |---|---|---|---|
