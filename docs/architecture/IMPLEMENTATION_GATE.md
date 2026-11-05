@@ -42,7 +42,7 @@
 - **قرارداد مصوب کاربر:** caller واحد `rial` یا `toman` را صریح می‌دهد؛ ورودی در هر واحد عدد صحیح مثبت است؛ Rial به‌صورت دقیق نگه داشته می‌شود و Toman با ضریب ۱۰ به integer Rial تبدیل می‌شود؛ هیچ rounding نداریم؛ صفر/منفی و اعشار رد می‌شوند؛ رقم فارسی و لاتین پذیرفته می‌شوند؛ برگشت وجه در جریان جداگانه‌ای خواهد بود.
 - نمایش دقیق Rial به Toman: `۱۱ ریال` به‌صورت `۱ تومان و ۱ ریال`، نه rounded decimal. helper خالص `src/domain/money.ts` همین قرارداد را اجرا می‌کند و به UI فروش، posting یا persistence وصل نیست.
 - تست‌ها پوشش می‌دهند: ۰، تمام ۱..۱۱ ریال، ورودی ریال/تومان، رقم فارسی/لاتین، grouping معتبر/نامعتبر، decimals، منفی، و مقدار BigInt بزرگ بدون overflow. حد تجاری مبلغ برای transaction flow هنوز تعیین نشده است.
-- **خروجی پذیرش فعلی:** هیچ ورودی helper بی‌صدا گرد یا حذف نمی‌شود؛ caller باید unit را تعیین کند؛ invalid input explicit result می‌دهد؛ helper تنها در isolation تست شده است. CI workflow فعال است؛ آخرین check باید روی PR #11 بررسی شود؛ review مستقل و اتصال به POS خارج از WP‑1 فعلی‌اند.
+- **خروجی پذیرش فعلی:** هیچ ورودی helper بی‌صدا گرد یا حذف نمی‌شود؛ caller باید unit را تعیین کند؛ invalid input explicit result می‌دهد؛ helper تنها در isolation تست شده است. CI workflow فعال است؛ check هر commit در PR #11 باید سبز بماند؛ review مستقل و اتصال به POS خارج از WP‑1 فعلی‌اند.
 - هیچ schema/data migration یا تراکنش واقعی در این WP اجرا نشده است.
 
 ### WP-2 — ابطال/اصلاح فروش

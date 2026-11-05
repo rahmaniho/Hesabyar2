@@ -23,4 +23,4 @@
 
 ## گام بعدی
 
-WP-1 helper خالص پیاده و تست شده است. WP-0 اکنون workflow کم‌دسترسی و lint configuration دارد؛ check جدید باید روی PR #11 اجرا و تأیید شود و owner باید branch-protection/required-check policy را جداگانه تأیید کند. پیش از اتصال helper به فرم فروش یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، برگشت وجه، persistence، API/auth، licensing، migration از `KarenYar`، Android و release هنوز شروع نشده‌اند و به تصمیم‌های جداگانه نیاز دارند.
+WP-1 helper خالص پیاده و تست شده است. WP-0 اکنون workflow کم‌دسترسی و lint configuration دارد؛ CI lint-enabled روی commit `c0924d8` موفق شد. هر تغییر بعدی باید check سبز داشته باشد و owner باید branch-protection/required-check policy را جداگانه تأیید کند. پیش از اتصال helper به فرم فروش یا جریان ثبت واقعی، CI سبز و review مستقل لازم‌اند. ledger/posting، برگشت وجه، persistence، API/auth، licensing، migration از `KarenYar`، Android و release هنوز شروع نشده‌اند و به تصمیم‌های جداگانه نیاز دارند.
