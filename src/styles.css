@@ -399,7 +399,7 @@ button:disabled { cursor: not-allowed; }
 .preview-modal > p { margin: 0; color: #7f9189; font-size: 10px; line-height: 2; }
 .sale-preview-fields { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
 .customer-preview-form { display: flex; flex-direction: column; gap: 7px; margin-top: 17px; }
-.customer-detail-card, .invoice-detail-card, .inventory-detail-card { display: flex; flex-direction: column; gap: 10px; margin-top: 17px; }
+.customer-detail-card, .invoice-detail-card, .inventory-detail-card, .activity-detail-card { display: flex; flex-direction: column; gap: 10px; margin-top: 17px; }
 .invoice-detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px; border: 1px solid #edf2ef; border-radius: 11px; background: #fbfdfc; }
 .invoice-detail-heading > div { display: flex; flex-direction: column; gap: 3px; }
 .invoice-detail-heading > div span { color: #97a59f; font-size: 8px; }
@@ -415,7 +415,7 @@ button:disabled { cursor: not-allowed; }
 .customer-detail-list dd, .invoice-detail-list dd { margin: 0; color: #47665b; font-size: 9px; font-weight: 600; }
 .invoice-sample-total { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 10px; color: #879890; border: 1px solid #edf2ef; border-radius: 9px; background: #f8fbf9; font-size: 9px; }
 .invoice-sample-total strong { color: #2f725e; font-size: 11px; }
-.customer-detail-note, .invoice-detail-note, .inventory-detail-note { margin: 0; padding: 9px 10px; color: #887345; border: 1px solid #f1e8cf; border-radius: 8px; background: #fffbf1; font-size: 8px; line-height: 1.8; }
+.customer-detail-note, .invoice-detail-note, .inventory-detail-note, .activity-detail-note { margin: 0; padding: 9px 10px; color: #887345; border: 1px solid #f1e8cf; border-radius: 8px; background: #fffbf1; font-size: 8px; line-height: 1.8; }
 .modal-input-label { margin-top: 3px; color: #667e75; font-size: 9px; font-weight: 600; }
 .customer-preview-form input { width: 100%; min-height: 39px; padding: 0 10px; color: #36564b; border: 1px solid #e5ede9; border-radius: 9px; background: #fbfdfc; font-size: 10px; }
 .customer-preview-form input::placeholder { color: #b0bcb7; }

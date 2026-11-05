@@ -54,6 +54,22 @@ describe('Hesabyar UI prototype', () => {
     expect(within(dialog).queryByRole('button', { name: /تسویه|ویرایش|حذف/ })).toBeNull();
   });
 
+  it('opens a read-only activity detail preview without transaction actions', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات واریز مشتری' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByRole('heading', { name: 'جزئیات گردش نمونه' })).toBeTruthy();
+    expect(within(dialog).getByText('واریز مشتری', { selector: 'strong' })).toBeTruthy();
+    expect(within(dialog).getByText('مینا رضایی')).toBeTruthy();
+    expect(within(dialog).getByText('دریافت فروش')).toBeTruthy();
+    expect(within(dialog).getByText('امروز، ۱۰:۲۵')).toBeTruthy();
+    expect(within(dialog).getByText('+۸,۷۵۰,۰۰۰ تومان')).toBeTruthy();
+    expect(within(dialog).getByText('این اطلاعات ساختگی و ثابت‌اند؛ هیچ دریافت یا پرداخت واقعی ثبت نمی‌شود و مانده‌ای تغییر نمی‌کند.')).toBeTruthy();
+    expect(within(dialog).queryByRole('button', { name: /ثبت|پرداخت|ویرایش|حذف/ })).toBeNull();
+  });
+
   it('opens a read-only detail preview for a sample customer', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
