@@ -1,7 +1,7 @@
 # گیت آمادگی برای اولین تغییر اجرایی
 
-**وضعیت:** architecture کلی و backend/tenant details هنوز approval نشده‌اند. کاربر `Hesabyar2` را به‌عنوان source greenfield و Shared Core را به‌عنوان هدف سطح‌بالا انتخاب کرد؛ همچنین فقط helper خالص WP‑1 را با قرارداد محدود پایین‌تر تأیید کرد. هیچ transaction، posting یا persistence مجاز/پیاده‌سازی نشده است.
-**Baseline شواهد:** snapshot read-only `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; شاخهٔ فعال `arena/a1600dfc-hesabyar2` در `Hesabyar2` بر merge commit PR #10، `88f3fe6456b80c5e1f584112573fbb17744a37aa` بنا شده؛ PR #11 باز است. هدف Shared Core در سطح بالا انتخاب شده اما architecture details/ADR pending است.
+**وضعیت:** architecture کلی و backend/tenant details هنوز approval نشده‌اند؛ پیش‌نویس ADR-001 فقط گزینه‌ها و پرسش‌های باز را ثبت می‌کند. کاربر `Hesabyar2` را به‌عنوان source greenfield و Shared Core را به‌عنوان هدف سطح‌بالا انتخاب کرد؛ همچنین فقط helper خالص WP‑1 را با قرارداد محدود پایین‌تر تأیید کرد. هیچ transaction، posting یا persistence مجاز/پیاده‌سازی نشده است.
+**Baseline شواهد:** snapshot read-only `KarenYar/main@d41ca2916a4edfa93b5edbeeefa6403d11a3ff24`; PR #11 در `Hesabyar2/main` ادغام شده با merge commit `f13e3d95e6af86a394a42e22a2e0ea031de0a7f0`؛ شاخهٔ فعال نشست `arena/67897961-hesabyar2` از همین commit آغاز می‌شود. CI روی merge commit با run `41939981854` موفق شد. Pages build/deploy به‌صورت خودکار پس از merge در run `41939981195` موفق گزارش شد؛ محتوا browser-verified نیست. هدف Shared Core در سطح بالا انتخاب شده اما architecture details/ADR pending است.
 
 ## چرا این گیت لازم است؟
 
@@ -35,14 +35,14 @@
 - `.github/workflows/ci.yml` روی pull requestها و push به `main` اجرا می‌شود: Node 22، `npm ci`, `npm run lint`, tests, typecheck, build و `npm audit --audit-level=low`.
 - Workflow فقط `contents: read` دارد، `actions/checkout` و `actions/setup-node` را به commit SHA کامل pin می‌کند، checkout credential را نگه نمی‌دارد، timeout/concurrency دارد و هیچ deploy، sign، release یا artifact publication انجام نمی‌دهد.
 - Lint با Oxlint 1.91 در `.oxlintrc.json` تنظیم شده: قواعد correctness برای TypeScript/React/Vitest/import و قواعد React Hooks مشخص؛ style/pedantic lint عمداً فعال نشده‌اند. Release guard هم موضوع این test-only workflow نیست.
-- **خروجی پذیرش:** GitHub run برای PR #11 باید سبز شود؛ سپس owner باید required-check/branch-protection policy را جداگانه تأیید کند. تنظیمات branch protection در این مرحله تغییر نکرده‌اند؛ workflow به‌تنهایی required check را enforce نمی‌کند.
+- **خروجی پذیرش:** PR #11 با check سبز ادغام شد و CI روی merge commit main با run `41939981854` نیز موفق است. Owner هنوز باید required-check/branch-protection policy را جداگانه تأیید کند؛ تنظیمات branch protection تغییر نکرده‌اند و workflow به‌تنهایی check را اجباری نمی‌کند.
 
 ### WP-1 — مرز ورودی پول POS (`IN PROGRESS / PURE HELPER ONLY`)
 
 - **قرارداد مصوب کاربر:** caller واحد `rial` یا `toman` را صریح می‌دهد؛ ورودی در هر واحد عدد صحیح مثبت است؛ Rial به‌صورت دقیق نگه داشته می‌شود و Toman با ضریب ۱۰ به integer Rial تبدیل می‌شود؛ هیچ rounding نداریم؛ صفر/منفی و اعشار رد می‌شوند؛ رقم فارسی و لاتین پذیرفته می‌شوند؛ برگشت وجه در جریان جداگانه‌ای خواهد بود.
 - نمایش دقیق Rial به Toman: `۱۱ ریال` به‌صورت `۱ تومان و ۱ ریال`، نه rounded decimal. helper خالص `src/domain/money.ts` همین قرارداد را اجرا می‌کند و به UI فروش، posting یا persistence وصل نیست.
 - تست‌ها پوشش می‌دهند: ۰، تمام ۱..۱۱ ریال، ورودی ریال/تومان، رقم فارسی/لاتین، grouping معتبر/نامعتبر، decimals، منفی، و مقدار BigInt بزرگ بدون overflow. حد تجاری مبلغ برای transaction flow هنوز تعیین نشده است.
-- **خروجی پذیرش فعلی:** هیچ ورودی helper بی‌صدا گرد یا حذف نمی‌شود؛ caller باید unit را تعیین کند؛ invalid input explicit result می‌دهد؛ helper تنها در isolation تست شده است. CI workflow فعال است؛ check هر commit در PR #11 باید سبز بماند؛ review مستقل و اتصال به POS خارج از WP‑1 فعلی‌اند.
+- **خروجی پذیرش فعلی:** هیچ ورودی helper بی‌صدا گرد یا حذف نمی‌شود؛ caller باید unit را تعیین کند؛ invalid input explicit result می‌دهد؛ helper تنها در isolation تست شده است. PR #11 و CI روی merge commit main سبز شدند؛ review مستقل و اتصال به POS خارج از WP‑1 فعلی‌اند.
 - هیچ schema/data migration یا تراکنش واقعی در این WP اجرا نشده است.
 
 ### WP-2 — ابطال/اصلاح فروش
@@ -71,7 +71,7 @@
 ## وضعیت فعلی
 
 - WP-0: `IN PROGRESS / CI ACTIVE; BRANCH POLICY PENDING`; WP-1: `IN PROGRESS / PURE HELPER ONLY`; WP-2/WP-3: `NOT STARTED`.
-- `.github/workflows/ci.yml` lint، test، typecheck، build و npm audit را با دسترسی read-only اجرا می‌کند؛ وضعیت آخرین اجرا در PR #11 دیده می‌شود؛ branch protection/required-check policy تغییر نکرده است.
+- `.github/workflows/ci.yml` lint، test، typecheck، build و npm audit را با دسترسی read-only اجرا می‌کند؛ آخرین run main روی merge commit PR #11 (`41939981854`) موفق است؛ branch protection/required-check policy تغییر نکرده است.
 - `src/domain/money.ts` تنها helper مستقلِ WP-1 است؛ هیچ sales flow، posting، ledger، DB، license، production، Android artifact یا release به آن وصل نشده است.
-- UI prototype و تعامل‌های mock در `arena/a1600dfc-hesabyar2` ادامه دارد؛ PR #11 باز است. local tests/typecheck/build موفق‌اند؛ workflow خودکار است اما به‌تنهایی check را اجباری نمی‌کند.
+- UI prototype و تعامل‌های mock در شاخهٔ فعال `arena/67897961-hesabyar2` ادامه‌پذیرند؛ PR #11 در main ادغام شده است. Pages workflow پس از merge به‌طور خودکار build/deploy شد (run `41939981195` موفق)، اما محتوای URL در مرورگر بررسی نشده. کاربر خواسته Pages deploy دیگری تا مجوز جداگانه انجام نشود؛ workflow CI نیز به‌تنهایی check را اجباری نمی‌کند.
 - پیش از اتصال helper به POS، تراکنش/ابطال/refund، ledger، persistence/backend، licensing، migration یا release، WP-0 و gateهای domain/security مربوط باید جداگانه بسته شوند؛ `KarenYar` هنوز import یا ویرایش نشده است.

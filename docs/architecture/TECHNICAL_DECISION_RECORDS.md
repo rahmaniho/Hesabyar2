@@ -18,9 +18,10 @@ TDRهای این سند **پیشنهاد/فرضیه** هستند و تا تأی�
 
 ## TDR-003 — یک Shared Financial Core
 
-- **وضعیت:** Proposed.
-- **پیشنهاد:** Money/Calculation/Posting/Period/Reversal مشترک؛ UI/edition گزارش/چاپ calculation جدا نداشته باشند.
-- **گیت:** تست invariant و Accounting Domain Owner approval.
+- **وضعیت:** هدف سطح‌بالا توسط کاربر انتخاب شده؛ مرز و جزئیات `OPEN / NOT APPROVED`.
+- **جهت پیشنهادی:** Money/Calculation/Posting/Period/Reversal می‌توانند در یک core مشترک باشند؛ این فهرست هنوز دامنهٔ مصوب نیست و انتخابش به approval دامنه‌ای نیاز دارد.
+- **مرجع تصمیم:** [ADR-001 — مرز و دامنهٔ Shared Core](ADR-001-SHARED-CORE.md) گزینه‌ها و پرسش‌های باز را ثبت می‌کند.
+- **گیت:** مالک محصول/معمار و Accounting Domain Owner باید scope، invariants و runtime را تأیید کنند؛ این TDR مجوز implementation نیست.
 
 ## TDR-004 — Personal local-first، Business server-authoritative
 
