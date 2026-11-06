@@ -25,6 +25,8 @@ describe('Karo UI prototype', () => {
     expect(screen.getByRole('heading', { name: 'برای مدیریت کسب‌وکارت، یک نگاه روشن‌تر' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'چرا کارو؟' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'امکانات' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'پلن‌ها' }).getAttribute('href')).toBe('#pricing');
+    expect(screen.getByRole('link', { name: 'ثبت‌نام' }).getAttribute('href')).toBe('#pricing');
     expect(screen.getByText('این نسخه فقط پیش‌نمایش رابط است؛ داده‌ها ساختگی‌اند و هیچ عملیات مالی یا ذخیره‌سازی انجام نمی‌شود.')).toBeTruthy();
     const firstFaq = screen.getByRole('button', { name: 'این نسخه به حساب واقعی من وصل می‌شود؟' });
     expect(firstFaq.getAttribute('aria-expanded')).toBe('true');
@@ -37,6 +39,54 @@ describe('Karo UI prototype', () => {
     expect(screen.getByText('کارو ۲.۰')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'بازگشت به صفحهٔ معرفی' }));
     expect(screen.getByRole('heading', { name: 'برای مدیریت کسب‌وکارت، یک نگاه روشن‌تر' })).toBeTruthy();
+  });
+
+  it('shows sample subscription pricing and walks through a non-persistent signup and mock order', () => {
+    render(<App />);
+
+    expect(screen.getByRole('heading', { name: 'پلنی برای هر مرحلهٔ رشد' })).toBeTruthy();
+    expect(screen.getByText(/قیمت‌ها و امکانات صرفاً نمونه هستند/)).toBeTruthy();
+    const annualBilling = screen.getByRole('button', { name: /سالانه/ });
+    fireEvent.click(annualBilling);
+    expect(annualBilling.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByText(/پرداخت سالانه ۴٬۹۹۰٬۰۰۰ تومان · دو ماه رایگان/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'ماهانه' }));
+
+    const chooseGrowthPlan = screen.getByRole('button', { name: 'انتخاب پلن رشد' });
+    fireEvent.click(chooseGrowthPlan);
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByRole('heading', { name: 'ثبت‌نام برای پلن رشد' })).toBeTruthy();
+    expect(document.activeElement).toBe(within(dialog).getByLabelText('نام و نام خانوادگی'));
+    expect(within(dialog).getByText(/فقط برای پیش‌نمایش است/)).toBeTruthy();
+
+    fireEvent.change(within(dialog).getByLabelText('نام و نام خانوادگی'), { target: { value: 'سارا احمدی' } });
+    fireEvent.change(within(dialog).getByLabelText('نام کسب‌وکار'), { target: { value: 'فروشگاه نمونه' } });
+    fireEvent.change(within(dialog).getByLabelText('شمارهٔ موبایل'), { target: { value: '09120000000' } });
+    fireEvent.change(within(dialog).getByLabelText('ایمیل'), { target: { value: 'sara@example.test' } });
+    fireEvent.change(within(dialog).getByLabelText('گذرواژهٔ آزمایشی'), { target: { value: 'samplepass' } });
+    fireEvent.change(within(dialog).getByLabelText('تکرار گذرواژه'), { target: { value: 'different8' } });
+    const signupForm = dialog.querySelector('form');
+    expect(signupForm).not.toBeNull();
+    fireEvent.submit(signupForm!);
+    expect(within(dialog).getByRole('alert').textContent).toContain('یکسان نیستند');
+
+    fireEvent.change(within(dialog).getByLabelText('تکرار گذرواژه'), { target: { value: 'samplepass' } });
+    fireEvent.submit(signupForm!);
+    expect(within(dialog).getByRole('heading', { name: 'بررسی سفارش اشتراک' })).toBeTruthy();
+    expect(within(dialog).getByText('۴۹۹٬۰۰۰ تومان')).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole('checkbox'));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'تکمیل سفارش نمایشی' }));
+
+    expect(within(dialog).getByRole('heading', { name: 'سفارش آزمایشی تکمیل شد' })).toBeTruthy();
+    expect(within(dialog).getByText(/حساب کاربری یا اشتراک واقعی ایجاد نشد/)).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole('button', { name: 'بازگشت به پلن‌ها' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(chooseGrowthPlan);
+
+    fireEvent.click(chooseGrowthPlan);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(chooseGrowthPlan);
   });
 
   it('shows the Persian dashboard and clearly marks its data as mock', () => {

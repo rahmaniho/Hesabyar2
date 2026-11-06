@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import {
   ArrowLeft,
   BarChart3,
@@ -19,6 +20,56 @@ import {
 interface LandingPageProps {
   onOpenDemo: () => void;
 }
+
+type BillingCycle = 'monthly' | 'annual';
+type PurchaseStep = 'signup' | 'review' | 'complete';
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  tagline: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  featured?: boolean;
+  features: string[];
+}
+
+interface SignupDetails {
+  fullName: string;
+  businessName: string;
+  phone: string;
+  email: string;
+}
+
+const pricingPlans: PricingPlan[] = [
+  {
+    id: 'start',
+    name: 'شروع',
+    tagline: 'برای یک شروع منظم',
+    monthlyPrice: 249000,
+    annualPrice: 2490000,
+    features: ['یک کاربر', 'فروش و فاکتور', 'دفتر مشتریان', 'گزارش‌های پایه'],
+  },
+  {
+    id: 'growth',
+    name: 'رشد',
+    tagline: 'برای کسب‌وکارهای در حال توسعه',
+    monthlyPrice: 499000,
+    annualPrice: 4990000,
+    featured: true,
+    features: ['تا ۵ کاربر', 'فروش، مشتری و انبار', 'گزارش‌های مدیریتی', 'پشتیبانی سریع‌تر'],
+  },
+  {
+    id: 'professional',
+    name: 'حرفه‌ای',
+    tagline: 'برای تیم‌های پرکار',
+    monthlyPrice: 899000,
+    annualPrice: 8990000,
+    features: ['تا ۱۰ کاربر', 'همهٔ بخش‌های اصلی', 'گزارش‌های پیشرفته', 'اولویت پشتیبانی'],
+  },
+];
+
+const formatToman = (amount: number) => new Intl.NumberFormat('fa-IR').format(amount);
 
 const features = [
   { icon: Receipt, title: 'فروش و فاکتورها', text: 'فهرست فاکتورهای نمونه را مرتب ببینید و وضعیت هر مورد را سریع مرور کنید.' },
@@ -42,6 +93,10 @@ const questions = [
     question: 'می‌توانم فروش یا پرداخت ثبت کنم؟',
     answer: 'نه. هیچ فروش، دریافت، پرداخت یا تغییر موجودی انجام نمی‌شود؛ دکمه‌ها فقط مسیرهای نمایشی رابط را نشان می‌دهند.',
   },
+  {
+    question: 'ثبت‌نام و خرید اشتراک در این صفحه واقعی است؟',
+    answer: 'خیر. قیمت‌ها و پلن‌ها نمونه‌اند و فرم سفارش فقط جریان رابط را نشان می‌دهد؛ حسابی ساخته نمی‌شود، اطلاعات به جایی ارسال نمی‌شود و مبلغی کسر نمی‌شود.',
+  },
 ];
 
 const chartHeights = [32, 48, 40, 66, 55, 76, 60, 88, 72, 96, 68, 82];
@@ -49,11 +104,27 @@ const chartHeights = [32, 48, 40, 66, 55, 76, 60, 88, 72, 96, 68, 82];
 export default function LandingPage({ onOpenDemo }: LandingPageProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openQuestion, setOpenQuestion] = useState<number | null>(0);
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const purchaseTrigger = useRef<HTMLElement | null>(null);
+  const selectedPlan = pricingPlans.find((plan) => plan.id === selectedPlanId) ?? null;
   const closeMobileMenu = () => setMobileMenuOpen(false);
   const openDemo = () => {
     closeMobileMenu();
     onOpenDemo();
   };
+  const openPurchase = (planId: string, trigger: HTMLElement) => {
+    closeMobileMenu();
+    purchaseTrigger.current = trigger;
+    setSelectedPlanId(planId);
+  };
+  const closePurchase = () => setSelectedPlanId(null);
+
+  useEffect(() => {
+    if (selectedPlanId !== null) return;
+    if (purchaseTrigger.current?.isConnected) purchaseTrigger.current.focus();
+    purchaseTrigger.current = null;
+  }, [purchaseTrigger, selectedPlanId]);
 
   return (
     <div className="landing-page" dir="rtl">
@@ -65,12 +136,14 @@ export default function LandingPage({ onOpenDemo }: LandingPageProps) {
 
           <nav className={`landing-nav ${mobileMenuOpen ? 'is-open' : ''}`} id="landing-navigation" aria-label="بخش‌های صفحه">
             <a href="#features" onClick={closeMobileMenu}>امکانات</a>
+            <a href="#pricing" onClick={closeMobileMenu}>پلن‌ها</a>
             <a href="#benefits" onClick={closeMobileMenu}>چرا کارو؟</a>
             <a href="#how-it-works" onClick={closeMobileMenu}>نحوهٔ آشنایی</a>
             <a href="#faq" onClick={closeMobileMenu}>پرسش‌های رایج</a>
           </nav>
 
           <div className="landing-header-actions">
+            <a className="landing-header-signup" href="#pricing" onClick={closeMobileMenu}>ثبت‌نام</a>
             <button className="landing-header-demo" type="button" onClick={openDemo}>دموی تعاملی <ArrowLeft size={16} /></button>
             <button
               className="landing-menu-toggle"
@@ -95,7 +168,7 @@ export default function LandingPage({ onOpenDemo }: LandingPageProps) {
               <p>کارو تجربه‌ای فارسی و منظم برای دیدن فروش، مشتریان و کالاهاست؛ همه در یک پیش‌نمایش ساده و قابل‌فهم.</p>
               <div className="landing-hero-actions">
                 <button className="landing-primary-button" type="button" onClick={openDemo}>مشاهدهٔ پیش‌نمایش <ArrowLeft size={17} /></button>
-                <a className="landing-secondary-link" href="#features">آشنایی با امکانات <ChevronDown size={15} /></a>
+                <a className="landing-secondary-link" href="#pricing">دیدن پلن‌ها و قیمت‌ها <ChevronDown size={15} /></a>
               </div>
               <div className="landing-hero-notes">
                 <span><Check size={15} /> محیط فارسی و راست‌چین</span>
@@ -209,6 +282,53 @@ export default function LandingPage({ onOpenDemo }: LandingPageProps) {
           </div>
         </section>
 
+        <section className="landing-section landing-pricing" id="pricing">
+          <div className="landing-container">
+            <div className="landing-pricing-header">
+              <div className="landing-section-heading">
+                <span className="landing-section-kicker">پلن‌های اشتراک · نمونه</span>
+                <h2>پلنی برای <span>هر مرحلهٔ رشد</span></h2>
+                <p>امکانات و قیمت‌ها فعلاً نمونه‌اند تا مسیر انتخاب و سفارش را ببینید.</p>
+              </div>
+              <div className="landing-billing-toggle" role="group" aria-label="دورهٔ پرداخت">
+                <button type="button" aria-pressed={billingCycle === 'monthly'} className={billingCycle === 'monthly' ? 'is-selected' : ''} onClick={() => setBillingCycle('monthly')}>ماهانه</button>
+                <button type="button" aria-pressed={billingCycle === 'annual'} className={billingCycle === 'annual' ? 'is-selected' : ''} onClick={() => setBillingCycle('annual')}>سالانه <span>۲ ماه رایگان</span></button>
+              </div>
+            </div>
+
+            <div className="landing-pricing-grid">
+              {pricingPlans.map((plan) => {
+                const monthlyEquivalent = billingCycle === 'annual' ? Math.round(plan.annualPrice / 12) : plan.monthlyPrice;
+                return (
+                  <article className={`landing-plan-card ${plan.featured ? 'is-featured' : ''}`} key={plan.id}>
+                    {plan.featured && <span className="landing-plan-popular"><Sparkles size={13} />محبوب‌ترین</span>}
+                    <span className="landing-plan-kicker">کارو · پلن نمونه</span>
+                    <h3>{plan.name}</h3>
+                    <p className="landing-plan-tagline">{plan.tagline}</p>
+                    <div className="landing-plan-price">
+                      <strong>{formatToman(monthlyEquivalent)}</strong>
+                      <span>تومان <small>/ ماه</small></span>
+                    </div>
+                    <p className="landing-plan-billing-note">
+                      {billingCycle === 'annual'
+                        ? `پرداخت سالانه ${formatToman(plan.annualPrice)} تومان · دو ماه رایگان`
+                        : 'پرداخت ماهانه · قابل تغییر در هر زمان'}
+                    </p>
+                    <ul className="landing-plan-features">
+                      {plan.features.map((feature) => <li key={feature}><Check size={15} />{feature}</li>)}
+                    </ul>
+                    <button className="landing-plan-button" type="button" aria-label={`انتخاب پلن ${plan.name}`} onClick={(event) => openPurchase(plan.id, event.currentTarget)}>
+                      انتخاب پلن <ArrowLeft size={15} />
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+
+            <p className="landing-pricing-disclaimer" role="note"><CircleHelp size={16} /><span><strong>توجه:</strong> قیمت‌ها و امکانات صرفاً نمونه هستند. فرم ثبت‌نام و سفارش هم نمایشی است؛ اطلاعات ارسال یا ذخیره نمی‌شوند و پرداخت واقعی انجام نمی‌شود.</span></p>
+          </div>
+        </section>
+
         <section className="landing-faq" id="faq">
           <div className="landing-container landing-faq-grid">
             <div className="landing-faq-intro">
@@ -237,8 +357,11 @@ export default function LandingPage({ onOpenDemo }: LandingPageProps) {
 
         <section className="landing-final-cta">
           <div className="landing-container landing-final-cta-inner">
-            <div><span className="landing-final-icon"><Wallet size={21} /></span><h2>کارو را در عمل ببینید</h2><p>پیش‌نمایش تعاملی را باز کنید؛ بدون ثبت‌نام و بدون دادهٔ واقعی.</p></div>
-            <button className="landing-primary-button landing-primary-light" type="button" onClick={openDemo}>رفتن به پیش‌نمایش <ArrowLeft size={17} /></button>
+            <div><span className="landing-final-icon"><Wallet size={21} /></span><h2>کارو را در عمل ببینید</h2><p>دموی تعاملی را بدون ثبت‌نام ببینید یا پلن‌های نمونه را بررسی کنید.</p></div>
+            <nav className="landing-final-cta-actions" aria-label="گزینه‌های شروع">
+              <button className="landing-primary-button landing-primary-light" type="button" onClick={openDemo}>رفتن به پیش‌نمایش <ArrowLeft size={17} /></button>
+              <a className="landing-primary-button landing-primary-light" href="#pricing">پلن‌ها و قیمت‌ها <ArrowLeft size={17} /></a>
+            </nav>
           </div>
         </section>
       </main>
@@ -248,10 +371,158 @@ export default function LandingPage({ onOpenDemo }: LandingPageProps) {
           <a className="landing-brand" href="#top" aria-label="بازگشت به ابتدای صفحه" onClick={closeMobileMenu}>
             <img className="landing-brand-logo" src={`${import.meta.env.BASE_URL}karo-logo.png`} alt="" aria-hidden="true" />
           </a>
-          <p>پیش‌نمایش رابط کارو ۲.۰ · داده‌ها ساختگی و غیرقابل ذخیره‌سازی هستند.</p>
+          <p>پیش‌نمایش کارو ۲.۰ · پلن‌ها و قیمت‌ها نمونه‌اند؛ ثبت‌نام و پرداخت واقعی فعال نیست.</p>
           <a className="landing-back-to-top" href="#top">ابتدای صفحه <ArrowLeft size={14} /></a>
         </div>
       </footer>
+      {selectedPlan && <SubscriptionDialog key={selectedPlan.id} plan={selectedPlan} billingCycle={billingCycle} onClose={closePurchase} />}
+    </div>
+  );
+}
+
+function SubscriptionDialog({ plan, billingCycle, onClose }: { plan: PricingPlan; billingCycle: BillingCycle; onClose: () => void }) {
+  const [step, setStep] = useState<PurchaseStep>('signup');
+  const [signupDetails, setSignupDetails] = useState<SignupDetails | null>(null);
+  const [formError, setFormError] = useState('');
+  const dialogRef = useRef<HTMLElement>(null);
+  const totalPrice = billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
+  const billingLabel = billingCycle === 'annual' ? 'سالانه' : 'ماهانه';
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const getFocusableElements = () => Array.from(dialog.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ));
+    const stepFocusTarget = step === 'signup'
+      ? dialog.querySelector<HTMLElement>('input[name="fullName"]')
+      : step === 'review'
+        ? dialog.querySelector<HTMLElement>('input[name="confirmDemo"]')
+        : dialog.querySelector<HTMLElement>('.landing-subscription-complete .landing-plan-button');
+    (stepFocusTarget ?? getFocusableElements()[0])?.focus();
+
+    const keepFocusInsideDialog = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusableElements = getFocusableElements();
+      if (!focusableElements.length) return;
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', keepFocusInsideDialog);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', keepFocusInsideDialog);
+    };
+  }, [onClose, step]);
+
+  const handleSignup = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const password = String(formData.get('password') ?? '');
+    const passwordConfirmation = String(formData.get('passwordConfirmation') ?? '');
+    if (password !== passwordConfirmation) {
+      setFormError('گذرواژه‌های آزمایشی با هم یکسان نیستند.');
+      return;
+    }
+
+    setFormError('');
+    setSignupDetails({
+      fullName: String(formData.get('fullName') ?? ''),
+      businessName: String(formData.get('businessName') ?? ''),
+      phone: String(formData.get('phone') ?? ''),
+      email: String(formData.get('email') ?? ''),
+    });
+    setStep('review');
+  };
+
+  const completeMockOrder = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStep('complete');
+  };
+
+  const stepLabel = step === 'signup' ? 'ثبت‌نام' : step === 'review' ? 'بررسی سفارش' : 'پایان';
+
+  return (
+    <div className="landing-subscription-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <section ref={dialogRef} className="landing-subscription-dialog" role="dialog" aria-modal="true" aria-labelledby="subscription-dialog-title" tabIndex={-1}>
+        <button className="landing-subscription-close" type="button" aria-label="بستن ثبت‌نام و خرید" onClick={onClose}><X size={19} /></button>
+        <span className="landing-section-kicker">ثبت‌نام و سفارش اشتراک · نمایشی</span>
+        <h2 id="subscription-dialog-title">
+          {step === 'signup' ? `ثبت‌نام برای پلن ${plan.name}` : step === 'review' ? 'بررسی سفارش اشتراک' : 'سفارش آزمایشی تکمیل شد'}
+        </h2>
+        <div className="landing-subscription-progress" aria-label={`مرحلهٔ ${step === 'signup' ? '۱' : step === 'review' ? '۲' : '۳'} از ۳ · ${stepLabel}`}>
+          <span className={step === 'signup' ? 'is-active' : 'is-complete'}>۱ <small>ثبت‌نام</small></span>
+          <i className={step === 'signup' ? '' : 'is-complete'} />
+          <span className={step === 'review' ? 'is-active' : step === 'complete' ? 'is-complete' : ''}>۲ <small>بررسی سفارش</small></span>
+          <i className={step === 'complete' ? 'is-complete' : ''} />
+          <span className={step === 'complete' ? 'is-active' : ''}>۳ <small>پایان</small></span>
+        </div>
+
+        {step === 'signup' && (
+          <form className="landing-subscription-form" onSubmit={handleSignup}>
+            <div className="landing-subscription-notice" role="note"><CircleHelp size={16} /><span>این فرم فقط برای پیش‌نمایش است؛ از اطلاعات ساختگی استفاده کنید. چیزی ارسال یا ذخیره نمی‌شود.</span></div>
+            <div className="landing-subscription-fields">
+              <label className="landing-subscription-field"><span>نام و نام خانوادگی</span><input name="fullName" autoComplete="name" required minLength={2} defaultValue={signupDetails?.fullName ?? ''} placeholder="مثلاً سارا احمدی" /></label>
+              <label className="landing-subscription-field"><span>نام کسب‌وکار</span><input name="businessName" required minLength={2} defaultValue={signupDetails?.businessName ?? ''} placeholder="مثلاً فروشگاه نمونه" /></label>
+              <label className="landing-subscription-field"><span>شمارهٔ موبایل</span><input name="phone" type="tel" autoComplete="tel" required defaultValue={signupDetails?.phone ?? ''} placeholder="0912 000 0000" /></label>
+              <label className="landing-subscription-field"><span>ایمیل</span><input name="email" type="email" autoComplete="email" required defaultValue={signupDetails?.email ?? ''} placeholder="name@example.test" /></label>
+              <label className="landing-subscription-field"><span>گذرواژهٔ آزمایشی</span><input name="password" type="password" autoComplete="new-password" minLength={8} required placeholder="حداقل ۸ نویسه" /></label>
+              <label className="landing-subscription-field"><span>تکرار گذرواژه</span><input name="passwordConfirmation" type="password" autoComplete="new-password" minLength={8} required placeholder="گذرواژه را دوباره وارد کنید" /></label>
+            </div>
+            {formError && <p className="landing-subscription-error" role="alert">{formError}</p>}
+            <div className="landing-subscription-plan-summary"><span>پلن انتخاب‌شده</span><strong>{plan.name} · {billingLabel}</strong><b>{formatToman(totalPrice)} تومان</b></div>
+            <div className="landing-subscription-actions">
+              <button className="landing-plan-button" type="submit">ادامه به بررسی سفارش <ArrowLeft size={15} /></button>
+              <button className="landing-subscription-text-button" type="button" onClick={onClose}>فعلاً نه</button>
+            </div>
+          </form>
+        )}
+
+        {step === 'review' && signupDetails && (
+          <form className="landing-subscription-review" onSubmit={completeMockOrder}>
+            <div className="landing-order-card">
+              <div className="landing-order-row"><span>پلن</span><strong>{plan.name}</strong></div>
+              <div className="landing-order-row"><span>دورهٔ اشتراک</span><strong>{billingLabel}</strong></div>
+              <div className="landing-order-row"><span>نام نمایشی</span><strong>{signupDetails.fullName}</strong></div>
+              <div className="landing-order-row"><span>نام کسب‌وکار</span><strong>{signupDetails.businessName}</strong></div>
+              <div className="landing-order-row"><span>موبایل نمایشی</span><strong>{signupDetails.phone}</strong></div>
+              <div className="landing-order-row"><span>ایمیل نمایشی</span><strong>{signupDetails.email}</strong></div>
+              <div className="landing-order-total"><span>مبلغ نمونه</span><strong>{formatToman(totalPrice)} تومان</strong></div>
+            </div>
+            <div className="landing-subscription-notice" role="note"><CircleHelp size={16} /><span>درگاه پرداخت به این پیش‌نمایش وصل نیست؛ اشتراک فعال یا مبلغی کسر نمی‌شود.</span></div>
+            <label className="landing-subscription-consent"><input type="checkbox" name="confirmDemo" required /><span>متوجه‌ام که این سفارش فقط شبیه‌سازی است و خرید واقعی انجام نمی‌شود.</span></label>
+            <div className="landing-subscription-actions">
+              <button className="landing-subscription-text-button" type="button" onClick={() => setStep('signup')}>ویرایش اطلاعات</button>
+              <button className="landing-plan-button" type="submit">تکمیل سفارش نمایشی <ArrowLeft size={15} /></button>
+            </div>
+          </form>
+        )}
+
+        {step === 'complete' && (
+          <div className="landing-subscription-complete">
+            <span className="landing-subscription-success-icon"><Check size={27} /></span>
+            <p>مسیر سفارش برای پلن <strong>{plan.name}</strong> با موفقیت نمایش داده شد.</p>
+            <div className="landing-subscription-notice" role="note"><CircleHelp size={16} /><span>حساب کاربری یا اشتراک واقعی ایجاد نشد و هیچ اطلاعاتی ذخیره یا ارسال نشده است؛ پرداختی هم انجام نشده.</span></div>
+            <button className="landing-plan-button" type="button" onClick={onClose}>بازگشت به پلن‌ها <ArrowLeft size={15} /></button>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
