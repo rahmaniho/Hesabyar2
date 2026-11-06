@@ -9,6 +9,13 @@ function renderDashboard() {
   fireEvent.click(screen.getByRole('button', { name: 'دموی تعاملی' }));
 }
 
+function navigateViaMenu(groupLabel: string, itemLabel: string) {
+  const sidebar = screen.getByRole('complementary', { name: 'منوی اصلی' });
+  const collapsedToggle = within(sidebar).queryByRole('button', { name: `باز کردن زیرمنوی ${groupLabel}` });
+  if (collapsedToggle) fireEvent.click(collapsedToggle);
+  fireEvent.click(within(sidebar).getByRole('button', { name: itemLabel }));
+}
+
 describe('Karo UI prototype', () => {
   it('shows a Persian landing page and links to the sample dashboard', () => {
     render(<App />);
@@ -58,7 +65,7 @@ describe('Karo UI prototype', () => {
   it('navigates to the customers sample view', () => {
     renderDashboard();
 
-    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    navigateViaMenu('سایر', 'اشخاص');
 
     expect(screen.getByRole('heading', { name: 'مشتریان', level: 1 })).toBeTruthy();
     expect(screen.getByText('آوید کریمی')).toBeTruthy();
@@ -91,9 +98,30 @@ describe('Karo UI prototype', () => {
     expect(document.activeElement).toBe(menuToggle);
   });
 
+  it('expands nested menu sections and changes the sample fiscal year', () => {
+    renderDashboard();
+    const sidebar = screen.getByRole('complementary', { name: 'منوی اصلی' });
+    const checksToggle = within(sidebar).getByRole('button', { name: 'باز کردن زیرمنوی چک' });
+
+    expect(checksToggle.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(checksToggle);
+    expect(within(sidebar).getByRole('button', { name: 'بستن زیرمنوی چک' }).getAttribute('aria-expanded')).toBe('true');
+    expect(within(sidebar).getByRole('button', { name: 'چک‌های دریافتی' })).toBeTruthy();
+    fireEvent.click(within(sidebar).getByRole('button', { name: 'چک‌های دریافتی' }));
+    expect(screen.getByRole('heading', { name: 'این قابلیت در حال طراحی است' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'بستن' }));
+    fireEvent.click(within(sidebar).getByRole('button', { name: 'بستن زیرمنوی چک' }));
+    expect(within(sidebar).queryByRole('button', { name: 'چک‌های دریافتی' })).toBeNull();
+
+    fireEvent.click(within(sidebar).getByRole('button', { name: /انتخاب سال مالی/ }));
+    const yearMenu = within(sidebar).getByRole('group', { name: 'انتخاب سال مالی' });
+    fireEvent.click(within(yearMenu).getByRole('button', { name: 'سال مالی ۱۴۰۴' }));
+    expect(within(sidebar).getByRole('button', { name: 'انتخاب سال مالی؛ سال مالی ۱۴۰۴' })).toBeTruthy();
+  });
+
   it('opens a read-only invoice preview without offering payment or edit actions', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
+    navigateViaMenu('فاکتورها و تراکنش‌ها', 'فروش و فاکتورها');
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات فروشگاه آوید' }));
 
     const dialog = screen.getByRole('dialog');
@@ -110,7 +138,7 @@ describe('Karo UI prototype', () => {
 
   it('opens a read-only activity detail preview without transaction actions', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
+    navigateViaMenu('فاکتورها و تراکنش‌ها', 'دریافت و پرداخت');
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات واریز مشتری' }));
 
     const dialog = screen.getByRole('dialog');
@@ -126,7 +154,7 @@ describe('Karo UI prototype', () => {
 
   it('opens a read-only detail preview for a sample customer', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    navigateViaMenu('سایر', 'اشخاص');
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات آوید کریمی' }));
 
     const dialog = screen.getByRole('dialog');
@@ -138,7 +166,7 @@ describe('Karo UI prototype', () => {
 
   it('opens read-only sample inventory details from the inventory list', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'کالا و انبار' }));
+    navigateViaMenu('انبارداری', 'کالا و انبار');
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات قهوهٔ اسپرسو ۲۵۰ گرمی' }));
 
     const dialog = screen.getByRole('dialog');
@@ -164,7 +192,7 @@ describe('Karo UI prototype', () => {
 
   it('filters the customer sample list by status and restores the full list', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    navigateViaMenu('سایر', 'اشخاص');
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' }));
 
     const filterMenu = screen.getByRole('group', { name: 'فیلتر مشتریان بر اساس وضعیت' });
@@ -181,21 +209,21 @@ describe('Karo UI prototype', () => {
 
   it('resets a mock status filter when switching between record pages', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    navigateViaMenu('سایر', 'اشخاص');
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر مشتریان بر اساس وضعیت' })).getByRole('button', { name: 'فعال' }));
     expect(screen.getByRole('button', { name: 'فیلتر مشتریان: فعال' })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
+    navigateViaMenu('فاکتورها و تراکنش‌ها', 'دریافت و پرداخت');
     expect(screen.getByRole('button', { name: 'فیلتر گردش‌ها: همهٔ گردش‌ها' })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    navigateViaMenu('سایر', 'اشخاص');
     expect(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' })).toBeTruthy();
   });
 
   it('filters sample invoices by payment status and restores the full list', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
+    navigateViaMenu('فاکتورها و تراکنش‌ها', 'فروش و فاکتورها');
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر فاکتورها: همهٔ فاکتورها' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر فاکتورها بر اساس وضعیت' })).getByRole('button', { name: 'در انتظار پرداخت' }));
 
@@ -210,7 +238,7 @@ describe('Karo UI prototype', () => {
 
   it('filters sample activity by direction and restores the full list', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
+    navigateViaMenu('فاکتورها و تراکنش‌ها', 'دریافت و پرداخت');
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر گردش‌ها: همهٔ گردش‌ها' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر گردش‌ها بر اساس وضعیت' })).getByRole('button', { name: 'پرداخت‌ها' }));
 
@@ -226,7 +254,7 @@ describe('Karo UI prototype', () => {
 
   it('filters sample inventory by stock status and restores the full list', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'کالا و انبار' }));
+    navigateViaMenu('انبارداری', 'کالا و انبار');
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر کالاها: همهٔ کالاها' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر کالاها بر اساس وضعیت' })).getByRole('button', { name: 'رو به اتمام' }));
 
@@ -245,7 +273,7 @@ describe('Karo UI prototype', () => {
   it('adds a sample customer in page memory without writing to browser storage', () => {
     window.localStorage.clear();
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
+    navigateViaMenu('سایر', 'اشخاص');
     fireEvent.click(screen.getByRole('button', { name: 'مشتری جدید' }));
     fireEvent.change(screen.getByLabelText('نام نمونه'), { target: { value: 'نگار آزمایشی' } });
     fireEvent.change(screen.getByLabelText('شمارهٔ نمایشی (اختیاری)'), { target: { value: '۰۹۱۲ ۰۰۰ ۰۰۰۰' } });
@@ -301,7 +329,7 @@ describe('Karo UI prototype', () => {
 
   it('filters the sample invoice list from the global search', () => {
     renderDashboard();
-    fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
+    navigateViaMenu('فاکتورها و تراکنش‌ها', 'فروش و فاکتورها');
     fireEvent.change(screen.getByRole('searchbox', { name: 'جست‌وجو در داده‌های نمونه' }), { target: { value: 'آوید' } });
 
     expect(screen.getByText('فروشگاه آوید')).toBeTruthy();

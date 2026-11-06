@@ -4,7 +4,9 @@ import {
   Activity,
   ArrowDownLeft,
   ArrowLeft,
+  Archive,
   ArrowUpRight,
+  Banknote,
   BarChart3,
   Bell,
   Boxes,
@@ -14,12 +16,16 @@ import {
   ChevronLeft,
   CircleHelp,
   Clock3,
+  CloudCog,
   CreditCard,
   Download,
   FileText,
   Filter,
+  Gavel,
   LayoutDashboard,
+  Link2,
   Menu,
+  MessageSquare,
   MoreHorizontal,
   Package,
   Plus,
@@ -28,6 +34,8 @@ import {
   Settings,
   ShoppingCart,
   Sparkles,
+  Calculator,
+  Wrench,
   TrendingDown,
   TrendingUp,
   Users,
@@ -48,11 +56,20 @@ const customerStatusOptions = [
   { value: 'نمونه', label: 'نمونه‌های موقت' },
 ] as const;
 
-interface NavItem {
-  id: PageId;
+interface SidebarSubitem {
+  id: string;
+  label: string;
+  page?: PageId;
+  action?: 'help' | 'generic';
+}
+
+interface SidebarGroup {
+  id: string;
   label: string;
   icon: LucideIcon;
-  badge?: string;
+  page?: PageId;
+  action?: 'help' | 'generic';
+  children?: SidebarSubitem[];
 }
 
 interface DataRow {
@@ -76,14 +93,98 @@ interface RecordConfig {
   rows: DataRow[];
 }
 
-const navItems: NavItem[] = [
-  { id: 'overview', label: 'نمای کلی', icon: LayoutDashboard },
-  { id: 'sales', label: 'فروش و فاکتورها', icon: Receipt },
-  { id: 'activity', label: 'دریافت و پرداخت', icon: CreditCard },
-  { id: 'customers', label: 'مشتریان', icon: Users },
-  { id: 'inventory', label: 'کالا و انبار', icon: Boxes },
-  { id: 'reports', label: 'گزارش‌ها', icon: BarChart3 },
+const sidebarGroups: SidebarGroup[] = [
+  {
+    id: 'sales',
+    label: 'فاکتورها و تراکنش‌ها',
+    icon: Link2,
+    page: 'sales',
+    children: [
+      { id: 'sales-list', label: 'فروش و فاکتورها', page: 'sales' },
+      { id: 'activity', label: 'دریافت و پرداخت', page: 'activity' },
+    ],
+  },
+  {
+    id: 'inventory',
+    label: 'انبارداری',
+    icon: Boxes,
+    page: 'inventory',
+    children: [
+      { id: 'inventory-list', label: 'کالا و انبار', page: 'inventory' },
+      { id: 'warehouse-transfers', label: 'حواله‌های انبار', action: 'generic' },
+    ],
+  },
+  {
+    id: 'checks',
+    label: 'چک',
+    icon: Banknote,
+    children: [
+      { id: 'incoming-checks', label: 'چک‌های دریافتی', action: 'generic' },
+      { id: 'outgoing-checks', label: 'چک‌های پرداختی', action: 'generic' },
+    ],
+  },
+  {
+    id: 'accounting',
+    label: 'حسابداری',
+    icon: Calculator,
+    page: 'activity',
+    children: [
+      { id: 'accounting-activity', label: 'گردش حساب‌ها', page: 'activity' },
+      { id: 'accounting-reports', label: 'گزارش‌های حسابداری', page: 'reports' },
+    ],
+  },
+  {
+    id: 'messaging',
+    label: 'پنل پیامک',
+    icon: MessageSquare,
+    children: [
+      { id: 'compose-message', label: 'ارسال پیامک', action: 'generic' },
+      { id: 'message-history', label: 'سوابق پیامک', action: 'generic' },
+    ],
+  },
+  {
+    id: 'production',
+    label: 'تولید',
+    icon: Wrench,
+    children: [
+      { id: 'production-formula-create', label: 'ایجاد فرمول تولید', action: 'generic' },
+      { id: 'production-formula-list', label: 'لیست فرمول تولید', action: 'generic' },
+      { id: 'production-order-create', label: 'سفارش تولید', action: 'generic' },
+      { id: 'production-order-list', label: 'لیست سفارش تولید', action: 'generic' },
+    ],
+  },
+  { id: 'archive', label: 'آرشیو اسناد', icon: Archive, action: 'generic' },
+  { id: 'tax', label: 'سامانه مؤدیان', icon: Gavel, action: 'generic' },
+  {
+    id: 'reports',
+    label: 'گزارشات',
+    icon: BarChart3,
+    page: 'reports',
+    children: [{ id: 'sample-reports', label: 'گزارش‌های نمونه', page: 'reports' }],
+  },
 ];
+
+const managementSidebarGroup: SidebarGroup = {
+  id: 'management',
+  label: 'مدیریت اطلاعات',
+  icon: CloudCog,
+  page: 'settings',
+  children: [
+    { id: 'settings', label: 'تنظیمات عمومی', page: 'settings' },
+    { id: 'users', label: 'مدیریت کاربران', action: 'generic' },
+  ],
+};
+
+const otherSidebarGroup: SidebarGroup = {
+  id: 'other',
+  label: 'سایر',
+  icon: MoreHorizontal,
+  children: [
+    { id: 'other-people', label: 'اشخاص', page: 'customers' },
+    { id: 'other-products', label: 'محصول', page: 'inventory' },
+    { id: 'integrations', label: 'یکپارچه‌ساز', action: 'generic' },
+  ],
+};
 
 const pageMeta: Record<PageId, { title: string; subtitle: string }> = {
   overview: { title: 'نمای کلی', subtitle: 'نمایی از اتفاق‌های امروز کسب‌وکار شما' },
@@ -471,6 +572,7 @@ function PrototypeApp({ onReturnToLanding }: { onReturnToLanding: () => void }) 
         open={sidebarOpen}
         onNavigate={navigate}
         onHelp={() => handlePrimaryAction('help')}
+        onPreviewFeature={() => handlePrimaryAction('generic')}
         onClose={() => updateSidebarOpen(false)}
       />
 
@@ -486,6 +588,10 @@ function PrototypeApp({ onReturnToLanding }: { onReturnToLanding: () => void }) 
               <strong>{page.title}</strong>
             </div>
           </div>
+
+          <button type="button" className="mobile-app-brand" aria-label="رفتن به نمای کلی" onClick={() => navigate('overview')}>
+            <img src={`${import.meta.env.BASE_URL}karo-logo.png`} alt="" />
+          </button>
 
           <div className="topbar-tools">
             <div className={`global-search ${searchFocused ? 'is-focused' : ''}`}>
@@ -577,8 +683,12 @@ function PrototypeApp({ onReturnToLanding }: { onReturnToLanding: () => void }) 
   );
 }
 
-function Sidebar({ activePage, open, onNavigate, onHelp, onClose }: { activePage: PageId; open: boolean; onNavigate: (id: PageId) => void; onHelp: () => void; onClose: () => void }) {
+function Sidebar({ activePage, open, onNavigate, onHelp, onPreviewFeature, onClose }: { activePage: PageId; open: boolean; onNavigate: (id: PageId) => void; onHelp: () => void; onPreviewFeature: () => void; onClose: () => void }) {
   const sidebarRef = useRef<HTMLElement>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set());
+  const [fiscalYear, setFiscalYear] = useState('۱۴۰۵');
+  const [yearMenuOpen, setYearMenuOpen] = useState(false);
+
   useEffect(() => {
     if (!open) return;
     const sidebar = sidebarRef.current;
@@ -591,6 +701,12 @@ function Sidebar({ activePage, open, onNavigate, onHelp, onClose }: { activePage
     (activeNavigationItem ?? getFocusableElements()[0])?.focus();
 
     const keepFocusInsideSidebar = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && yearMenuOpen) {
+        event.preventDefault();
+        event.stopPropagation();
+        setYearMenuOpen(false);
+        return;
+      }
       if (event.key !== 'Tab') return;
       const focusableElements = getFocusableElements();
       if (focusableElements.length === 0) return;
@@ -609,43 +725,165 @@ function Sidebar({ activePage, open, onNavigate, onHelp, onClose }: { activePage
 
     document.addEventListener('keydown', keepFocusInsideSidebar);
     return () => document.removeEventListener('keydown', keepFocusInsideSidebar);
-  }, [open]);
+  }, [open, yearMenuOpen]);
+
+  const navigateToPage = (pageId: PageId) => {
+    setYearMenuOpen(false);
+    onNavigate(pageId);
+  };
+
+  const openHelp = () => {
+    setYearMenuOpen(false);
+    onHelp();
+  };
+
+  const showPreviewFeature = () => {
+    setYearMenuOpen(false);
+    onPreviewFeature();
+  };
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups((current) => {
+      const next = new Set(current);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+  };
+
+  const expandGroup = (groupId: string) => {
+    setExpandedGroups((current) => current.has(groupId) ? current : new Set(current).add(groupId));
+  };
+
+  const renderGroup = (group: SidebarGroup) => {
+    const Icon = group.icon;
+    const hasChildren = Boolean(group.children?.length);
+    const expanded = hasChildren && expandedGroups.has(group.id);
+    const active = group.page === activePage || Boolean(group.children?.some((item) => item.page === activePage));
+    const openFeature = () => {
+      setYearMenuOpen(false);
+      if (group.page) navigateToPage(group.page);
+      else if (group.action === 'help') openHelp();
+      else if (group.action === 'generic') showPreviewFeature();
+    };
+
+    if (!hasChildren) {
+      return (
+        <button key={group.id} type="button" className={`nav-item ${active ? 'is-active' : ''}`} aria-current={group.page === activePage ? 'page' : undefined} onClick={openFeature}>
+          <Icon size={21} strokeWidth={1.8} />
+          <span>{group.label}</span>
+        </button>
+      );
+    }
+
+    return (
+      <div className={`nav-group ${active ? 'is-active-group' : ''}`} key={group.id}>
+        <div className="nav-group-header">
+          <button
+            type="button"
+            className={`nav-item nav-group-link ${active ? 'is-active' : ''}`}
+            aria-current={group.page === activePage ? 'page' : undefined}
+            onClick={() => {
+              if (group.page) {
+                expandGroup(group.id);
+                navigateToPage(group.page);
+              } else toggleGroup(group.id);
+            }}
+          >
+            <Icon size={21} strokeWidth={1.8} />
+            <span>{group.label}</span>
+          </button>
+          <button
+            type="button"
+            className={`nav-group-toggle ${expanded ? 'is-expanded' : ''}`}
+            aria-label={`${expanded ? 'بستن' : 'باز کردن'} زیرمنوی ${group.label}`}
+            aria-expanded={expanded}
+            aria-controls={`sidebar-submenu-${group.id}`}
+            onClick={() => toggleGroup(group.id)}
+          >
+            <ChevronDown size={17} />
+          </button>
+        </div>
+        <div className="nav-submenu" id={`sidebar-submenu-${group.id}`} hidden={!expanded}>
+          {group.children?.map((item) => {
+            const itemIsActive = Boolean(item.page && item.page === activePage && item.page !== group.page);
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={`nav-subitem ${itemIsActive ? 'is-active' : ''}`}
+                aria-current={itemIsActive ? 'page' : undefined}
+                onClick={() => {
+                  setYearMenuOpen(false);
+                  if (item.page) navigateToPage(item.page);
+                  else if (item.action === 'help') openHelp();
+                  else if (item.action === 'generic') showPreviewFeature();
+                }}
+              >
+                <span className="submenu-dot" aria-hidden="true" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <aside ref={sidebarRef} id="main-sidebar" className={`sidebar ${open ? 'is-open' : ''}`} aria-label="منوی اصلی">
       <div className="brand-row">
         <img className="brand-logo" src={`${import.meta.env.BASE_URL}karo-logo.png`} alt="کارو" />
         <span className="brand-version">۲.۰</span>
-        <button type="button" className="sidebar-close" aria-label="بستن منوی اصلی" onClick={onClose}><X size={17} /></button>
+        <button type="button" className="sidebar-close" aria-label="بستن منوی اصلی" onClick={() => { setYearMenuOpen(false); onClose(); }}><X size={19} /></button>
       </div>
 
-      <div className="workspace-switcher">
-        <span className="workspace-avatar">ن</span>
-        <span className="workspace-label"><strong>فروشگاه نارون</strong><small>فضای کاری نمونه</small></span>
-        <ChevronDown size={15} />
+      <div className="fiscal-year-control">
+        <button
+          type="button"
+          className="workspace-switcher"
+          aria-label={`انتخاب سال مالی؛ سال مالی ${fiscalYear}`}
+          aria-haspopup="true"
+          aria-expanded={yearMenuOpen}
+          onClick={() => setYearMenuOpen((value) => !value)}
+        >
+          <span className="workspace-avatar"><CalendarDays size={19} /></span>
+          <span className="workspace-label"><strong>سال مالی {fiscalYear}</strong><small>دورهٔ مالی نمونه</small></span>
+          <ChevronDown size={17} />
+        </button>
+        {yearMenuOpen && (
+          <div className="fiscal-year-menu" role="group" aria-label="انتخاب سال مالی">
+            {['۱۴۰۴', '۱۴۰۵', '۱۴۰۶'].map((year) => (
+              <button key={year} type="button" aria-pressed={fiscalYear === year} className={fiscalYear === year ? 'is-selected' : ''} onClick={() => { setFiscalYear(year); setYearMenuOpen(false); }}>
+                <span>سال مالی {year}</span>
+                {fiscalYear === year && <Check size={16} />}
+              </button>
+            ))}
+            <small>انتخاب سال فقط برای نمایش رابط است.</small>
+          </div>
+        )}
       </div>
 
       <div className="sidebar-section-label">فضای کاری</div>
-      <nav className="primary-nav">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <button key={item.id} type="button" className={`nav-item ${activePage === item.id ? 'is-active' : ''}`} aria-current={activePage === item.id ? 'page' : undefined} onClick={() => onNavigate(item.id)}>
-              <Icon size={19} strokeWidth={activePage === item.id ? 2.15 : 1.85} />
-              <span>{item.label}</span>
-              {item.id === 'activity' && <span className="nav-count">۳</span>}
-            </button>
-          );
-        })}
+      <nav className="primary-nav" aria-label="بخش‌های اصلی">
+        <button type="button" className={`nav-item nav-overview ${activePage === 'overview' ? 'is-active' : ''}`} aria-current={activePage === 'overview' ? 'page' : undefined} onClick={() => navigateToPage('overview')}>
+          <LayoutDashboard size={21} strokeWidth={1.8} />
+          <span>نمای کلی</span>
+        </button>
+        {sidebarGroups.map(renderGroup)}
       </nav>
 
       <div className="sidebar-section-label sidebar-lower-label">مدیریت</div>
-      <nav className="primary-nav secondary-nav">
-        <button type="button" className={`nav-item ${activePage === 'settings' ? 'is-active' : ''}`} aria-current={activePage === 'settings' ? 'page' : undefined} onClick={() => onNavigate('settings')}>
-          <Settings size={19} /><span>تنظیمات</span>
+      <nav className="primary-nav secondary-nav" aria-label="مدیریت و پشتیبانی">
+        {renderGroup(managementSidebarGroup)}
+        {renderGroup(otherSidebarGroup)}
+        <button type="button" className={`nav-item ${activePage === 'settings' ? 'is-active' : ''}`} aria-current={activePage === 'settings' ? 'page' : undefined} onClick={() => navigateToPage('settings')}>
+          <Settings size={21} strokeWidth={1.8} />
+          <span>تنظیمات</span>
         </button>
-        <button type="button" className="nav-item muted-nav-item" onClick={onHelp}>
-          <CircleHelp size={19} /><span>راهنما و بازخورد</span>
+        <button type="button" className="nav-item muted-nav-item" onClick={openHelp}>
+          <CircleHelp size={21} strokeWidth={1.8} />
+          <span>راهنما و بازخورد</span>
         </button>
       </nav>
 
@@ -654,12 +892,12 @@ function Sidebar({ activePage, open, onNavigate, onHelp, onClose }: { activePage
         <div className="plan-icon"><Sparkles size={17} /></div>
         <div><strong>محیط پیش‌نمایش</strong><span>اطلاعات نمونه، بدون ثبت</span></div>
         <span className="plan-status" aria-label="نسخهٔ آزمایشی" />
-        <button type="button" className="plan-link" onClick={onHelp}>دربارهٔ این نسخه <ArrowLeft size={14} /></button>
+        <button type="button" className="plan-link" onClick={openHelp}>دربارهٔ این نسخه <ArrowLeft size={14} /></button>
       </div>
       <div className="sidebar-user">
         <span className="profile-avatar">س</span>
         <span><strong>سارا احمدی</strong><small>مدیر فروشگاه</small></span>
-        <button type="button" aria-label="بستن راهنما" onClick={onHelp}><MoreHorizontal size={19} /></button>
+        <button type="button" aria-label="باز کردن گزینه‌های حساب کاربری" onClick={openHelp}><MoreHorizontal size={19} /></button>
       </div>
     </aside>
   );
