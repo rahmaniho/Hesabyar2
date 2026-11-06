@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import {
   Activity,
@@ -35,6 +35,7 @@ import {
   X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import LandingPage from './LandingPage';
 
 type PageId = 'overview' | 'sales' | 'activity' | 'customers' | 'inventory' | 'reports' | 'settings';
 type ModalKind = 'sale' | 'customer' | 'customer-detail' | 'invoice-detail' | 'inventory-detail' | 'activity-detail' | 'help' | 'report' | 'generic' | null;
@@ -303,6 +304,13 @@ function getPersianDate() {
 }
 
 export default function App() {
+  const [showPrototype, setShowPrototype] = useState(false);
+  return showPrototype
+    ? <PrototypeApp onReturnToLanding={() => setShowPrototype(false)} />
+    : <LandingPage onOpenDemo={() => setShowPrototype(true)} />;
+}
+
+function PrototypeApp({ onReturnToLanding }: { onReturnToLanding: () => void }) {
   const [activePage, setActivePage] = useState<PageId>('overview');
   const [prototypeCustomers, setPrototypeCustomers] = useState<DataRow[]>(recordConfigs.customers.rows);
   const [selectedCustomer, setSelectedCustomer] = useState<DataRow | null>(null);
@@ -319,9 +327,21 @@ export default function App() {
   const [toast, setToast] = useState('');
   const toastTimer = useRef<number | undefined>(undefined);
   const searchInput = useRef<HTMLInputElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const sidebarOpenRef = useRef(false);
 
   const page = pageMeta[activePage];
   const isRecordsPage = activePage === 'sales' || activePage === 'activity' || activePage === 'customers' || activePage === 'inventory';
+
+  const updateSidebarOpen = useCallback((open: boolean) => {
+    const wasOpen = sidebarOpenRef.current;
+    sidebarOpenRef.current = open;
+    setSidebarOpen(open);
+    if (wasOpen && !open) {
+      const menuButton = mobileMenuButtonRef.current;
+      if (menuButton && window.getComputedStyle(menuButton).display !== 'none') menuButton.focus();
+    }
+  }, []);
 
   const showToast = (message: string) => {
     setToast(message);
@@ -331,7 +351,7 @@ export default function App() {
 
   const navigate = (pageId: PageId) => {
     setActivePage(pageId);
-    setSidebarOpen(false);
+    updateSidebarOpen(false);
     setNotificationsOpen(false);
     setRangeOpen(false);
   };
@@ -419,7 +439,7 @@ export default function App() {
         setSelectedInvoice(null);
         setSelectedInventoryItem(null);
         setSelectedActivity(null);
-        setSidebarOpen(false);
+        updateSidebarOpen(false);
         setNotificationsOpen(false);
         setRangeOpen(false);
         setSearchFocused(false);
@@ -430,9 +450,10 @@ export default function App() {
       window.removeEventListener('keydown', onKeyDown);
       window.clearTimeout(toastTimer.current);
     };
-  }, []);
+  }, [updateSidebarOpen]);
 
   const handlePrimaryAction = (kind: ModalKind) => {
+    updateSidebarOpen(false);
     setSelectedCustomer(null);
     setSelectedInvoice(null);
     setSelectedInventoryItem(null);
@@ -444,22 +465,23 @@ export default function App() {
 
   return (
     <div className="app-shell" dir="rtl">
-      <div className={`mobile-scrim ${sidebarOpen ? 'is-visible' : ''}`} onClick={() => setSidebarOpen(false)} aria-hidden="true" />
+      <div className={`mobile-scrim ${sidebarOpen ? 'is-visible' : ''}`} onClick={() => updateSidebarOpen(false)} aria-hidden="true" />
       <Sidebar
         activePage={activePage}
         open={sidebarOpen}
         onNavigate={navigate}
         onHelp={() => handlePrimaryAction('help')}
+        onClose={() => updateSidebarOpen(false)}
       />
 
       <div className="main-shell">
         <header className="topbar">
           <div className="topbar-start">
-            <button className="icon-button mobile-menu" type="button" aria-label="باز کردن منو" onClick={() => setSidebarOpen(true)}>
+            <button ref={mobileMenuButtonRef} className="icon-button mobile-menu" type="button" aria-label="باز کردن منو" aria-expanded={sidebarOpen} aria-controls="main-sidebar" onClick={() => updateSidebarOpen(true)}>
               <Menu size={20} />
             </button>
             <div className="breadcrumb">
-              <span>حساب‌یار</span>
+              <span>کارو</span>
               <ChevronLeft size={14} />
               <strong>{page.title}</strong>
             </div>
@@ -529,6 +551,7 @@ export default function App() {
             <span>پیش‌نمایش رابط</span>
             <span className="banner-separator">·</span>
             <span>داده‌ها ساختگی‌اند و جایی ذخیره نمی‌شوند</span>
+            <button type="button" className="prototype-return" onClick={onReturnToLanding} aria-label="بازگشت به صفحهٔ معرفی"><ArrowLeft size={14} /><span>معرفی</span></button>
             <button type="button" onClick={() => handlePrimaryAction('help')} aria-label="دربارهٔ پیش‌نمایش">
               <CircleHelp size={15} />
               <span>درباره</span>
@@ -541,7 +564,7 @@ export default function App() {
           {activePage === 'settings' && <SettingsPage onAction={handlePrimaryAction} showToast={showToast} />}
 
           <footer className="app-footer">
-            <span>حساب‌یار ۲.۰</span>
+            <span>کارو ۲.۰</span>
             <span>پروتوتایپ رابط · بدون ذخیره‌سازی یا عملیات مالی</span>
             <span>{getPersianDate()}</span>
           </footer>
@@ -554,13 +577,46 @@ export default function App() {
   );
 }
 
-function Sidebar({ activePage, open, onNavigate, onHelp }: { activePage: PageId; open: boolean; onNavigate: (id: PageId) => void; onHelp: () => void }) {
+function Sidebar({ activePage, open, onNavigate, onHelp, onClose }: { activePage: PageId; open: boolean; onNavigate: (id: PageId) => void; onHelp: () => void; onClose: () => void }) {
+  const sidebarRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+
+    const getFocusableElements = () => Array.from(sidebar.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )).filter((element) => !element.closest('[hidden], [aria-hidden="true"]'));
+    const activeNavigationItem = sidebar.querySelector<HTMLElement>('.nav-item.is-active');
+    (activeNavigationItem ?? getFocusableElements()[0])?.focus();
+
+    const keepFocusInsideSidebar = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const focusIsOutsideSidebar = !sidebar.contains(document.activeElement);
+      if (event.shiftKey && (document.activeElement === firstElement || focusIsOutsideSidebar)) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && (document.activeElement === lastElement || focusIsOutsideSidebar)) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', keepFocusInsideSidebar);
+    return () => document.removeEventListener('keydown', keepFocusInsideSidebar);
+  }, [open]);
+
   return (
-    <aside className={`sidebar ${open ? 'is-open' : ''}`} aria-label="منوی اصلی">
+    <aside ref={sidebarRef} id="main-sidebar" className={`sidebar ${open ? 'is-open' : ''}`} aria-label="منوی اصلی">
       <div className="brand-row">
-        <div className="brand-mark"><Wallet size={22} strokeWidth={2.2} /></div>
-        <div className="brand-copy"><strong>حساب‌یار</strong><span>مدیریت مالی ساده‌تر</span></div>
+        <img className="brand-logo" src={`${import.meta.env.BASE_URL}karo-logo.png`} alt="کارو" />
         <span className="brand-version">۲.۰</span>
+        <button type="button" className="sidebar-close" aria-label="بستن منوی اصلی" onClick={onClose}><X size={17} /></button>
       </div>
 
       <div className="workspace-switcher">
@@ -574,7 +630,7 @@ function Sidebar({ activePage, open, onNavigate, onHelp }: { activePage: PageId;
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
-            <button key={item.id} type="button" className={`nav-item ${activePage === item.id ? 'is-active' : ''}`} onClick={() => onNavigate(item.id)}>
+            <button key={item.id} type="button" className={`nav-item ${activePage === item.id ? 'is-active' : ''}`} aria-current={activePage === item.id ? 'page' : undefined} onClick={() => onNavigate(item.id)}>
               <Icon size={19} strokeWidth={activePage === item.id ? 2.15 : 1.85} />
               <span>{item.label}</span>
               {item.id === 'activity' && <span className="nav-count">۳</span>}
@@ -585,7 +641,7 @@ function Sidebar({ activePage, open, onNavigate, onHelp }: { activePage: PageId;
 
       <div className="sidebar-section-label sidebar-lower-label">مدیریت</div>
       <nav className="primary-nav secondary-nav">
-        <button type="button" className={`nav-item ${activePage === 'settings' ? 'is-active' : ''}`} onClick={() => onNavigate('settings')}>
+        <button type="button" className={`nav-item ${activePage === 'settings' ? 'is-active' : ''}`} aria-current={activePage === 'settings' ? 'page' : undefined} onClick={() => onNavigate('settings')}>
           <Settings size={19} /><span>تنظیمات</span>
         </button>
         <button type="button" className="nav-item muted-nav-item" onClick={onHelp}>
@@ -1009,7 +1065,7 @@ function PreviewModal({ kind, onClose, onNavigate, onCreateCustomer, selectedCus
       : kind === 'report'
         ? { icon: FileText, title: 'خروجی گزارش', label: 'در این نسخه آماده نیست', description: 'گزارش‌ها نمونه هستند و هیچ فایل یا خروجی واقعی تولید نمی‌شود.' }
         : kind === 'help'
-          ? { icon: CircleHelp, title: 'دربارهٔ این پیش‌نمایش', label: 'نمونهٔ رابط Hesabyar 2.0', description: 'اطلاعات صفحه ساختگی است. این نسخه به API یا پایگاه داده وصل نیست و هیچ عملیات مالی، مجوز نرم‌افزار یا تنظیمات واقعی را اجرا نمی‌کند.' }
+          ? { icon: CircleHelp, title: 'دربارهٔ این پیش‌نمایش', label: 'نمونهٔ رابط کارو ۲.۰', description: 'اطلاعات صفحه ساختگی است. این نسخه به API یا پایگاه داده وصل نیست و هیچ عملیات مالی، مجوز نرم‌افزار یا تنظیمات واقعی را اجرا نمی‌کند.' }
           : { icon: Sparkles, title: 'این قابلیت در حال طراحی است', label: 'نمونهٔ تعاملی', description: 'این دکمه برای نمایش مسیر رابط اضافه شده است. قابلیت‌های داده‌ای در این پیش‌نمایش غیرفعال‌اند.' };
   const Icon = content.icon;
 
