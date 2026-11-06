@@ -891,3 +891,126 @@ button:disabled { cursor: not-allowed; }
   .landing-footer p { order: 3; width: 100%; text-align: right; }
   .landing-back-to-top { font-size: 10px; }
 }
+
+/* Pricing and mock subscription flow */
+.landing-header-signup { display: inline-flex; min-height: 39px; align-items: center; justify-content: center; padding: 0 14px; color: #2868bd; border: 1px solid #dce6f5; border-radius: 10px; background: #fff; font-size: 12px; font-weight: 600; text-decoration: none; transition: background .18s ease, border .18s ease, color .18s ease; }
+.landing-header-signup:hover { color: #1559b2; border-color: #c8d9f1; background: #f7f9fd; }
+.landing-pricing { background: linear-gradient(180deg, #f7f8fb 0%, #eef3fb 100%); }
+.landing-pricing-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 25px; margin-bottom: 31px; }
+.landing-pricing-header .landing-section-heading { max-width: 650px; margin: 0; text-align: right; }
+.landing-billing-toggle { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 3px; padding: 4px; border: 1px solid #e3e9f2; border-radius: 11px; background: #fff; }
+.landing-billing-toggle button { display: inline-flex; min-height: 38px; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; color: #6e7b8f; border: 0; border-radius: 8px; background: transparent; font-family: inherit; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+.landing-billing-toggle button.is-selected { color: #225fae; background: #edf3fb; box-shadow: inset 0 0 0 1px #e0e9f6; }
+.landing-billing-toggle button span { padding: 3px 6px; color: #287556; border-radius: 5px; background: #eaf6f0; font-size: 8px; }
+.landing-pricing-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 15px; }
+.landing-plan-card { position: relative; display: flex; min-width: 0; min-height: 390px; flex-direction: column; padding: 23px; border: 1px solid #e4e9f1; border-radius: 15px; background: #fff; box-shadow: 0 8px 24px rgba(42, 68, 111, .055); transition: border .18s ease, box-shadow .18s ease, transform .18s ease; }
+.landing-plan-card:hover { border-color: #c8d8ef; box-shadow: 0 14px 32px rgba(42, 68, 111, .11); transform: translateY(-3px); }
+.landing-plan-card.is-featured { border: 2px solid #6e9cdb; box-shadow: 0 15px 35px rgba(39, 95, 171, .13); }
+.landing-plan-popular { position: absolute; top: -12px; right: 19px; display: inline-flex; align-items: center; gap: 4px; padding: 5px 9px; color: #fff; border-radius: 999px; background: #2169c8; box-shadow: 0 4px 10px rgba(33, 105, 200, .2); font-size: 9px; font-weight: 600; }
+.landing-plan-kicker { color: #7e91aa; font-size: 9px; font-weight: 600; }
+.landing-plan-card h3 { margin: 8px 0 2px; color: #35445a; font-size: 21px; font-weight: 700; }
+.landing-plan-tagline { margin: 0; color: #8b95a4; font-size: 11px; }
+.landing-plan-price { display: flex; align-items: baseline; gap: 6px; margin-top: 22px; color: #3c4e67; }
+.landing-plan-price strong { font-size: 27px; font-weight: 700; letter-spacing: -.4px; }
+.landing-plan-price > span { color: #7f8b9a; font-size: 11px; }
+.landing-plan-price small { font-size: 9px; }
+.landing-plan-billing-note { min-height: 34px; margin: 5px 0 14px; color: #8390a0; font-size: 9px; line-height: 1.8; }
+.landing-plan-features { display: flex; flex: 1; flex-direction: column; gap: 11px; margin: 0 0 20px; padding: 15px 0 0; border-top: 1px solid #eef1f5; list-style: none; }
+.landing-plan-features li { display: flex; align-items: center; gap: 8px; color: #687789; font-size: 11px; }
+.landing-plan-features svg { flex: 0 0 auto; color: #38836b; }
+.landing-plan-button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 0 14px; color: #fff; border: 1px solid #2169c8; border-radius: 9px; background: #2169c8; box-shadow: 0 5px 12px rgba(33, 105, 200, .13); font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer; transition: background .16s ease, transform .16s ease, box-shadow .16s ease; }
+.landing-plan-button:hover { border-color: #1559b2; background: #1559b2; box-shadow: 0 8px 17px rgba(33, 105, 200, .19); transform: translateY(-1px); }
+.landing-pricing-disclaimer { display: flex; align-items: flex-start; gap: 8px; max-width: 900px; margin: 21px auto 0; padding: 12px 14px; color: #7e6f54; border: 1px solid #eee5d2; border-radius: 10px; background: #fffdf7; font-size: 10px; line-height: 1.9; }
+.landing-pricing-disclaimer svg { flex: 0 0 auto; margin-top: 2px; color: #a98238; }
+.landing-pricing-disclaimer strong { color: #70572d; }
+.landing-subscription-backdrop { position: fixed; z-index: 150; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(18, 31, 53, .56); backdrop-filter: blur(5px); animation: landing-backdrop-in .16s ease-out; }
+.landing-subscription-dialog { position: relative; width: min(100%, 640px); max-height: min(92vh, 820px); overflow: auto; padding: 29px; border: 1px solid #e6ebf3; border-radius: 19px; background: #fff; box-shadow: 0 28px 80px rgba(10, 29, 58, .27); animation: landing-dialog-in .18s ease-out; }
+.landing-subscription-close { position: absolute; top: 17px; left: 17px; display: grid; width: 35px; height: 35px; place-items: center; color: #738197; border: 1px solid #e6ebf2; border-radius: 9px; background: #fff; cursor: pointer; }
+.landing-subscription-close:hover { color: #245fa9; background: #f5f8fc; }
+.landing-subscription-dialog > .landing-section-kicker { max-width: calc(100% - 50px); }
+.landing-subscription-dialog h2 { margin: 13px 0 14px; color: #35445a; font-size: 22px; line-height: 1.6; }
+.landing-subscription-progress { display: grid; grid-template-columns: auto 1fr auto 1fr auto; align-items: center; gap: 8px; margin: 0 0 19px; padding: 10px 12px; border-radius: 9px; background: #f6f8fb; }
+.landing-subscription-progress span { display: flex; align-items: center; gap: 5px; color: #9aa4b1; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.landing-subscription-progress span small { color: inherit; font-size: 9px; font-weight: 500; }
+.landing-subscription-progress span.is-active { color: #2169c8; }
+.landing-subscription-progress span.is-complete { color: #338269; }
+.landing-subscription-progress i { height: 1px; background: #dfe5ed; }
+.landing-subscription-progress i.is-complete { background: #8ec6aa; }
+.landing-subscription-form { display: flex; flex-direction: column; gap: 14px; }
+.landing-subscription-notice { display: flex; align-items: flex-start; gap: 8px; padding: 11px 12px; color: #6e7f98; border: 1px solid #e4ebf5; border-radius: 9px; background: #f7f9fc; font-size: 10px; line-height: 1.9; }
+.landing-subscription-notice svg { flex: 0 0 auto; margin-top: 2px; color: #567eb7; }
+.landing-subscription-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.landing-subscription-field { display: flex; min-width: 0; flex-direction: column; gap: 5px; color: #59677a; font-size: 10px; font-weight: 600; }
+.landing-subscription-field input { width: 100%; min-width: 0; height: 42px; padding: 0 10px; color: #44546b; border: 1px solid #e3e8ef; border-radius: 8px; outline: none; background: #fbfcfe; font-family: inherit; font-size: 11px; }
+.landing-subscription-field input::placeholder { color: #a2aab5; font-size: 10px; font-weight: 400; }
+.landing-subscription-field input:focus { border-color: #9bb8e0; box-shadow: 0 0 0 3px rgba(33, 105, 200, .1); }
+.landing-subscription-error { margin: -3px 0 0; color: #ad4a4a; font-size: 10px; }
+.landing-subscription-plan-summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 12px; border: 1px solid #e8edf4; border-radius: 9px; background: #fafbfd; font-size: 10px; }
+.landing-subscription-plan-summary span { color: #8b95a2; }
+.landing-subscription-plan-summary strong { color: #53647b; }
+.landing-subscription-plan-summary b { color: #2867bb; font-size: 11px; }
+.landing-subscription-actions { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+.landing-subscription-actions .landing-plan-button { flex: 1; }
+.landing-subscription-text-button { min-height: 42px; padding: 0 12px; color: #728095; border: 1px solid transparent; border-radius: 8px; background: transparent; font-family: inherit; font-size: 10px; font-weight: 600; cursor: pointer; }
+.landing-subscription-text-button:hover { color: #3a5e8c; background: #f5f7fa; }
+.landing-subscription-review { display: flex; flex-direction: column; gap: 13px; }
+.landing-order-card { padding: 8px 13px 12px; border: 1px solid #e4eaf2; border-radius: 11px; background: #fbfcfe; }
+.landing-order-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 37px; border-bottom: 1px solid #edf0f4; font-size: 10px; }
+.landing-order-row span { color: #8a95a3; }
+.landing-order-row strong { overflow-wrap: anywhere; color: #53647a; font-weight: 600; text-align: left; }
+.landing-order-total { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; color: #53647a; font-size: 11px; font-weight: 600; }
+.landing-order-total strong { color: #2169c8; font-size: 15px; }
+.landing-subscription-consent { display: flex; align-items: flex-start; gap: 8px; color: #747f8e; font-size: 10px; line-height: 1.8; cursor: pointer; }
+.landing-subscription-consent input { width: 16px; height: 16px; flex: 0 0 auto; margin: 2px 0 0; accent-color: #2169c8; }
+.landing-subscription-complete { display: flex; flex-direction: column; align-items: center; gap: 15px; padding-top: 6px; text-align: center; }
+.landing-subscription-success-icon { display: grid; width: 58px; height: 58px; place-items: center; color: #287b61; border: 1px solid #d3ecdf; border-radius: 50%; background: #eff9f3; }
+.landing-subscription-complete > p { margin: 0; color: #53647a; font-size: 13px; line-height: 1.9; }
+.landing-subscription-complete > p strong { color: #2169c8; }
+.landing-subscription-complete .landing-subscription-notice { width: 100%; text-align: right; }
+.landing-subscription-complete > .landing-plan-button { max-width: 280px; }
+@keyframes landing-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes landing-dialog-in { from { opacity: .7; transform: translateY(9px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+@media (max-width: 800px) {
+  .landing-header-actions > a, .landing-header-actions > button { position: relative; pointer-events: auto; }
+  .landing-header-demo { display: none; }
+  .landing-pricing-header { align-items: flex-start; flex-direction: column; gap: 17px; }
+  .landing-pricing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .landing-plan-card.is-featured { transform: none; }
+  .landing-plan-card:last-child { grid-column: 1 / -1; width: min(100%, 360px); justify-self: center; }
+}
+@media (max-width: 560px) {
+  .landing-header-signup { min-height: 34px; padding-inline: 10px; font-size: 10px; }
+  .landing-pricing-header { align-items: center; }
+  .landing-pricing-header .landing-section-heading { text-align: center; }
+  .landing-billing-toggle { align-self: center; }
+  .landing-pricing-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .landing-plan-card:last-child { grid-column: auto; width: 100%; justify-self: stretch; }
+  .landing-plan-card { min-height: 0; padding: 20px; }
+  .landing-plan-card h3 { font-size: 19px; }
+  .landing-plan-price strong { font-size: 25px; }
+  .landing-pricing-disclaimer { padding: 10px; font-size: 9px; }
+  .landing-subscription-backdrop { place-items: center; padding: 8px; }
+  .landing-subscription-dialog { width: 100%; max-height: calc(100dvh - 16px); padding: 24px 15px 16px; border-radius: 15px; }
+  .landing-subscription-close { top: 12px; left: 12px; width: 32px; height: 32px; }
+  .landing-subscription-dialog h2 { margin-top: 11px; font-size: 18px; }
+  .landing-subscription-progress { gap: 4px; padding: 9px 6px; }
+  .landing-subscription-progress span { gap: 3px; font-size: 9px; }
+  .landing-subscription-progress span small { font-size: 8px; }
+  .landing-subscription-fields { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .landing-subscription-actions { align-items: stretch; flex-direction: column; }
+  .landing-subscription-actions .landing-plan-button { flex: initial; }
+  .landing-subscription-text-button { width: 100%; }
+  .landing-subscription-plan-summary { flex-wrap: wrap; }
+  .landing-order-row { align-items: flex-start; padding-block: 8px; }
+}
+
+.landing-pricing { scroll-margin-top: 88px; }
+.landing-final-cta-actions { display: flex; align-items: center; gap: 10px; }
+@media (max-width: 800px) {
+  .landing-final-cta-actions { flex-wrap: wrap; }
+}
+@media (max-width: 560px) {
+  .landing-final-cta-actions { width: 100%; align-items: stretch; flex-direction: column; }
+  .landing-final-cta-actions .landing-primary-button { width: 100%; }
+}
