@@ -4,9 +4,36 @@ import App from './App';
 
 afterEach(() => cleanup());
 
-describe('Hesabyar UI prototype', () => {
-  it('shows the Persian dashboard and clearly marks its data as mock', () => {
+function renderDashboard() {
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: 'دموی تعاملی' }));
+}
+
+describe('Karo UI prototype', () => {
+  it('shows a Persian landing page and links to the sample dashboard', () => {
     render(<App />);
+
+    const brandLink = screen.getByRole('link', { name: 'کارو، ابتدای صفحه' });
+    expect(brandLink.querySelector('img')?.getAttribute('src')).toContain('karo-logo.png');
+    expect(screen.getByRole('heading', { name: 'برای مدیریت کسب‌وکارت، یک نگاه روشن‌تر' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'چرا کارو؟' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'امکانات' })).toBeTruthy();
+    expect(screen.getByText('این نسخه فقط پیش‌نمایش رابط است؛ داده‌ها ساختگی‌اند و هیچ عملیات مالی یا ذخیره‌سازی انجام نمی‌شود.')).toBeTruthy();
+    const firstFaq = screen.getByRole('button', { name: 'این نسخه به حساب واقعی من وصل می‌شود؟' });
+    expect(firstFaq.getAttribute('aria-expanded')).toBe('true');
+    fireEvent.click(firstFaq);
+    expect(firstFaq.getAttribute('aria-expanded')).toBe('false');
+
+    fireEvent.click(screen.getByRole('button', { name: 'مشاهدهٔ پیش‌نمایش' }));
+    expect(screen.getByRole('heading', { name: /صبح بخیر، سارا/ })).toBeTruthy();
+    expect(screen.getByRole('img', { name: 'کارو' })).toBeTruthy();
+    expect(screen.getByText('کارو ۲.۰')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'بازگشت به صفحهٔ معرفی' }));
+    expect(screen.getByRole('heading', { name: 'برای مدیریت کسب‌وکارت، یک نگاه روشن‌تر' })).toBeTruthy();
+  });
+
+  it('shows the Persian dashboard and clearly marks its data as mock', () => {
+    renderDashboard();
 
     expect(screen.getByRole('heading', { name: /صبح بخیر، سارا/ })).toBeTruthy();
     expect(screen.getByText('داده‌ها ساختگی‌اند و جایی ذخیره نمی‌شوند')).toBeTruthy();
@@ -14,7 +41,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('updates the dashboard chart with static mock data for the selected period', () => {
-    render(<App />);
+    renderDashboard();
     expect(screen.getByRole('img', { name: 'نمودار نمونهٔ فروش و دریافت برای این هفته؛ داده‌ها ساختگی‌اند' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'این هفته' }));
@@ -29,7 +56,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('navigates to the customers sample view', () => {
-    render(<App />);
+    renderDashboard();
 
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
 
@@ -37,8 +64,35 @@ describe('Hesabyar UI prototype', () => {
     expect(screen.getByText('آوید کریمی')).toBeTruthy();
   });
 
+  it('announces the mobile navigation, moves focus inside, and traps focus until Escape', () => {
+    renderDashboard();
+    const menuToggle = screen.getByRole('button', { name: 'باز کردن منو' });
+    expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(menuToggle);
+
+    expect(menuToggle.getAttribute('aria-expanded')).toBe('true');
+    expect(menuToggle.getAttribute('aria-controls')).toBe('main-sidebar');
+    const sidebar = screen.getByRole('complementary', { name: 'منوی اصلی' });
+    const activePageButton = within(sidebar).getByRole('button', { name: 'نمای کلی' });
+    expect(activePageButton.getAttribute('aria-current')).toBe('page');
+    expect(document.activeElement).toBe(activePageButton);
+
+    const sidebarButtons = within(sidebar).getAllByRole('button');
+    const firstButton = sidebarButtons[0];
+    const lastButton = sidebarButtons[sidebarButtons.length - 1];
+    firstButton.focus();
+    fireEvent.keyDown(firstButton, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(lastButton);
+    fireEvent.keyDown(lastButton, { key: 'Tab' });
+    expect(document.activeElement).toBe(firstButton);
+
+    fireEvent.keyDown(firstButton, { key: 'Escape' });
+    expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(menuToggle);
+  });
+
   it('opens a read-only invoice preview without offering payment or edit actions', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات فروشگاه آوید' }));
 
@@ -55,7 +109,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('opens a read-only activity detail preview without transaction actions', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات واریز مشتری' }));
 
@@ -71,7 +125,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('opens a read-only detail preview for a sample customer', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات آوید کریمی' }));
 
@@ -83,7 +137,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('opens read-only sample inventory details from the inventory list', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'کالا و انبار' }));
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات قهوهٔ اسپرسو ۲۵۰ گرمی' }));
 
@@ -98,7 +152,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('opens the sample item detail directly from the low-stock dashboard list', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'نمایش چای ممتاز بهاره' }));
 
     const dialog = screen.getByRole('dialog');
@@ -109,7 +163,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('filters the customer sample list by status and restores the full list', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' }));
 
@@ -126,7 +180,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('resets a mock status filter when switching between record pages', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر مشتریان: همهٔ مشتریان' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر مشتریان بر اساس وضعیت' })).getByRole('button', { name: 'فعال' }));
@@ -140,7 +194,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('filters sample invoices by payment status and restores the full list', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر فاکتورها: همهٔ فاکتورها' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر فاکتورها بر اساس وضعیت' })).getByRole('button', { name: 'در انتظار پرداخت' }));
@@ -155,7 +209,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('filters sample activity by direction and restores the full list', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: /^دریافت و پرداخت/ }));
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر گردش‌ها: همهٔ گردش‌ها' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر گردش‌ها بر اساس وضعیت' })).getByRole('button', { name: 'پرداخت‌ها' }));
@@ -171,7 +225,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('filters sample inventory by stock status and restores the full list', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'کالا و انبار' }));
     fireEvent.click(screen.getByRole('button', { name: 'فیلتر کالاها: همهٔ کالاها' }));
     fireEvent.click(within(screen.getByRole('group', { name: 'فیلتر کالاها بر اساس وضعیت' })).getByRole('button', { name: 'رو به اتمام' }));
@@ -190,7 +244,7 @@ describe('Hesabyar UI prototype', () => {
 
   it('adds a sample customer in page memory without writing to browser storage', () => {
     window.localStorage.clear();
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'مشتریان' }));
     fireEvent.click(screen.getByRole('button', { name: 'مشتری جدید' }));
     fireEvent.change(screen.getByLabelText('نام نمونه'), { target: { value: 'نگار آزمایشی' } });
@@ -212,7 +266,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('opens a non-persistent sale preview instead of recording a transaction', () => {
-    render(<App />);
+    renderDashboard();
 
     fireEvent.click(screen.getByRole('button', { name: 'ثبت فروش' }));
 
@@ -222,7 +276,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('keeps keyboard focus inside a preview dialog and restores it after closing', () => {
-    render(<App />);
+    renderDashboard();
     const trigger = screen.getByRole('button', { name: 'ثبت فروش' });
     trigger.focus();
     fireEvent.click(trigger);
@@ -246,7 +300,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('filters the sample invoice list from the global search', () => {
-    render(<App />);
+    renderDashboard();
     fireEvent.click(screen.getByRole('button', { name: 'فروش و فاکتورها' }));
     fireEvent.change(screen.getByRole('searchbox', { name: 'جست‌وجو در داده‌های نمونه' }), { target: { value: 'آوید' } });
 
@@ -255,7 +309,7 @@ describe('Hesabyar UI prototype', () => {
   });
 
   it('opens the sample notifications panel', () => {
-    render(<App />);
+    renderDashboard();
 
     fireEvent.click(screen.getByRole('button', { name: 'اعلان‌ها' }));
 
